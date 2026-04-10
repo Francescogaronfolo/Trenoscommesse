@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrenoScommesse 🚂 — Scommetti sul Ritardo!</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;600;700&family=Merriweather:ital,wght@1,300;1,700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --verde: #1a6b3a;
+      --verde-chiaro: #2ecc71;
+      --rosso: #c0392b;
+      --rosso-chiaro: #e74c3c;
+      --giallo: #f39c12;
+      --giallo-chiaro: #f1c40f;
+      --crema: #fdf6e3;
+      --marrone: #3d2b1f;
+      --grigio: #2c2c2c;
+      --beige: #f5e6c8;
+      --bianco: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Oswald', sans-serif;
+      background-color: var(--crema);
+      color: var(--marrone);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(0, 0, 0, 0.03) 40px,
+          rgba(0, 0, 0, 0.03) 41px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 40px,
+          rgba(0, 0, 0, 0.03) 40px,
+          rgba(0, 0, 0, 0.03) 41px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header,
+    main,
+    .disclaimer,
+    .overlay {
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-stripe {
+      background: var(--rosso);
+      height: 8px;
+    }
+
+    header {
+      background: var(--verde);
+      color: white;
+      border-bottom: 6px solid var(--giallo);
+      overflow: hidden;
+    }
+
+    .header-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 18px 16px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .logo-icon {
+      font-size: 2.8rem;
+      line-height: 1;
+      flex-shrink: 0;
+      filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.3));
+      animation: trenoWobble 2s ease-in-out infinite;
+    }
+
+    @keyframes trenoWobble {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(3px) rotate(1deg); }
+      75% { transform: translateX(-3px) rotate(-1deg); }
+    }
+
+    .titoli {
+      min-width: 0;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 3px;
+      line-height: 0.95;
+      text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+      word-break: break-word;
+    }
+
+    .tagline {
+      font-family: 'Merriweather', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: var(--beige);
+      opacity: 0.95;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .top-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .saldo-badge,
+    .mini-badge {
+      background: var(--giallo);
+      color: var(--marrone);
+      border-radius: 12px;
+      padding: 8px 14px;
+      text-align: center;
+      border: 3px solid var(--marrone);
+      box-shadow: 3px 3px 0 var(--marrone);
+      flex-shrink: 0;
+    }
+
+    .mini-badge {
+      background: var(--beige);
+      min-width: 88px;
+    }
+
+    .saldo-label,
+    .mini-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .saldo-valore,
+    .mini-valore {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.65rem;
+      letter-spacing: 1px;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .mini-valore {
+      font-size: 1.3rem;
+    }
+
+    main {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    .card {
+      background: var(--bianco);
+      border-radius: 4px;
+      border: 2px solid var(--marrone);
+      box-shadow: 5px 5px 0 var(--marrone);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: var(--marrone);
+      color: white;
+      padding: 10px 16px;
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .status-box {
+      background: var(--beige);
+      border: 2px solid var(--marrone);
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .status-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.75;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .status-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 1px;
+      line-height: 1;
+    }
+
+    .status-sub {
+      font-size: 0.72rem;
+      color: #777;
+      margin-top: 4px;
+      line-height: 1.2;
+    }
+
+    .utente-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .utente-nome {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 1px;
+      line-height: 1;
+      color: var(--verde);
+    }
+
+    .utente-titolo {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .btn-secondary {
+      background: var(--giallo);
+      color: var(--marrone);
+      border: 2px solid var(--marrone);
+      box-shadow: 3px 3px 0 var(--marrone);
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 5px 5px 0 var(--marrone);
+    }
+
+    .btn-danger {
+      background: var(--rosso);
+      color: white;
+    }
+
+    .treni-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .treno-btn {
+      background: var(--beige);
+      border: 2px solid var(--marrone);
+      border-radius: 4px;
+      padding: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+      font-family: 'Oswald', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .treno-btn:hover {
+      background: var(--giallo-chiaro);
+      transform: translateY(-2px);
+      box-shadow: 3px 3px 0 var(--marrone);
+    }
+
+    .treno-btn.selected {
+      background: var(--verde);
+      color: white;
+      box-shadow: 3px 3px 0 var(--marrone);
+    }
+
+    .treno-btn.selected .treno-nome {
+      color: white;
+    }
+
+    .treno-btn.selected .treno-extra {
+      color: rgba(255,255,255,0.82);
+    }
+
+    .treno-numero {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      color: var(--rosso);
+      line-height: 1;
+    }
+
+    .treno-btn.selected .treno-numero {
+      color: var(--giallo-chiaro);
+    }
+
+    .treno-nome {
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: var(--grigio);
+      margin-top: 3px;
+      line-height: 1.2;
+    }
+
+    .treno-tipo {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-top: 6px;
+      background: var(--rosso);
+      color: white;
+    }
+
+    .treno-btn.selected .treno-tipo {
+      background: var(--giallo);
+      color: var(--marrone);
+    }
+
+    .treno-extra {
+      margin-top: 6px;
+      font-size: 0.68rem;
+      color: #7a7a7a;
+      line-height: 1.25;
+      min-height: 34px;
+    }
+
+    .scommessa-section {
+      margin-bottom: 14px;
+    }
+
+    .scommessa-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--marrone);
+      margin-bottom: 8px;
+    }
+
+    .minuti-display {
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 3.5rem;
+      color: var(--rosso);
+      text-align: center;
+      line-height: 1;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+      transition: color 0.2s ease;
+      margin-bottom: 4px;
+    }
+
+    .minuti-unit {
+      font-size: 1rem;
+      color: var(--marrone);
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+
+    .slider-wrap {
+      padding: 0 4px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(
+        to right,
+        var(--verde) 0%,
+        var(--verde) var(--pct, 0%),
+        var(--beige) var(--pct, 0%),
+        var(--beige) 100%
+      );
+      border-radius: 999px;
+      border: 2px solid var(--marrone);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 8px;
+      background: transparent;
+      border-radius: 999px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      margin-top: -11px;
+      border-radius: 50%;
+      background: var(--giallo);
+      border: 3px solid var(--marrone);
+      box-shadow: 2px 2px 0 var(--marrone);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:active {
+      transform: scale(1.12);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 8px;
+      background: transparent;
+      border: none;
+      border-radius: 999px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--giallo);
+      border: 3px solid var(--marrone);
+      box-shadow: 2px 2px 0 var(--marrone);
+      cursor: pointer;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.65rem;
+      color: #888;
+      margin-top: 6px;
+    }
+
+    .puntata-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .puntata-chip {
+      flex: 1;
+      min-width: 60px;
+      background: var(--beige);
+      border: 2px solid var(--marrone);
+      border-radius: 4px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 1.1rem;
+      transition: all 0.15s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .puntata-chip:hover,
+    .puntata-chip.selected {
+      background: var(--verde);
+      color: var(--giallo-chiaro);
+      box-shadow: 2px 2px 0 var(--marrone);
+      transform: translateY(-1px);
+    }
+
+    .btn-scommetti {
+      width: 100%;
+      padding: 16px;
+      background: var(--rosso);
+      color: white;
+      border: 3px solid var(--marrone);
+      border-radius: 4px;
+      box-shadow: 5px 5px 0 var(--marrone);
+      font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-scommetti:hover:not(:disabled) {
+      background: var(--rosso-chiaro);
+      transform: translateY(-2px);
+      box-shadow: 7px 7px 0 var(--marrone);
+    }
+
+    .btn-scommetti:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0 var(--marrone);
+    }
+
+    .btn-scommetti:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .loader {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      background: white;
+      border: 2px solid var(--marrone);
+      box-shadow: 5px 5px 0 var(--marrone);
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .loader.show {
+      display: block;
+    }
+
+    .treno-loading {
+      font-size: 2rem;
+      animation: trenoRun 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes trenoRun {
+      0% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      100% { transform: translateX(-10px); }
+    }
+
+    .loader-text {
+      font-size: 0.92rem;
+      color: #777;
+      margin-top: 8px;
+      font-style: italic;
+      line-height: 1.45;
+    }
+
+    .risultato-box {
+      display: none;
+      text-align: center;
+      padding: 20px 16px;
+    }
+
+    .risultato-box.show {
+      display: block;
+    }
+
+    .ritardo-reale {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: #888;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .ritardo-numero {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4.8rem;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .ritardo-meter {
+      width: 100%;
+      height: 12px;
+      background: #eee;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      overflow: hidden;
+      margin: 8px 0 16px;
+    }
+
+    .ritardo-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 1s ease;
+      background: linear-gradient(
+        90deg,
+        var(--verde-chiaro),
+        var(--giallo),
+        var(--rosso)
+      );
+    }
+
+    .delta-info {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: #666;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .guadagno-badge {
+      display: inline-block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      padding: 8px 20px;
+      border-radius: 4px;
+      border: 3px solid var(--marrone);
+      box-shadow: 3px 3px 0 var(--marrone);
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
+    .guadagno-badge.win {
+      background: var(--verde-chiaro);
+      color: white;
+    }
+
+    .guadagno-badge.lose {
+      background: var(--rosso-chiaro);
+      color: white;
+    }
+
+    .risultato-msg {
+      font-family: 'Merriweather', serif;
+      font-style: italic;
+      font-size: 1rem;
+      margin: 12px 0 16px;
+      line-height: 1.5;
+    }
+
+    .btn-rigioca {
+      background: var(--giallo);
+      color: var(--marrone);
+      border: 2px solid var(--marrone);
+      box-shadow: 3px 3px 0 var(--marrone);
+      border-radius: 4px;
+      padding: 10px 24px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-rigioca:hover {
+      transform: translateY(-2px);
+      box-shadow: 5px 5px 0 var(--marrone);
+    }
+
+    .storico-list {
+      list-style: none;
+    }
+
+    .storico-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #ddd;
+      font-size: 0.85rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    .storico-item:last-child {
+      border-bottom: none;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .storico-treno {
+      font-weight: 600;
+      color: var(--verde);
+    }
+
+    .storico-delta {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    .storico-esito {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+
+    .storico-esito.win {
+      color: var(--verde);
+    }
+
+    .storico-esito.lose {
+      color: var(--rosso);
+    }
+
+    .classifica {
+      display: block;
+    }
+
+    .rank-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #ddd;
+    }
+
+    .rank-item:last-child {
+      border-bottom: none;
+    }
+
+    .rank-pos {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      color: #bbb;
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .rank-pos.gold { color: #f1c40f; }
+    .rank-pos.silver { color: #bdc3c7; }
+    .rank-pos.bronze { color: #e67e22; }
+
+    .rank-nome {
+      font-weight: 600;
+      flex: 1;
+      line-height: 1.2;
+    }
+
+    .rank-desc {
+      font-size: 0.72rem;
+      color: #888;
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    .rank-saldo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--verde);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .rank-item.you {
+      background: rgba(46, 204, 113, 0.08);
+      border-radius: 4px;
+      padding-left: 8px;
+      padding-right: 8px;
+      border: 1px dashed rgba(46, 204, 113, 0.6);
+    }
+
+    .badge-info {
+      background: var(--verde);
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 2px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .disclaimer {
+      text-align: center;
+      font-size: 0.68rem;
+      color: #8e8e8e;
+      padding: 8px 16px 24px;
+      line-height: 1.55;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .confetto {
+      position: fixed;
+      top: -20px;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: caduta 1.5s ease-in forwards;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    @keyframes caduta {
+      to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bianco);
+      border: 2px solid var(--marrone);
+      box-shadow: 6px 6px 0 var(--marrone);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: var(--marrone);
+      color: white;
+      padding: 12px 16px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+    }
+
+    .modal-body {
+      padding: 16px;
+    }
+
+    .modal-text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #555;
+      margin-bottom: 14px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--marrone);
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--marrone);
+      border-radius: 4px;
+      outline: none;
+      font-size: 1rem;
+      font-family: 'Oswald', sans-serif;
+      margin-bottom: 12px;
+    }
+
+    .text-input:focus {
+      box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .helper-note {
+      margin-top: 8px;
+      font-size: 0.72rem;
+      color: #777;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 560px) {
+      .header-content {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-badges {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+      }
+
+      .tagline {
+        font-size: 0.8rem;
+      }
+
+      .ritardo-numero {
+        font-size: 4rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .treni-grid,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .logo-row {
+        align-items: flex-start;
+      }
+
+      h1 {
+        font-size: 1.95rem;
+      }
+
+      .minuti-display {
+        font-size: 3rem;
+      }
+
+      .btn-scommetti {
+        font-size: 1.25rem;
+      }
+
+      .guadagno-badge {
+        font-size: 1.65rem;
+      }
+
+      .ritardo-numero {
+        font-size: 3.4rem;
+      }
+
+      .utente-nome {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="usernameOverlay">
+    <div class="modal">
+      <div class="modal-header">🚂 Benvenuto a TrenoScommesse</div>
+      <div class="modal-body">
+        <div class="modal-text">
+          Prima di iniziare serve un nome da pendolare leggendario.
+        </div>
+
+        <label class="input-label" for="usernameInput">Nome giocatore</label>
+        <input
+          type="text"
+          id="usernameInput"
+          class="text-input"
+          maxlength="18"
+          placeholder="Es. Ritardologo73"
+          autocomplete="nickname"
+        />
+
+        <div class="modal-actions">
+          <button class="btn-secondary" id="saveUsernameBtn" type="button">Salva nome</button>
+          <button class="btn-secondary" id="randomUsernameBtn" type="button">Nome casuale</button>
+        </div>
+
+        <div class="helper-note">
+          Il nome viene salvato solo nel tuo browser. Nessun account, nessuna registrazione.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-stripe"></div>
+
+  <header>
+    <div class="header-content">
+      <div class="logo-row">
+        <div class="logo-icon">🚂</div>
+        <div class="titoli">
+          <h1>TrenoScommesse</h1>
+          <div class="tagline">Perché tanto in ritardo ci arriva lo stesso</div>
+        </div>
+      </div>
+
+      <div class="top-badges">
+        <div class="mini-badge">
+          <div class="mini-label">🔥 Streak</div>
+          <div class="mini-valore" id="streakBadge">0</div>
+        </div>
+        <div class="saldo-badge">
+          <div class="saldo-label">💰 Saldo</div>
+          <div class="saldo-valore" id="saldo">1.000€</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="card-header">👤 Profilo pendolare</div>
+      <div class="card-body">
+        <div class="utente-row">
+          <div>
+            <div class="utente-nome" id="playerName">—</div>
+            <div class="utente-titolo" id="playerTitle">Pendolare Novizio</div>
+          </div>
+          <button class="btn-secondary" type="button" id="changeNameBtn">✏️ Cambia nome</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">📈 I tuoi numeri</div>
+      <div class="card-body">
+        <div class="status-grid">
+          <div class="status-box">
+            <div class="status-label">Scommesse</div>
+            <div class="status-value" id="statBets">0</div>
+            <div class="status-sub">totali giocate</div>
+          </div>
+          <div class="status-box">
+            <div class="status-label">Vittorie</div>
+            <div class="status-value" id="statWins">0</div>
+            <div class="status-sub">entro 5 minuti</div>
+          </div>
+          <div class="status-box">
+            <div class="status-label">Win rate</div>
+            <div class="status-value" id="statWinRate">0%</div>
+            <div class="status-sub">precisione pendolare</div>
+          </div>
+          <div class="status-box">
+            <div class="status-label">Miglior streak</div>
+            <div class="status-value" id="statBestStreak">0</div>
+            <div class="status-sub">serie consecutive</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">🗺️ Scegli il tuo treno della speranza</div>
+      <div class="card-body">
+        <div class="treni-grid" id="treniGrid"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">⏱️ Quanti minuti di ritardo?</div>
+      <div class="card-body">
+        <div class="scommessa-section">
+          <div class="minuti-display" id="minutiDisplay">
+            <span id="minutiVal">15</span><span class="minuti-unit">min</span>
+          </div>
+
+          <div class="slider-wrap">
+            <input type="range" min="0" max="120" value="15" id="ritardoSlider" />
+            <div class="slider-labels">
+              <span>0 (miracolo)</span>
+              <span>30</span>
+              <span>60</span>
+              <span>120+ 😱</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scommessa-label" style="margin-top: 14px;">Puntata virtuale</div>
+        <div class="puntata-row">
+          <div class="puntata-chip" data-val="50">50€</div>
+          <div class="puntata-chip" data-val="100">100€</div>
+          <div class="puntata-chip selected" data-val="200">200€</div>
+          <div class="puntata-chip" data-val="500">500€</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-scommetti" id="btnScommetti" type="button">
+      🎲 SCOMMETTI!
+    </button>
+
+    <div class="loader" id="loader">
+      <div class="treno-loading">🚂</div>
+      <div class="loader-text">
+        Attendendo dati ferroviari...<br />
+        <em>(tranquillo, anche il treno sta aspettando)</em>
+      </div>
+    </div>
+
+    <div class="card" id="risultatoCard" style="display: none;">
+      <div class="card-header" id="risultatoHeader">📊 Risultato</div>
+      <div class="risultato-box show">
+        <div class="ritardo-reale">Ritardo reale registrato</div>
+        <div class="ritardo-numero" id="ritardoRealeNum">—</div>
+
+        <div class="ritardo-meter">
+          <div class="ritardo-fill" id="ritardoFill"></div>
+        </div>
+
+        <div class="delta-info" id="deltaInfo"></div>
+        <div class="guadagno-badge" id="guadagnoBadge"></div>
+        <div class="risultato-msg" id="risultatoMsg"></div>
+
+        <button class="btn-rigioca" type="button" id="btnRigioca">🔄 Rigioca</button>
+      </div>
+    </div>
+
+    <div class="card" id="storicoCard" style="display: none;">
+      <div class="card-header">📋 Le tue scommesse</div>
+      <div class="card-body">
+        <ul class="storico-list" id="storicoList"></ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        🏆 Hall of Ritardi <span class="badge-info">LOCALE</span>
+      </div>
+      <div class="card-body classifica" id="classificaList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">⚙️ Gestione profilo</div>
+      <div class="card-body">
+        <div class="utente-row">
+          <div>
+            <div class="utente-titolo">
+              Puoi azzerare il saldo, lo storico e il nome salvato nel browser.
+            </div>
+          </div>
+          <button class="btn-secondary btn-danger" type="button" id="resetProfileBtn">
+            🗑️ Reset profilo
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="disclaimer">
+    ⚠️ <strong>Solo per ridere.</strong> Nessun denaro reale. Nessuna scommessa vera.<br />
+    I 6 treni mostrati esistono e ora provano a caricare uno stato live.<br />
+    Se il live non compare, il gioco continua a funzionare comunque in modalità simulata.
+  </div>
+
+  <script>
+    const STORAGE_KEY = "trenoScommesseSave_v3";
+
+    const treni = [
+      { num: "FR 9600", nome: "Roma → Milano", tipo: "FRECCIAROSSA", media: 8, varianza: 15, info: "Caricamento dati live..." },
+      { num: "IC 505", nome: "Napoli → Torino", tipo: "INTERCITY", media: 22, varianza: 30, info: "Caricamento dati live..." },
+      { num: "RV 2843", nome: "Bari → Taranto", tipo: "REGIONALE", media: 18, varianza: 45, info: "Caricamento dati live..." },
+      { num: "FR 9810", nome: "Venezia → Roma", tipo: "FRECCIAROSSA", media: 6, varianza: 12, info: "Caricamento dati live..." },
+      { num: "R 3042", nome: "Palermo → Messina", tipo: "REGIONALE", media: 35, varianza: 60, info: "Caricamento dati live..." },
+      { num: "IC 723", nome: "Milano → Lecce", tipo: "INTERCITY", media: 28, varianza: 40, info: "Caricamento dati live..." }
+    ];
+
+    const messaggiVincita = [
+      "Sei un profeta! Trenitalia ti teme.",
+      "Incredibile. Forse dovresti lavorare in RFI.",
+      "Complimenti! Anche il tabellone era d'accordo con te.",
+      "Indovinato! Hai il fiuto del pendolare esperto.",
+      "Bravo! L'esperienza si sente 🎯"
+    ];
+
+    const messaggiPerdita = [
+      "Potevi prendere l'aereo. Almeno sai quando parte.",
+      "Hai sopravvalutato Trenitalia. O sottovalutato.",
+      "Il treno era in ritardo, ma non abbastanza per te.",
+      "Prossima volta scommetti su 'treno soppresso' 😅",
+      "Ci vuole pratica. E tanta pazienza. Come in stazione."
+    ];
+
+    const nomiCasuali = [
+      "Pendolare Supremo",
+      "Profeta del Binario",
+      "Ritardologo73",
+      "Capostazione Mistico",
+      "Binario Fantasma",
+      "Freccia Selvaggia",
+      "Oracolo FS",
+      "Biglietto Oblietrato"
+    ];
+
+    let playerName = "";
+    let saldo = 1000;
+    let puntataSelezionata = 200;
+    let trenoSelezionato = null;
+    let storico = [];
+    let currentStreak = 0;
+    let bestStreak = 0;
+    let totalWins = 0;
+
+    const treniGrid = document.getElementById("treniGrid");
+    const ritardoSlider = document.getElementById("ritardoSlider");
+    const minutiVal = document.getElementById("minutiVal");
+    const minutiDisplay = document.getElementById("minutiDisplay");
+    const btnScommetti = document.getElementById("btnScommetti");
+    const loader = document.getElementById("loader");
+    const saldoEl = document.getElementById("saldo");
+    const streakBadge = document.getElementById("streakBadge");
+
+    const risultatoCard = document.getElementById("risultatoCard");
+    const risultatoHeader = document.getElementById("risultatoHeader");
+    const ritardoRealeNum = document.getElementById("ritardoRealeNum");
+    const ritardoFill = document.getElementById("ritardoFill");
+    const deltaInfo = document.getElementById("deltaInfo");
+    const guadagnoBadge = document.getElementById("guadagnoBadge");
+    const risultatoMsg = document.getElementById("risultatoMsg");
+    const btnRigioca = document.getElementById("btnRigioca");
+
+    const storicoCard = document.getElementById("storicoCard");
+    const storicoList = document.getElementById("storicoList");
+    const classificaList = document.getElementById("classificaList");
+
+    const playerNameEl = document.getElementById("playerName");
+    const playerTitleEl = document.getElementById("playerTitle");
+    const statBetsEl = document.getElementById("statBets");
+    const statWinsEl = document.getElementById("statWins");
+    const statWinRateEl = document.getElementById("statWinRate");
+    const statBestStreakEl = document.getElementById("statBestStreak");
+
+    const usernameOverlay = document.getElementById("usernameOverlay");
+    const usernameInput = document.getElementById("usernameInput");
+    const saveUsernameBtn = document.getElementById("saveUsernameBtn");
+    const randomUsernameBtn = document.getElementById("randomUsernameBtn");
+    const changeNameBtn = document.getElementById("changeNameBtn");
+    const resetProfileBtn = document.getElementById("resetProfileBtn");
+
+    function formatEuro(valore) {
+      return valore.toLocaleString("it-IT") + "€";
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function sanitizeName(name) {
+      return name.replace(/\s+/g, " ").trim().slice(0, 18);
+    }
+
+    function saveData() {
+      const saveObject = {
+        playerName,
+        saldo,
+        puntataSelezionata,
+        storico,
+        currentStreak,
+        bestStreak,
+        totalWins
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(saveObject));
+    }
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+
+        const data = JSON.parse(raw);
+
+        if (typeof data.playerName === "string") playerName = data.playerName;
+        if (typeof data.saldo === "number") saldo = data.saldo;
+        if (typeof data.puntataSelezionata === "number") puntataSelezionata = data.puntataSelezionata;
+        if (Array.isArray(data.storico)) storico = data.storico;
+        if (typeof data.currentStreak === "number") currentStreak = data.currentStreak;
+        if (typeof data.bestStreak === "number") bestStreak = data.bestStreak;
+        if (typeof data.totalWins === "number") totalWins = data.totalWins;
+      } catch (error) {
+        console.error("Errore nel caricamento dati:", error);
+      }
+    }
+
+    function getPlayerRankTitle() {
+      if (saldo >= 4500) return "Imperatore dei Ritardi";
+      if (saldo >= 3000) return "Profeta del Binario";
+      if (saldo >= 2000) return "Ritardologo Certificato";
+      if (saldo >= 1400) return "Pendolare Esperto";
+      if (saldo >= 900) return "Pendolare Novizio";
+      if (saldo >= 500) return "Vittima delle Coincidenze";
+      return "Disperso in Stazione";
+    }
+
+    function getWinRate() {
+      if (!storico.length) return 0;
+      return Math.round((totalWins / storico.length) * 100);
+    }
+
+    function updateHeaderStats() {
+      saldoEl.textContent = formatEuro(saldo);
+      streakBadge.textContent = currentStreak;
+    }
+
+    function updatePlayerUI() {
+      playerNameEl.textContent = playerName || "Pendolare senza nome";
+      playerTitleEl.textContent = getPlayerRankTitle();
+
+      statBetsEl.textContent = storico.length;
+      statWinsEl.textContent = totalWins;
+      statWinRateEl.textContent = getWinRate() + "%";
+      statBestStreakEl.textContent = bestStreak;
+    }
+
+    function getLeaderboard() {
+      const npcPlayers = [
+        { nome: "Pendolare Romano 🏛️", saldo: 4820, desc: "3.200 scommesse · indovina il 71%" },
+        { nome: "Nonna di Napoli 👵", saldo: 3100, desc: '"Lo sapevo io"' },
+        { nome: "Ingegnere Milanese 💼", saldo: 2750, desc: "Usa i dati storici. Vince sempre." },
+        { nome: "Turista Giapponese 🇯🇵", saldo: 890, desc: "Non capisce come funziona in Italia" },
+        { nome: "Controllore Mistico 🎫", saldo: 1650, desc: "Vede il ritardo prima del capotreno" },
+        { nome: "Oracolo Regionale 🚉", saldo: 1260, desc: "Ha perso la speranza, non la precisione" }
+      ];
+
+      const you = {
+        nome: (playerName || "Tu") + " 🫵",
+        saldo,
+        desc: `${storico.length} scommesse · streak ${currentStreak}`,
+        isYou: true
+      };
+
+      const all = [...npcPlayers, you].sort((a, b) => b.saldo - a.saldo);
+      return all.map((item, index) => ({ ...item, position: index + 1 }));
+    }
+
+    function renderLeaderboard() {
+      const leaderboard = getLeaderboard();
+
+      classificaList.innerHTML = leaderboard
+        .map((entry) => {
+          let posClass = "";
+          if (entry.position === 1) posClass = "gold";
+          else if (entry.position === 2) posClass = "silver";
+          else if (entry.position === 3) posClass = "bronze";
+
+          return `
+            <div class="rank-item ${entry.isYou ? "you" : ""}">
+              <div class="rank-pos ${posClass}">${entry.position}</div>
+              <div>
+                <div class="rank-nome">${escapeHtml(entry.nome)}</div>
+                <div class="rank-desc">${escapeHtml(entry.desc)}</div>
+              </div>
+              <div class="rank-saldo">${formatEuro(entry.saldo)}</div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function updateMiniDisplay() {
+      const val = parseInt(ritardoSlider.value, 10);
+      minutiVal.textContent = val;
+
+      const pct = (val / 120) * 100;
+      ritardoSlider.style.setProperty("--pct", pct + "%");
+
+      if (val <= 5) {
+        minutiDisplay.style.color = "#27ae60";
+      } else if (val <= 20) {
+        minutiDisplay.style.color = "#f39c12";
+      } else {
+        minutiDisplay.style.color = "#c0392b";
+      }
+    }
+
+    function selectTrain(index, element) {
+      trenoSelezionato = index;
+      document.querySelectorAll(".treno-btn").forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+      element.classList.add("selected");
+    }
+
+    function renderTrains() {
+      treniGrid.innerHTML = "";
+
+      treni.forEach((treno, index) => {
+        const btn = document.createElement("div");
+        btn.className = "treno-btn";
+        btn.setAttribute("role", "button");
+        btn.setAttribute("tabindex", "0");
+
+        btn.innerHTML = `
+          <div class="treno-numero">${escapeHtml(treno.num)}</div>
+          <div class="treno-nome">${escapeHtml(treno.nome)}</div>
+          <span class="treno-tipo">${escapeHtml(treno.tipo)}</span>
+          <div class="treno-extra" id="train-extra-${index}">${escapeHtml(treno.info)}</div>
+        `;
+
+        btn.addEventListener("click", () => selectTrain(index, btn));
+        btn.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectTrain(index, btn);
+          }
+        });
+
+        treniGrid.appendChild(btn);
+      });
+    }
+
+    async function loadLiveTrainData() {
+      try {
+        const response = await fetch("/api/train-status");
+        const data = await response.json();
+
+        if (!data.ok || !Array.isArray(data.trains)) {
+          throw new Error("Formato dati live non valido");
+        }
+
+        applyLiveTrainData(data.trains);
+      } catch (error) {
+        console.error("Errore dati live:", error);
+        showLiveFallback();
+      }
+    }
+
+    function applyLiveTrainData(liveTrains) {
+      const liveMap = new Map(liveTrains.map((t) => [t.number, t]));
+
+      treni.forEach((treno, index) => {
+        const live = liveMap.get(treno.num);
+        const extraEl = document.getElementById(`train-extra-${index}`);
+
+        if (!extraEl || !live) return;
+
+        if (!live.live) {
+          extraEl.textContent = "Live non disponibile al momento";
+          treno.liveDelay = null;
+          return;
+        }
+
+        const parts = [
+          live.statusText || "N/D",
+          live.lastStop ? `ultima: ${live.lastStop}` : null,
+          live.updatedLabel ? `agg. ${live.updatedLabel}` : null
+        ].filter(Boolean);
+
+        extraEl.textContent = parts.join(" · ");
+
+        treno.liveDelay = typeof live.delayMinutes === "number" ? live.delayMinutes : null;
+        treno.liveStatus = live.statusText || null;
+        treno.liveLastStop = live.lastStop || null;
+      });
+    }
+
+    function showLiveFallback() {
+      treni.forEach((treno, index) => {
+        const extraEl = document.getElementById(`train-extra-${index}`);
+        if (extraEl) {
+          extraEl.textContent = "Live momentaneamente non disponibile";
+        }
+        treno.liveDelay = null;
+      });
+    }
+
+    function setupBetChips() {
+      document.querySelectorAll(".puntata-chip").forEach((chip) => {
+        const value = parseInt(chip.dataset.val, 10);
+
+        if (value === puntataSelezionata) {
+          chip.classList.add("selected");
+        } else {
+          chip.classList.remove("selected");
+        }
+
+        chip.addEventListener("click", () => {
+          document.querySelectorAll(".puntata-chip").forEach((c) => c.classList.remove("selected"));
+          chip.classList.add("selected");
+          puntataSelezionata = value;
+          saveData();
+        });
+      });
+    }
+
+    function generateSimulatedDelay(treno) {
+      let ritardo = Math.max(
+        0,
+        Math.round(treno.media + (Math.random() - 0.4) * treno.varianza)
+      );
+
+      if (Math.random() < 0.08) ritardo = 0;
+      if (Math.random() < 0.07) ritardo = Math.round(treno.media * 3 + Math.random() * 40);
+
+      return ritardo;
+    }
+
+    function getResolvedDelay(treno) {
+      if (typeof treno.liveDelay === "number") {
+        return treno.liveDelay;
+      }
+      return generateSimulatedDelay(treno);
+    }
+
+    function updateHistory() {
+      storicoList.innerHTML = "";
+
+      storico.slice(0, 8).forEach((s) => {
+        const li = document.createElement("li");
+        li.className = "storico-item";
+
+        li.innerHTML = `
+          <div>
+            <span class="storico-treno">${escapeHtml(s.treno)}</span>
+            <div class="storico-delta">
+              Scommesso: ${s.scommessa} min · Reale: ${s.reale} min · Puntata: ${s.puntata}€
+            </div>
+          </div>
+          <div class="storico-esito ${s.vinto ? "win" : "lose"}">
+            ${s.vinto ? "+" + s.guadagno + "€" : "-" + Math.abs(s.guadagno) + "€"}
+          </div>
+        `;
+
+        storicoList.appendChild(li);
+      });
+
+      storicoCard.style.display = storico.length ? "block" : "none";
+    }
+
+    function launchConfetti() {
+      const colori = ["#f1c40f", "#e74c3c", "#2ecc71", "#3498db", "#9b59b6"];
+
+      for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+          const confetto = document.createElement("div");
+          confetto.className = "confetto";
+          confetto.style.left = Math.random() * 100 + "vw";
+          confetto.style.background = colori[Math.floor(Math.random() * colori.length)];
+          confetto.style.transform = `rotate(${Math.random() * 360}deg)`;
+          confetto.style.animationDuration = (1 + Math.random()) + "s";
+
+          document.body.appendChild(confetto);
+
+          setTimeout(() => {
+            confetto.remove();
+          }, 2500);
+        }, i * 50);
+      }
+    }
+
+    function showResult() {
+      const treno = treni[trenoSelezionato];
+      const scommessaMinuti = parseInt(ritardoSlider.value, 10);
+      const ritardoReale = getResolvedDelay(treno);
+
+      const delta = Math.abs(scommessaMinuti - ritardoReale);
+      const vinto = delta <= 5;
+      const guadagno = vinto
+        ? Math.round(puntataSelezionata * (1 + (5 - delta) * 0.4))
+        : -puntataSelezionata;
+
+      saldo += guadagno;
+      if (saldo < 0) saldo = 0;
+
+      if (vinto) {
+        totalWins += 1;
+        currentStreak += 1;
+        if (currentStreak > bestStreak) bestStreak = currentStreak;
+      } else {
+        currentStreak = 0;
+      }
+
+      updateHeaderStats();
+      updatePlayerUI();
+
+      const coloreSemaforo =
+        ritardoReale === 0
+          ? "#27ae60"
+          : ritardoReale < 15
+          ? "#f39c12"
+          : "#c0392b";
+
+      const emojiTreno =
+        ritardoReale === 0
+          ? "✅"
+          : ritardoReale < 15
+          ? "⚠️"
+          : ritardoReale < 40
+          ? "🔴"
+          : "💀";
+
+      risultatoHeader.textContent = `${emojiTreno} Risultato — ${treno.num}`;
+      ritardoRealeNum.textContent = `${ritardoReale} min`;
+      ritardoRealeNum.style.color = coloreSemaforo;
+
+      const fillPct = Math.min(100, (ritardoReale / 60) * 100);
+      ritardoFill.style.width = "0%";
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          ritardoFill.style.width = fillPct + "%";
+        }, 80);
+      });
+
+      deltaInfo.textContent = `Hai scommesso ${scommessaMinuti} min · Differenza: ${delta} min`;
+
+      if (vinto) {
+        guadagnoBadge.textContent = `+${guadagno}€ VINTO! 🎉`;
+        guadagnoBadge.className = "guadagno-badge win";
+        launchConfetti();
+      } else {
+        guadagnoBadge.textContent = `-${puntataSelezionata}€ PERSO 😢`;
+        guadagnoBadge.className = "guadagno-badge lose";
+      }
+
+      const listaMessaggi = vinto ? messaggiVincita : messaggiPerdita;
+      risultatoMsg.textContent =
+        '"' + listaMessaggi[Math.floor(Math.random() * listaMessaggi.length)] + '"';
+
+      storico.unshift({
+        treno: treno.num,
+        scommessa: scommessaMinuti,
+        reale: ritardoReale,
+        puntata: puntataSelezionata,
+        guadagno,
+        vinto,
+        ts: Date.now()
+      });
+
+      updateHistory();
+      renderLeaderboard();
+      saveData();
+
+      risultatoCard.style.display = "block";
+      risultatoCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+      btnScommetti.disabled = false;
+    }
+
+    function placeBet() {
+      if (!playerName) {
+        openUsernameModal(true);
+        return;
+      }
+
+      if (trenoSelezionato === null) {
+        alert("Scegli prima un treno, campione! 🚂");
+        return;
+      }
+
+      if (puntataSelezionata > saldo) {
+        alert("Non hai abbastanza fondi virtuali! 😅");
+        return;
+      }
+
+      btnScommetti.disabled = true;
+      loader.classList.add("show");
+      risultatoCard.style.display = "none";
+
+      setTimeout(() => {
+        loader.classList.remove("show");
+        showResult();
+      }, 1400);
+    }
+
+    function replay() {
+      risultatoCard.style.display = "none";
+      btnScommetti.disabled = false;
+
+      document.querySelectorAll(".treno-btn").forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+
+      trenoSelezionato = null;
+      ritardoSlider.value = 15;
+      updateMiniDisplay();
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function openUsernameModal(prefillCurrent = false) {
+      usernameOverlay.classList.add("show");
+      usernameInput.value = prefillCurrent && playerName ? playerName : "";
+      setTimeout(() => usernameInput.focus(), 50);
+    }
+
+    function closeUsernameModal() {
+      usernameOverlay.classList.remove("show");
+    }
+
+    function saveUsername() {
+      const clean = sanitizeName(usernameInput.value);
+
+      if (!clean) {
+        alert("Scrivi un nome prima di partire.");
+        return;
+      }
+
+      playerName = clean;
+      updatePlayerUI();
+      renderLeaderboard();
+      saveData();
+      closeUsernameModal();
+    }
+
+    function setRandomUsername() {
+      const random = nomiCasuali[Math.floor(Math.random() * nomiCasuali.length)];
+      usernameInput.value = random;
+    }
+
+    function resetProfile() {
+      const conferma = confirm(
+        "Sei sicuro? Verranno cancellati nome, saldo, storico e statistiche salvate nel browser."
+      );
+
+      if (!conferma) return;
+
+      localStorage.removeItem(STORAGE_KEY);
+
+      playerName = "";
+      saldo = 1000;
+      puntataSelezionata = 200;
+      storico = [];
+      currentStreak = 0;
+      bestStreak = 0;
+      totalWins = 0;
+      trenoSelezionato = null;
+
+      document.querySelectorAll(".puntata-chip").forEach((chip) => {
+        chip.classList.remove("selected");
+        if (parseInt(chip.dataset.val, 10) === 200) chip.classList.add("selected");
+      });
+
+      document.querySelectorAll(".treno-btn").forEach((btn) => btn.classList.remove("selected"));
+
+      ritardoSlider.value = 15;
+      risultatoCard.style.display = "none";
+
+      updateMiniDisplay();
+      updateHeaderStats();
+      updatePlayerUI();
+      updateHistory();
+      renderLeaderboard();
+
+      openUsernameModal(false);
+    }
+
+    function init() {
+      loadData();
+
+      renderTrains();
+      loadLiveTrainData();
+      setInterval(loadLiveTrainData, 60000);
+
+      setupBetChips();
+      updateMiniDisplay();
+      updateHeaderStats();
+      updatePlayerUI();
+      updateHistory();
+      renderLeaderboard();
+
+      ritardoSlider.addEventListener("input", updateMiniDisplay);
+      btnScommetti.addEventListener("click", placeBet);
+      btnRigioca.addEventListener("click", replay);
+
+      saveUsernameBtn.addEventListener("click", saveUsername);
+      randomUsernameBtn.addEventListener("click", setRandomUsername);
+      changeNameBtn.addEventListener("click", () => openUsernameModal(true));
+      resetProfileBtn.addEventListener("click", resetProfile);
+
+      usernameInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") saveUsername();
+      });
+
+      if (!playerName) {
+        openUsernameModal(false);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

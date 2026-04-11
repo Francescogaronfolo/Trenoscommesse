@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrenoScommesse</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4efe6;
+}
+
+/* TOP BAR */
+.topbar{
+  background:#0d3556;
+  color:white;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.balance{
+  background:#d4a73c;
+  padding:10px 15px;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+/* PAGINE */
+.page{
+  display:none;
+  padding:15px;
+}
+
+.page.active{
+  display:block;
+}
+
+/* TRENI */
+.train-card{
+  background:#ddd;
+  border-radius:20px;
+  margin-bottom:15px;
+  padding:20px;
+  cursor:pointer;
+}
+
+/* STAZIONE */
+.station-map{
+  height:300px;
+  background:#ddd;
+  border-radius:20px;
+  position:relative;
+}
+
+.rail{
+  position:absolute;
+  top:50%;
+  left:0;
+  right:0;
+  height:6px;
+  background:black;
+}
+
+.train-old{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:40px;
+}
+
+.station-building{
+  position:absolute;
+  top:10px;
+  left:10px;
+  font-size:30px;
+}
+
+.infra{
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  font-size:30px;
+}
+
+/* POPUP */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  display:none;
+}
+
+.popup{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  padding:20px;
+  border-radius:20px;
+  display:none;
+}
+
+/* NAVBAR */
+.bottom-bar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#0d3556;
+  display:flex;
+  justify-content:space-around;
+  padding:10px;
+  color:white;
+}
+
+.nav-item{
+  text-align:center;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div>🚆 TrenoScommesse</div>
+  <div class="balance">1000€</div>
+</div>
+
+<!-- PAGINA SCOMMESSE -->
+<div id="bets" class="page active">
+
+  <h2>Scommesse</h2>
+
+  <div class="train-card" onclick="openPopup('Treno 1')">Treno 1</div>
+  <div class="train-card" onclick="openPopup('Treno 2')">Treno 2</div>
+  <div class="train-card" onclick="openPopup('Treno 3')">Treno 3</div>
+
+</div>
+
+<!-- PAGINA STAZIONE -->
+<div id="station" class="page">
+
+  <h2>La tua stazione</h2>
+
+  <div class="station-map">
+    <div class="rail" onclick="openPopup('Binario')"></div>
+    <div class="train-old" onclick="openPopup('Treno a vapore')">🚂</div>
+    <div class="station-building" onclick="openPopup('Stazione')">🏢</div>
+    <div class="infra" onclick="openPopup('Infrastruttura')">⚙️</div>
+  </div>
+
+</div>
+
+<!-- POPUP -->
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+
+<div class="popup" id="popup">
+  <h3 id="popupTitle">Titolo</h3>
+  <p>Qui potrai migliorare o scommettere</p>
+</div>
+
+<!-- NAVBAR -->
+<div class="bottom-bar">
+
+  <div class="nav-item" onclick="showPage('bets')">
+    🎯<br>Scommesse
+  </div>
+
+  <div class="nav-item" onclick="showPage('station')">
+    🚉<br>Stazione
+  </div>
+
+</div>
+
+<script>
+function showPage(page){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+}
+
+function openPopup(text){
+  document.getElementById("popupTitle").textContent = text;
+  document.getElementById("overlay").style.display="block";
+  document.getElementById("popup").style.display="block";
+}
+
+function closePopup(){
+  document.getElementById("overlay").style.display="none";
+  document.getElementById("popup").style.display="none";
+}
+</script>
+
+</body>
+</html>

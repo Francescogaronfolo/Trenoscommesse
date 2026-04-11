@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TrenoScommesse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#eef1f3;
+      --panel:#f8fafb;
+      --panel-2:#ffffff;
+      --line:#b7c0c7;
+      --text:#1f2b33;
+      --muted:#66747f;
+      --green:#1f6b4f;
+      --green-2:#2f8a67;
+      --red:#b6443d;
+      --amber:#d08b1f;
+      --blue:#2f5d7c;
+      --rail:#505a61;
+      --shadow:0 10px 24px rgba(0,0,0,0.08);
+      --topbar-h:64px;
+      --bottombar-h:78px;
+      --radius:16px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{
+      font-family:"Barlow",system-ui,sans-serif;
+      color:var(--text);
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px) 0 0/28px 28px,
+        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px) 0 0/28px 28px,
+        var(--bg);
+      height:100vh;
+      overflow:hidden;
+    }
+
+    .app{
+      height:100vh;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .topbar{
+      position:fixed;
+      top:0;left:0;right:0;
+      height:var(--topbar-h);
+      z-index:30;
+      background:#dde5ea;
+      border-bottom:1px solid #9aa8b2;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 14px calc(10px + env(safe-area-inset-top));
+      box-shadow:0 4px 10px rgba(0,0,0,0.04);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .brand-mark{
+      width:34px;height:34px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background:#1e2e39;
+      color:#fff;
+      font-size:18px;
+      flex-shrink:0;
+    }
+
+    .brand-text{
+      min-width:0;
+    }
+
+    .brand-title{
+      font-family:"Barlow Condensed", sans-serif;
+      font-size:1.45rem;
+      letter-spacing:0.04em;
+      line-height:1;
+      text-transform:uppercase;
+    }
+
+    .brand-sub{
+      font-size:0.7rem;
+      color:var(--muted);
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:160px;
+    }
+
+    .top-right{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-shrink:0;
+    }
+
+    .top-badge{
+      min-width:78px;
+      background:#fdfefe;
+      border:1px solid #90a0ab;
+      border-radius:12px;
+      padding:6px 8px;
+      text-align:center;
+    }
+
+    .top-badge-label{
+      font-size:0.58rem;
+      color:var(--muted);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.06em;
+    }
+
+    .top-badge-value{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.2rem;
+      line-height:1;
+      margin-top:2px;
+      font-weight:700;
+    }
+
+    .pages{
+      position:absolute;
+      top:var(--topbar-h);
+      left:0;right:0;
+      bottom:var(--bottombar-h);
+      overflow:hidden;
+    }
+
+    .page{
+      position:absolute;
+      inset:0;
+      display:none;
+      overflow-y:auto;
+      padding:16px 14px 20px;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .page.active{display:block}
+
+    .section{
+      background:rgba(255,255,255,0.84);
+      border:1px solid #c6d0d7;
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-bottom:14px;
+      backdrop-filter:blur(4px);
+    }
+
+    .section-head{
+      padding:12px 14px;
+      background:#dfe7ec;
+      border-bottom:1px solid #c6d0d7;
+      font-family:"Barlow Condensed",sans-serif;
+      text-transform:uppercase;
+      letter-spacing:0.05em;
+      font-size:1.05rem;
+      font-weight:700;
+    }
+
+    .section-body{padding:14px}
+
+    .btn{
+      appearance:none;
+      border:1px solid #5f6e78;
+      background:#edf2f5;
+      color:var(--text);
+      border-radius:12px;
+      padding:12px 14px;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1rem;
+      letter-spacing:0.04em;
+      text-transform:uppercase;
+      cursor:pointer;
+    }
+
+    .btn.primary{
+      background:var(--green);
+      color:white;
+      border-color:#245c47;
+    }
+
+    .btn.warning{
+      background:var(--amber);
+      color:white;
+      border-color:#a96f18;
+    }
+
+    .btn.danger{
+      background:var(--red);
+      color:white;
+      border-color:#8f3732;
+    }
+
+    .btn.full{width:100%}
+
+    .profile-hero{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .player-name{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:2rem;
+      line-height:1;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    .player-role{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:0.9rem;
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .stat-card{
+      background:#f7fafb;
+      border:1px solid #c7d0d7;
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .stat-label{
+      font-size:0.68rem;
+      color:var(--muted);
+      text-transform:uppercase;
+      font-weight:700;
+      letter-spacing:0.05em;
+    }
+
+    .stat-value{
+      margin-top:4px;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.5rem;
+      line-height:1;
+      font-weight:700;
+    }
+
+    .stat-sub{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:0.74rem;
+    }
+
+    .leader-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .leader-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border:1px solid #ccd5db;
+      background:#fbfcfd;
+      border-radius:14px;
+      padding:10px 12px;
+    }
+
+    .leader-item.you{
+      border-color:#7ba890;
+      background:#eef7f2;
+    }
+
+    .leader-pos{
+      width:28px;
+      text-align:center;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.3rem;
+      font-weight:700;
+      color:var(--muted);
+      flex-shrink:0;
+    }
+
+    .leader-main{flex:1;min-width:0}
+    .leader-name{
+      font-weight:700;
+      font-size:0.98rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .leader-desc{
+      margin-top:2px;
+      font-size:0.75rem;
+      color:var(--muted);
+    }
+    .leader-score{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.25rem;
+      font-weight:700;
+      color:var(--green);
+      flex-shrink:0;
+    }
+
+    .map-shell{
+      background:#f5f8fa;
+      border:1px solid #ccd4da;
+      border-radius:18px;
+      overflow:hidden;
+      height:430px;
+      position:relative;
+    }
+
+    .map-caption{
+      position:absolute;
+      top:10px;left:10px;
+      z-index:3;
+      background:rgba(255,255,255,0.9);
+      border:1px solid #cad2d8;
+      border-radius:12px;
+      padding:8px 10px;
+      font-size:0.75rem;
+      color:var(--muted);
+    }
+
+    .map-viewport{
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      position:relative;
+      touch-action:none;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px) 0 0/36px 36px,
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px) 0 0/36px 36px,
+        #eef3f6;
+    }
+
+    .map-content{
+      position:absolute;
+      width:900px;
+      height:620px;
+      left:-140px;
+      top:-90px;
+      transform:translate(0px,0px);
+      transition:box-shadow 0.2s;
+    }
+
+    .main-rail{
+      position:absolute;
+      left:130px;
+      right:130px;
+      top:290px;
+      height:8px;
+      background:var(--rail);
+      border-radius:999px;
+      box-shadow:0 0 0 6px rgba(80,90,97,0.1);
+    }
+
+    .map-node{
+      position:absolute;
+      display:grid;
+      place-items:center;
+      border:2px solid #51606a;
+      background:#ffffff;
+      color:var(--text);
+      border-radius:18px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08);
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .node-label{
+      position:absolute;
+      top:100%;
+      left:50%;
+      transform:translateX(-50%);
+      margin-top:6px;
+      background:rgba(255,255,255,0.92);
+      border:1px solid #ccd4da;
+      border-radius:999px;
+      padding:3px 8px;
+      font-size:0.68rem;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .node-train{
+      width:130px;
+      height:58px;
+      top:258px;
+      left:380px;
+      border-radius:18px;
+      background:linear-gradient(180deg,#473327,#2e221b);
+      color:#f5e7c7;
+      border-color:#2a211c;
+      font-family:"Barlow Condensed",sans-serif;
+      font-weight:700;
+      font-size:1rem;
+    }
+
+    .node-track{
+      width:120px;
+      height:44px;
+      top:235px;
+      left:190px;
+      background:#dde7ee;
+    }
+
+    .node-station{
+      width:92px;
+      height:92px;
+      top:130px;
+      left:620px;
+      background:#f7f0dc;
+    }
+
+    .node-mine{
+      width:82px;
+      height:82px;
+      top:400px;
+      left:235px;
+      background:#e6eef3;
+    }
+
+    .node-plant{
+      width:82px;
+      height:82px;
+      top:395px;
+      left:620px;
+      background:#e7f0e8;
+    }
+
+    .train-strip{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .train-card{
+      border:1px solid #c8d1d8;
+      border-radius:16px;
+      background:#fbfcfd;
+      overflow:hidden;
+      cursor:pointer;
+      transition:transform 0.12s ease;
+    }
+
+    .train-card:hover{transform:translateY(-1px)}
+
+    .train-card-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px;
+      background:#eef3f6;
+      border-bottom:1px solid #d6dee4;
+    }
+
+    .train-visual{
+      width:150px;
+      min-width:150px;
+      height:42px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .nose{
+      position:absolute;
+      right:0;
+      top:4px;
+      width:56px;
+      height:34px;
+      border-radius:22px 8px 8px 22px;
+      background:linear-gradient(180deg,#6d7780,#4f5961);
+      border:1px solid #465058;
+    }
+
+    .wagons{
+      position:absolute;
+      left:0;
+      top:8px;
+      display:flex;
+      gap:6px;
+    }
+
+    .wagon{
+      width:28px;
+      height:24px;
+      border-radius:6px;
+      border:1px solid #54606a;
+      background:#7f8b95;
+    }
+
+    .train-meta{flex:1;min-width:0}
+    .train-code{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.3rem;
+      line-height:1;
+      font-weight:700;
+      text-transform:uppercase;
+    }
+    .train-route{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:0.82rem;
+    }
+    .train-type{
+      display:inline-block;
+      margin-top:6px;
+      border:1px solid #8fa0ab;
+      border-radius:999px;
+      padding:3px 8px;
+      font-size:0.68rem;
+      font-weight:700;
+      color:#44515a;
+      background:#fff;
+    }
+
+    .schedule-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .schedule-item{
+      border:1px solid #c8d1d8;
+      border-radius:14px;
+      background:#fbfcfd;
+      overflow:hidden;
+    }
+
+    .schedule-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      background:#eef3f6;
+      border-bottom:1px solid #d6dee4;
+    }
+
+    .schedule-code{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.25rem;
+      font-weight:700;
+      line-height:1;
+      text-transform:uppercase;
+    }
+
+    .schedule-route{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:0.8rem;
+    }
+
+    .status-pill{
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:0.7rem;
+      font-weight:700;
+      border:1px solid #97a5af;
+      white-space:nowrap;
+    }
+
+    .status-green{background:#eaf5ee;color:#255c47}
+    .status-yellow{background:#fff6e5;color:#99660f}
+    .status-red{background:#fbe9e7;color:#963f39}
+    .status-gray{background:#eef2f4;color:#5f6d77}
+
+    .schedule-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      padding:12px;
+    }
+
+    .info-card{
+      border:1px dashed #ccd4da;
+      border-radius:12px;
+      padding:10px;
+      background:#f8fbfc;
+    }
+
+    .info-label{
+      font-size:0.64rem;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:0.05em;
+      font-weight:700;
+    }
+
+    .info-value{
+      margin-top:4px;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.15rem;
+      line-height:1.1;
+      font-weight:700;
+    }
+
+    .history-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .history-item{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      border:1px solid #ccd4da;
+      border-radius:14px;
+      background:#fbfcfd;
+      padding:10px 12px;
+    }
+
+    .history-main{flex:1;min-width:0}
+    .history-title{
+      font-weight:700;
+      font-size:0.95rem;
+      color:var(--green);
+    }
+    .history-sub{
+      margin-top:2px;
+      color:var(--muted);
+      font-size:0.76rem;
+      line-height:1.35;
+    }
+    .history-result{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.2rem;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .history-result.win{color:var(--green)}
+    .history-result.lose{color:var(--red)}
+
+    .bottombar{
+      position:fixed;
+      left:0;right:0;bottom:0;
+      height:var(--bottombar-h);
+      z-index:30;
+      background:#d7e0e6;
+      border-top:1px solid #96a5af;
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      align-items:center;
+      padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+      gap:10px;
+    }
+
+    .nav-btn{
+      height:54px;
+      border:1px solid transparent;
+      background:transparent;
+      border-radius:16px;
+      color:#46525a;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:2px;
+      font-family:"Barlow",sans-serif;
+    }
+
+    .nav-btn.active{
+      background:#f4f8fa;
+      border-color:#8fa0ab;
+      color:#1e2b33;
+    }
+
+    .nav-btn.center{
+      transform:translateY(-8px);
+      height:62px;
+      background:#254255;
+      color:white;
+      border:1px solid #173142;
+      box-shadow:0 8px 18px rgba(0,0,0,0.15);
+    }
+
+    .nav-btn.center.active{
+      background:#1f6b4f;
+      border-color:#15503a;
+    }
+
+    .nav-icon{
+      font-size:1.05rem;
+      line-height:1;
+    }
+
+    .nav-label{
+      font-size:0.68rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.05em;
+    }
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(17,25,31,0.52);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:60;
+    }
+
+    .overlay.show{display:flex}
+
+    .modal{
+      width:min(460px, 100%);
+      background:#fdfefe;
+      border:1px solid #9eb0bc;
+      border-radius:18px;
+      box-shadow:0 18px 42px rgba(0,0,0,0.2);
+      overflow:hidden;
+    }
+
+    .modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      background:#dde6eb;
+      border-bottom:1px solid #c7d0d7;
+    }
+
+    .modal-title{
+      font-family:"Barlow Condensed",sans-serif;
+      text-transform:uppercase;
+      font-size:1.15rem;
+      letter-spacing:0.05em;
+      font-weight:700;
+    }
+
+    .close-btn{
+      width:34px;height:34px;
+      border-radius:10px;
+      border:1px solid #9aabb6;
+      background:#fff;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .modal-body{
+      padding:14px;
+    }
+
+    .modal-copy{
+      font-size:0.88rem;
+      color:var(--muted);
+      line-height:1.45;
+      margin-bottom:12px;
+    }
+
+    .modal-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .modal-card{
+      border:1px solid #ccd4da;
+      background:#f8fbfc;
+      border-radius:12px;
+      padding:10px;
+    }
+
+    .modal-label{
+      font-size:0.64rem;
+      color:var(--muted);
+      text-transform:uppercase;
+      font-weight:700;
+      letter-spacing:0.05em;
+    }
+
+    .modal-value{
+      margin-top:4px;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.15rem;
+      font-weight:700;
+      line-height:1.1;
+    }
+
+    .text-input{
+      width:100%;
+      border:1px solid #a8b5bf;
+      border-radius:12px;
+      padding:12px;
+      font:inherit;
+      margin-bottom:10px;
+      background:white;
+    }
+
+    .range-wrap{margin:10px 0 12px}
+    .bet-range{
+      width:100%;
+      appearance:none;
+      -webkit-appearance:none;
+      height:8px;
+      border-radius:999px;
+      background:linear-gradient(to right, var(--green) 0%, var(--green) var(--pct, 0%), #dbe4e9 var(--pct, 0%), #dbe4e9 100%);
+      border:1px solid #97a7b2;
+    }
+    .bet-range::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      width:26px;height:26px;
+      border-radius:50%;
+      border:2px solid #41515c;
+      background:white;
+    }
+
+    .bet-value{
+      text-align:center;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:2.2rem;
+      line-height:1;
+      margin-bottom:10px;
+      font-weight:700;
+    }
+
+    .chip-row{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .bet-chip{
+      border:1px solid #9fb0bb;
+      background:#f4f8fa;
+      border-radius:12px;
+      padding:10px 6px;
+      text-align:center;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1rem;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .bet-chip.selected{
+      background:#1f6b4f;
+      color:white;
+      border-color:#1a5942;
+    }
+
+    .mini-note{
+      color:var(--muted);
+      font-size:0.76rem;
+      line-height:1.4;
+      margin-top:8px;
+    }
+
+    @media (max-width:480px){
+      .brand-title{font-size:1.25rem}
+      .brand-sub{display:none}
+      .stats-grid,.modal-grid,.schedule-grid{grid-template-columns:1fr}
+      .top-badge{min-width:68px}
+      .top-badge-value{font-size:1.05rem}
+      .chip-row{grid-template-columns:1fr 1fr}
+      .train-card-head{align-items:flex-start}
+      .train-visual{width:120px;min-width:120px}
+      .nose{width:46px}
+      .wagon{width:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">⎈</div>
+        <div class="brand-text">
+          <div class="brand-title">TrenoScommesse</div>
+          <div class="brand-sub">Sistema ferroviario simulato</div>
+        </div>
+      </div>
+
+      <div class="top-right">
+        <div class="top-badge">
+          <div class="top-badge-label">Livello</div>
+          <div class="top-badge-value" id="topLevel">1</div>
+        </div>
+        <div class="top-badge">
+          <div class="top-badge-label">Saldo</div>
+          <div class="top-badge-value" id="topSaldo">1000€</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="pages">
+      <section class="page active" id="page-profile">
+        <div class="section">
+          <div class="section-head">Profilo operatore</div>
+          <div class="section-body">
+            <div class="profile-hero">
+              <div>
+                <div class="player-name" id="playerName">—</div>
+                <div class="player-role" id="playerRole">Operatore ferroviario emergente</div>
+              </div>
+              <button class="btn" id="changeNameBtn" type="button">Cambia nome</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">Statistiche</div>
+          <div class="section-body">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Budget</div>
+                <div class="stat-value" id="statBudget">1000€</div>
+                <div class="stat-sub">saldo disponibile</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Ranking</div>
+                <div class="stat-value" id="statRank">#7</div>
+                <div class="stat-sub">posizione attuale</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Scommesse</div>
+                <div class="stat-value" id="statBets">0</div>
+                <div class="stat-sub">totali effettuate</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Vittorie</div>
+                <div class="stat-value" id="statWins">0</div>
+                <div class="stat-sub">entro 5 minuti</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Win rate</div>
+                <div class="stat-value" id="statWinRate">0%</div>
+                <div class="stat-sub">precisione operativa</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Miglior streak</div>
+                <div class="stat-value" id="statBestStreak">0</div>
+                <div class="stat-sub">serie migliore</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">Classifica</div>
+          <div class="section-body">
+            <div class="leader-list" id="leaderList"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">Gestione</div>
+          <div class="section-body">
+            <button class="btn danger full" id="resetProfileBtn" type="button">Reset profilo</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-station">
+        <div class="section">
+          <div class="section-head">Stazione centrale</div>
+          <div class="section-body">
+            <div class="map-shell">
+              <div class="map-caption">Tocca un elemento per aprire il pannello di potenziamento.</div>
+              <div class="map-viewport" id="mapViewport">
+                <div class="map-content" id="mapContent">
+                  <div class="main-rail"></div>
+
+                  <div class="map-node node-track" data-upgrade="track">
+                    🛤️
+                    <div class="node-label">Binario</div>
+                  </div>
+
+                  <div class="map-node node-train" data-upgrade="train">
+                    🚂
+                    <div class="node-label">Il tuo treno</div>
+                  </div>
+
+                  <div class="map-node node-station" data-upgrade="station">
+                    🏢
+                    <div class="node-label">Stazione</div>
+                  </div>
+
+                  <div class="map-node node-mine" data-upgrade="mine">
+                    ⛏️
+                    <div class="node-label">Miniera</div>
+                  </div>
+
+                  <div class="map-node node-plant" data-upgrade="plant">
+                    ⚡
+                    <div class="node-label">Centrale</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mini-note">
+              Il tuo treno parte vecchio e lento. I potenziamenti sono lenti e costosi: servono pazienza e continuità.
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">Quadro tecnico</div>
+          <div class="section-body">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Livello treno</div>
+                <div class="stat-value" id="stationTrainLevel">1</div>
+                <div class="stat-sub">upgrade principale</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Potenza</div>
+                <div class="stat-value" id="stationPower">1</div>
+                <div class="stat-sub">automatica da livello</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Stabilità</div>
+                <div class="stat-value" id="stationStability">1</div>
+                <div class="stat-sub">automatica da livello</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Efficienza</div>
+                <div class="stat-value" id="stationEfficiency">1</div>
+                <div class="stat-sub">automatica da livello</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-bet">
+        <div class="section">
+          <div class="section-head">Scommesse nazionali</div>
+          <div class="section-body">
+            <div class="train-strip" id="betTrainList"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">Quadro orari simulato</div>
+          <div class="section-body">
+            <div class="schedule-list" id="scheduleList"></div>
+            <div class="mini-note">
+              Gli orari sono simulati internamente dal sistema. Il tuo treno non è scommettibile: compete solo in classifica.
+            </div>
+          </div>
+        </div>
+
+        <div class="section" id="historySection" style="display:none;">
+          <div class="section-head">Storico scommesse</div>
+          <div class="section-body">
+            <div class="history-list" id="historyList"></div>
+          </div>
+        </div>
+
+        <div class="section" id="betResultSection" style="display:none;">
+          <div class="section-head" id="betResultHeader">Risultato</div>
+          <div class="section-body">
+            <div class="stat-card" style="text-align:center">
+              <div class="stat-label">Ritardo registrato</div>
+              <div class="stat-value" id="resultDelay">0 min</div>
+              <div class="stat-sub" id="resultDiff">Differenza 0 min</div>
+            </div>
+            <div id="resultBadgeWrap" style="margin-top:12px;text-align:center;"></div>
+            <div id="resultText" style="margin-top:12px;color:var(--muted);line-height:1.45;"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottombar">
+      <button class="nav-btn active" data-page="profile" type="button">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profilo</span>
+      </button>
+
+      <button class="nav-btn center" data-page="station" type="button">
+        <span class="nav-icon">🏢</span>
+        <span class="nav-label">Stazione</span>
+      </button>
+
+      <button class="nav-btn" data-page="bet" type="button">
+        <span class="nav-icon">🎲</span>
+        <span class="nav-label">Scommesse</span>
+      </button>
+    </nav>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal">
+      <div class="modal-head">
+        <div class="modal-title" id="modalTitle">Pannello</div>
+        <button class="close-btn" id="closeModalBtn" type="button">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "treno_scommesse_v3";
+
+    const externalTrains = [
+      { code: "FR 9600", route: "Roma → Milano", type: "FRECCIAROSSA", baseDelay: 8, variability: 14, score: 5200, visualWear: 0.05 },
+      { code: "IC 505", route: "Napoli → Torino", type: "INTERCITY", baseDelay: 20, variability: 28, score: 4300, visualWear: 0.14 },
+      { code: "RV 2843", route: "Bari → Taranto", type: "REGIONALE", baseDelay: 18, variability: 38, score: 3500, visualWear: 0.18 },
+      { code: "FR 9810", route: "Venezia → Roma", type: "FRECCIAROSSA", baseDelay: 6, variability: 12, score: 5000, visualWear: 0.06 },
+      { code: "R 3042", route: "Palermo → Messina", type: "REGIONALE", baseDelay: 32, variability: 46, score: 2900, visualWear: 0.22 },
+      { code: "IC 723", route: "Milano → Lecce", type: "INTERCITY", baseDelay: 26, variability: 34, score: 3800, visualWear: 0.15 }
+    ];
+
+    const upgradeCatalog = {
+      train: {
+        title: "Treno personale",
+        desc: "Upgrade principale. Aumenta automaticamente potenza, stabilità ed efficienza.",
+        baseCost: [100, 300, 700, 1500, 3000, 6000, 12000, 20000, 35000]
+      },
+      track: {
+        title: "Binario",
+        desc: "Migliora l’infrastruttura del tuo collegamento principale e riduce leggermente i ritardi del tuo treno.",
+        baseCost: [80, 220, 500, 1100, 2300, 4800, 9000, 15000, 24000]
+      },
+      station: {
+        title: "Stazione",
+        desc: "Aumenta capacità e ordine operativo, migliorando la regolarità del tuo convoglio.",
+        baseCost: [90, 260, 600, 1300, 2600, 5200, 9600, 16000, 25000]
+      },
+      mine: {
+        title: "Miniera",
+        desc: "Aumenta le entrate, rendendo più redditizie le vittorie nelle scommesse.",
+        baseCost: [70, 180, 420, 900, 1800, 3800, 7600, 13000, 21000]
+      },
+      plant: {
+        title: "Centrale",
+        desc: "Supporta il sistema e migliora l’efficienza complessiva del tuo ecosistema ferroviario.",
+        baseCost: [75, 200, 460, 1000, 2000, 4100, 8000, 14000, 22000]
+      }
+    };
+
+    const randomNames = [
+      "Ritardologo73",
+      "Capostazione Nord",
+      "Binario Fantasma",
+      "Operatore Milano",
+      "Macchinista Bruno",
+      "Stazione Delta"
+    ];
+
+    const winMessages = [
+      "Pronostico centrato. Operazione completata.",
+      "Stima corretta. Quadro sotto controllo.",
+      "Ottima lettura del traffico ferroviario.",
+      "Scommessa validata con successo."
+    ];
+
+    const loseMessages = [
+      "Stima errata. Servono più dati.",
+      "Ritardo fuori previsione.",
+      "Sistema nazionale imprevedibile.",
+      "Il tabellone ti ha smentito."
+    ];
+
+    let state = {
+      playerName: "",
+      saldo: 1000,
+      stats: {
+        bets: 0,
+        wins: 0,
+        currentStreak: 0,
+        bestStreak: 0
+      },
+      upgrades: {
+        train: 1,
+        track: 1,
+        station: 1,
+        mine: 1,
+        plant: 1
+      },
+      history: [],
+      schedules: []
+    };
+
+    const topSaldo = document.getElementById("topSaldo");
+    const topLevel = document.getElementById("topLevel");
+    const pages = {
+      profile: document.getElementById("page-profile"),
+      station: document.getElementById("page-station"),
+      bet: document.getElementById("page-bet")
+    };
+    const navButtons = document.querySelectorAll(".nav-btn");
+
+    const playerNameEl = document.getElementById("playerName");
+    const playerRoleEl = document.getElementById("playerRole");
+    const statBudget = document.getElementById("statBudget");
+    const statRank = document.getElementById("statRank");
+    const statBets = document.getElementById("statBets");
+    const statWins = document.getElementById("statWins");
+    const statWinRate = document.getElementById("statWinRate");
+    const statBestStreak = document.getElementById("statBestStreak");
+    const leaderList = document.getElementById("leaderList");
+
+    const stationTrainLevel = document.getElementById("stationTrainLevel");
+    const stationPower = document.getElementById("stationPower");
+    const stationStability = document.getElementById("stationStability");
+    const stationEfficiency = document.getElementById("stationEfficiency");
+
+    const betTrainList = document.getElementById("betTrainList");
+    const scheduleList = document.getElementById("scheduleList");
+    const historySection = document.getElementById("historySection");
+    const historyList = document.getElementById("historyList");
+    const betResultSection = document.getElementById("betResultSection");
+    const betResultHeader = document.getElementById("betResultHeader");
+    const resultDelay = document.getElementById("resultDelay");
+    const resultDiff = document.getElementById("resultDiff");
+    const resultBadgeWrap = document.getElementById("resultBadgeWrap");
+    const resultText = document.getElementById("resultText");
+
+    const overlay = document.getElementById("overlay");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+
+    const changeNameBtn = document.getElementById("changeNameBtn");
+    const resetProfileBtn = document.getElementById("resetProfileBtn");
+
+    const mapViewport = document.getElementById("mapViewport");
+    const mapContent = document.getElementById("mapContent");
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        state = {
+          ...state,
+          ...parsed,
+          stats: { ...state.stats, ...(parsed.stats || {}) },
+          upgrades: { ...state.upgrades, ...(parsed.upgrades || {}) },
+          history: Array.isArray(parsed.history) ? parsed.history : [],
+          schedules: Array.isArray(parsed.schedules) ? parsed.schedules : []
+        };
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function formatEuro(v) {
+      return v.toLocaleString("it-IT") + "€";
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function getTrainLevel() {
+      return state.upgrades.train;
+    }
+
+    function getPower() {
+      return state.upgrades.train;
+    }
+
+    function getStability() {
+      return state.upgrades.train;
+    }
+
+    function getEfficiency() {
+      return state.upgrades.train;
+    }
+
+    function getRoleLabel() {
+      const lvl = getTrainLevel();
+      if (lvl >= 10) return "Operatore storico d’élite";
+      if (lvl >= 8) return "Compagnia ferroviaria consolidata";
+      if (lvl >= 6) return "Operatore regionale competitivo";
+      if (lvl >= 4) return "Impresa in crescita";
+      if (lvl >= 2) return "Gestore di linea locale";
+      return "Macchinista di vecchia scuola";
+    }
+
+    function getLeaderboardData() {
+      const myScore =
+        1200 +
+        (state.upgrades.train - 1) * 420 +
+        (state.upgrades.track - 1) * 120 +
+        (state.upgrades.station - 1) * 110 +
+        (state.upgrades.mine - 1) * 90 +
+        (state.upgrades.plant - 1) * 90 +
+        Math.min(state.stats.wins * 8, 500);
+
+      const data = externalTrains.map(t => ({
+        name: t.code,
+        desc: t.route,
+        score: t.score
+      }));
+
+      data.push({
+        name: `${state.playerName || "Il tuo treno"} 🚂`,
+        desc: `Livello ${state.upgrades.train} · convoglio personale`,
+        score: myScore,
+        you: true
+      });
+
+      return data
+        .sort((a, b) => b.score - a.score)
+        .map((item, idx) => ({ ...item, pos: idx + 1 }));
+    }
+
+    function getMyRank() {
+      const data = getLeaderboardData();
+      const mine = data.find(x => x.you);
+      return mine ? mine.pos : 7;
+    }
+
+    function updateTopBar() {
+      topSaldo.textContent = formatEuro(state.saldo);
+      topLevel.textContent = state.upgrades.train;
+    }
+
+    function updateProfile() {
+      playerNameEl.textContent = state.playerName || "Operatore senza nome";
+      playerRoleEl.textContent = getRoleLabel();
+      statBudget.textContent = formatEuro(state.saldo);
+      statRank.textContent = "#" + getMyRank();
+      statBets.textContent = state.stats.bets;
+      statWins.textContent = state.stats.wins;
+      statWinRate.textContent = state.stats.bets ? Math.round((state.stats.wins / state.stats.bets) * 100) + "%" : "0%";
+      statBestStreak.textContent = state.stats.bestStreak;
+    }
+
+    function renderLeaderboard() {
+      const data = getLeaderboardData();
+      leaderList.innerHTML = data.map(item => `
+        <div class="leader-item ${item.you ? "you" : ""}">
+          <div class="leader-pos">${item.pos}</div>
+          <div class="leader-main">
+            <div class="leader-name">${escapeHtml(item.name)}</div>
+            <div class="leader-desc">${escapeHtml(item.desc)}</div>
+          </div>
+          <div class="leader-score">${item.score}</div>
+        </div>
+      `).join("");
+    }
+
+    function updateStationStats() {
+      stationTrainLevel.textContent = state.upgrades.train;
+      stationPower.textContent = getPower();
+      stationStability.textContent = getStability();
+      stationEfficiency.textContent = getEfficiency();
+    }
+
+    function showPage(pageKey) {
+      Object.entries(pages).forEach(([key, el]) => {
+        el.classList.toggle("active", key === pageKey);
+        if (key === pageKey) el.scrollTop = 0;
+      });
+
+      navButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.page === pageKey);
+      });
+    }
+
+    function openModal(title, bodyHtml) {
+      modalTitle.textContent = title;
+      modalBody.innerHTML = bodyHtml;
+      overlay.classList.add("show");
+    }
+
+    function closeModal() {
+      overlay.classList.remove("show");
+    }
+
+    function getUpgradeCost(key) {
+      const currentLevel = state.upgrades[key];
+      const costs = upgradeCatalog[key].baseCost;
+      if (currentLevel >= 10) return null;
+      return costs[currentLevel - 1];
+    }
+
+    function openUpgradeModal(key) {
+      const config = upgradeCatalog[key];
+      const currentLevel = state.upgrades[key];
+      const cost = getUpgradeCost(key);
+      const isMax = currentLevel >= 10;
+
+      openModal(
+        config.title,
+        `
+          <div class="modal-copy">${config.desc}</div>
+          <div class="modal-grid">
+            <div class="modal-card">
+              <div class="modal-label">Livello attuale</div>
+              <div class="modal-value">${currentLevel}</div>
+            </div>
+            <div class="modal-card">
+              <div class="modal-label">Costo upgrade</div>
+              <div class="modal-value">${isMax ? "MAX" : formatEuro(cost)}</div>
+            </div>
+          </div>
+          <div class="modal-grid">
+            <div class="modal-card">
+              <div class="modal-label">Potenza</div>
+              <div class="modal-value">${key === "train" ? getPower() : state.upgrades[key]}</div>
+            </div>
+            <div class="modal-card">
+              <div class="modal-label">Stato</div>
+              <div class="modal-value">${isMax ? "Livello massimo" : "Pronto upgrade"}</div>
+            </div>
+          </div>
+          <button class="btn primary full" ${isMax ? "disabled" : ""} onclick="upgradeItem('${key}')">
+            ${isMax ? "Livello massimo raggiunto" : "Migliora"}
+          </button>
+          <div class="mini-note">
+            I costi salgono in modo pesante. Il treno efficiente richiede molto tempo.
+          </div>
+        `
+      );
+    }
+
+    window.upgradeItem = function(key) {
+      const cost = getUpgradeCost(key);
+      if (cost === null) return;
+      if (state.saldo < cost) {
+        alert("Saldo insufficiente.");
+        return;
+      }
+
+      state.saldo -= cost;
+      state.upgrades[key] += 1;
+      saveState();
+      refreshAll();
+      closeModal();
+    };
+
+    function createSchedules() {
+      state.schedules = externalTrains.map((train, idx) => {
+        const hour = 7 + idx * 2;
+        const minute = idx % 2 === 0 ? "05" : "35";
+        const base = train.baseDelay;
+        let delay = Math.max(0, Math.round(base + (Math.random() - 0.35) * train.variability));
+
+        if (Math.random() < 0.12) delay = 0;
+        if (Math.random() < 0.08) delay += Math.round(Math.random() * 35);
+
+        let status = "In viaggio";
+        if (delay === 0) status = "Puntuale";
+        else if (delay > 0) status = `Ritardo ${delay} min`;
+
+        return {
+          code: train.code,
+          route: train.route,
+          type: train.type,
+          planned: `${String(hour).padStart(2,"0")}:${minute}`,
+          delay,
+          status,
+          lastStop: routeLastStop(train.route),
+          updated: nowTime()
+        };
+      });
+    }
+
+    function routeLastStop(route) {
+      const parts = route.split("→").map(s => s.trim());
+      return parts[0] || "Nodo";
+    }
+
+    function nowTime() {
+      return new Date().toLocaleTimeString("it-IT", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function renderSchedules() {
+      scheduleList.innerHTML = state.schedules.map(item => {
+        const statusClass =
+          item.delay === 0 ? "status-green" :
+          item.delay > 20 ? "status-red" :
+          item.delay > 0 ? "status-yellow" :
+          "status-gray";
+
+        return `
+          <div class="schedule-item">
+            <div class="schedule-top">
+              <div>
+                <div class="schedule-code">${escapeHtml(item.code)}</div>
+                <div class="schedule-route">${escapeHtml(item.route)}</div>
+              </div>
+              <div class="status-pill ${statusClass}">${escapeHtml(item.status)}</div>
+            </div>
+            <div class="schedule-grid">
+              <div class="info-card">
+                <div class="info-label">Orario</div>
+                <div class="info-value">${escapeHtml(item.planned)}</div>
+              </div>
+              <div class="info-card">
+                <div class="info-label">Ritardo</div>
+                <div class="info-value">${item.delay} min</div>
+              </div>
+              <div class="info-card">
+                <div class="info-label">Ultima fermata</div>
+                <div class="info-value">${escapeHtml(item.lastStop)}</div>
+              </div>
+              <div class="info-card">
+                <div class="info-label">Aggiornamento</div>
+                <div class="info-value">${escapeHtml(item.updated)}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderBetTrains() {
+      betTrainList.innerHTML = externalTrains.map((train, idx) => {
+        const wear = train.visualWear;
+        const bodyOpacity = clamp(1 - wear, 0.75, 1);
+        return `
+          <div class="train-card" onclick="openBetModal(${idx})">
+            <div class="train-card-head">
+              <div class="train-visual">
+                <div class="wagons" style="opacity:${bodyOpacity}">
+                  <div class="wagon"></div>
+                  <div class="wagon"></div>
+                  <div class="wagon"></div>
+                </div>
+                <div class="nose" style="opacity:${bodyOpacity}"></div>
+              </div>
+              <div class="train-meta">
+                <div class="train-code">${escapeHtml(train.code)}</div>
+                <div class="train-route">${escapeHtml(train.route)}</div>
+                <div class="train-type">${escapeHtml(train.type)}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function getBetRewardMultiplier() {
+      return 1 + (getEfficiency() - 1) * 0.05 + (state.upgrades.mine - 1) * 0.03 + (state.upgrades.plant - 1) * 0.02;
+    }
+
+    function computeMyTrainQuality() {
+      return (
+        state.upgrades.train * 100 +
+        state.upgrades.track * 35 +
+        state.upgrades.station * 28 +
+        state.upgrades.mine * 18 +
+        state.upgrades.plant * 18
+      );
+    }
+
+    window.openBetModal = function(index) {
+      const train = externalTrains[index];
+      const schedule = state.schedules.find(s => s.code === train.code);
+      const defaultMinutes = schedule ? Math.min(120, Math.max(0, schedule.delay)) : 15;
+
+      openModal(
+        `Scommessa ${train.code}`,
+        `
+          <div class="modal-copy">
+            ${escapeHtml(train.route)} · ${escapeHtml(train.type)}
+          </div>
+
+          <div class="modal-grid">
+            <div class="modal-card">
+              <div class="modal-label">Stato attuale</div>
+              <div class="modal-value">${escapeHtml(schedule ? schedule.status : "N/D")}</div>
+            </div>
+            <div class="modal-card">
+              <div class="modal-label">Puntata bonus</div>
+              <div class="modal-value">x${getBetRewardMultiplier().toFixed(2)}</div>
+            </div>
+          </div>
+
+          <div class="bet-value"><span id="betMinutesValue">${defaultMinutes}</span> min</div>
+
+          <div class="range-wrap">
+            <input class="bet-range" type="range" min="0" max="120" value="${defaultMinutes}" id="betMinutesRange" />
+          </div>
+
+          <div class="chip-row" id="betChipRow">
+            <div class="bet-chip" data-bet="50">50€</div>
+            <div class="bet-chip" data-bet="100">100€</div>
+            <div class="bet-chip selected" data-bet="200">200€</div>
+            <div class="bet-chip" data-bet="500">500€</div>
+          </div>
+
+          <button class="btn primary full" onclick="confirmBet(${index})">Conferma scommessa</button>
+          <div class="mini-note">Puoi scommettere solo sui treni esterni. Il tuo treno non è selezionabile.</div>
+        `
+      );
+
+      const range = document.getElementById("betMinutesRange");
+      const valueEl = document.getElementById("betMinutesValue");
+      const chips = document.querySelectorAll(".bet-chip");
+
+      range.style.setProperty("--pct", (range.value / 120) * 100 + "%");
+      range.addEventListener("input", () => {
+        valueEl.textContent = range.value;
+        range.style.setProperty("--pct", (range.value / 120) * 100 + "%");
+      });
+
+      chips.forEach(chip => {
+        chip.addEventListener("click", () => {
+          chips.forEach(c => c.classList.remove("selected"));
+          chip.classList.add("selected");
+        });
+      });
+    };
+
+    function generateResolvedDelay(baseTrain, schedule) {
+      let delay = schedule ? schedule.delay : generateBaseDelay(baseTrain);
+
+      // I treni esterni non sono toccati dal tuo upgrade. Restano sistema esterno.
+      return delay;
+    }
+
+    function generateBaseDelay(train) {
+      let value = Math.max(0, Math.round(train.baseDelay + (Math.random() - 0.35) * train.variability));
+      if (Math.random() < 0.1) value = 0;
+      if (Math.random() < 0.08) value += Math.round(Math.random() * 30);
+      return value;
+    }
+
+    window.confirmBet = function(index) {
+      const train = externalTrains[index];
+      const range = document.getElementById("betMinutesRange");
+      const selectedChip = document.querySelector(".bet-chip.selected");
+      const predicted = parseInt(range.value, 10);
+      const betAmount = parseInt(selectedChip.dataset.bet, 10);
+
+      if (state.saldo < betAmount) {
+        alert("Saldo insufficiente.");
+        return;
+      }
+
+      const schedule = state.schedules.find(s => s.code === train.code);
+      const realDelay = generateResolvedDelay(train, schedule);
+      const diff = Math.abs(predicted - realDelay);
+      const won = diff <= 5;
+      const multiplier = getBetRewardMultiplier();
+      const reward = won ? Math.round(betAmount * (1 + (5 - diff) * 0.4) * multiplier) : -betAmount;
+
+      state.saldo += reward;
+      state.stats.bets += 1;
+
+      if (won) {
+        state.stats.wins += 1;
+        state.stats.currentStreak += 1;
+        state.stats.bestStreak = Math.max(state.stats.bestStreak, state.stats.currentStreak);
+      } else {
+        state.stats.currentStreak = 0;
+      }
+
+      state.history.unshift({
+        train: train.code,
+        predicted,
+        real: realDelay,
+        amount: betAmount,
+        reward,
+        won,
+        time: nowTime()
+      });
+
+      saveState();
+      refreshAll();
+      closeModal();
+
+      betResultSection.style.display = "block";
+      betResultHeader.textContent = `Risultato — ${train.code}`;
+      resultDelay.textContent = `${realDelay} min`;
+      resultDiff.textContent = `Pronostico ${predicted} min · Differenza ${diff} min`;
+      resultBadgeWrap.innerHTML = `
+        <div class="badge-result ${won ? "win" : "lose"}">
+          ${won ? "+" + reward + "€" : reward + "€"}
+        </div>
+      `;
+      resultText.textContent = won
+        ? winMessages[Math.floor(Math.random() * winMessages.length)]
+        : loseMessages[Math.floor(Math.random() * loseMessages.length)];
+    };
+
+    function renderHistory() {
+      if (!state.history.length) {
+        historySection.style.display = "none";
+        return;
+      }
+
+      historySection.style.display = "block";
+      historyList.innerHTML = state.history.slice(0, 8).map(item => `
+        <div class="history-item">
+          <div class="history-main">
+            <div class="history-title">${escapeHtml(item.train)}</div>
+            <div class="history-sub">
+              Pronostico ${item.predicted} min · Reale ${item.real} min · Puntata ${item.amount}€ · ${item.time}
+            </div>
+          </div>
+          <div class="history-result ${item.won ? "win" : "lose"}">
+            ${item.won ? "+" + item.reward + "€" : item.reward + "€"}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function refreshAll() {
+      updateTopBar();
+      updateProfile();
+      renderLeaderboard();
+      updateStationStats();
+      renderSchedules();
+      renderBetTrains();
+      renderHistory();
+    }
+
+    function openNameModal(prefill = "") {
+      openModal(
+        "Nome operatore",
+        `
+          <div class="modal-copy">Imposta il nome del tuo operatore ferroviario.</div>
+          <input class="text-input" id="nameInput" maxlength="18" value="${escapeHtml(prefill)}" placeholder="Es. Ritardologo73" />
+          <button class="btn primary full" onclick="saveNameFromModal()">Salva nome</button>
+          <div style="height:8px"></div>
+          <button class="btn full" onclick="randomizeName()">Nome casuale</button>
+        `
+      );
+    }
+
+    window.saveNameFromModal = function() {
+      const input = document.getElementById("nameInput");
+      const name = input.value.trim().replace(/\s+/g, " ").slice(0, 18);
+      if (!name) {
+        alert("Inserisci un nome.");
+        return;
+      }
+      state.playerName = name;
+      saveState();
+      refreshAll();
+      closeModal();
+    };
+
+    window.randomizeName = function() {
+      const input = document.getElementById("nameInput");
+      input.value = randomNames[Math.floor(Math.random() * randomNames.length)];
+    };
+
+    function initMapDrag() {
+      let dragging = false;
+      let startX = 0;
+      let startY = 0;
+      let originX = 0;
+      let originY = 0;
+      let tx = 0;
+      let ty = 0;
+
+      const limitX = 90;
+      const limitY = 70;
+
+      function apply() {
+        mapContent.style.transform = `translate(${tx}px, ${ty}px)`;
+      }
+
+      mapViewport.addEventListener("pointerdown", (e) => {
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        originX = tx;
+        originY = ty;
+        mapViewport.setPointerCapture(e.pointerId);
+      });
+
+      mapViewport.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        tx = clamp(originX + (e.clientX - startX), -limitX, limitX);
+        ty = clamp(originY + (e.clientY - startY), -limitY, limitY);
+        apply();
+      });
+
+      mapViewport.addEventListener("pointerup", () => {
+        dragging = false;
+      });
+
+      mapViewport.addEventListener("pointercancel", () => {
+        dragging = false;
+      });
+
+      document.querySelectorAll(".map-node").forEach(node => {
+        node.addEventListener("click", () => {
+          const key = node.dataset.upgrade;
+          openUpgradeModal(key);
+        });
+      });
+    }
+
+    function initNav() {
+      navButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          showPage(btn.dataset.page);
+        });
+      });
+    }
+
+    function initActions() {
+      closeModalBtn.addEventListener("click", closeModal);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeModal();
+      });
+
+      changeNameBtn.addEventListener("click", () => openNameModal(state.playerName));
+      resetProfileBtn.addEventListener("click", () => {
+        if (!confirm("Vuoi davvero cancellare il profilo locale?")) return;
+
+        localStorage.removeItem(STORAGE_KEY);
+        state = {
+          playerName: "",
+          saldo: 1000,
+          stats: { bets: 0, wins: 0, currentStreak: 0, bestStreak: 0 },
+          upgrades: { train: 1, track: 1, station: 1, mine: 1, plant: 1 },
+          history: [],
+          schedules: []
+        };
+        createSchedules();
+        saveState();
+        refreshAll();
+        openNameModal("");
+        showPage("profile");
+      });
+    }
+
+    function init() {
+      loadState();
+
+      if (!state.schedules.length) {
+        createSchedules();
+        saveState();
+      }
+
+      initNav();
+      initActions();
+      initMapDrag();
+      refreshAll();
+
+      setInterval(() => {
+        createSchedules();
+        saveState();
+        renderSchedules();
+      }, 60000);
+
+      if (!state.playerName) {
+        openNameModal("");
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

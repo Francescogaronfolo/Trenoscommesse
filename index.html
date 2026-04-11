@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrenoScommesse</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: -apple-system, sans-serif;
+    background: #f4f1ea;
+}
+
+/* TOP BAR */
+.topbar {
+    background: #133a5c;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.balance {
+    background: #d4a843;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+/* CARD TRENI */
+.container {
+    padding: 20px;
+}
+
+.train-card {
+    background: #d9d0c3;
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.2s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.train-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.train-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* MODULI TRENO */
+.module {
+    width: 28px;
+    height: 16px;
+    border-radius: 6px;
+    background: #bdbdbd;
+    position: relative;
+}
+
+.module.active {
+    background: linear-gradient(135deg, #4aa3ff, #1c6ed5);
+}
+
+.module.red {
+    background: linear-gradient(135deg, #ff5b5b, #c92a2a);
+}
+
+.module.gray {
+    background: linear-gradient(135deg, #aaa, #666);
+}
+
+/* TESTO */
+.train-info h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.train-info span {
+    font-size: 13px;
+    color: #555;
+}
+
+/* BADGE */
+.badge {
+    background: #eee;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    margin-top: 4px;
+    display: inline-block;
+}
+
+/* STATO */
+.status {
+    width: 40px;
+    height: 14px;
+    border-radius: 8px;
+}
+
+.status.red {
+    background: #ff3b30;
+}
+
+.status.yellow {
+    background: #ffcc00;
+}
+
+.status.green {
+    background: #34c759;
+}
+
+/* POPUP */
+.overlay {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.5);
+    display:none;
+}
+
+.popup {
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    background: #f7f3ed;
+    padding: 20px;
+    border-radius: 20px;
+    width: 300px;
+    display:none;
+}
+
+.popup h2 {
+    margin-top: 0;
+}
+
+.slider {
+    width: 100%;
+}
+
+/* BOTTONI */
+.bet-options {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.bet-options button {
+    flex:1;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    background: white;
+}
+
+.bet-options button.active {
+    background: #133a5c;
+    color: white;
+}
+
+.actions {
+    display:flex;
+    margin-top:15px;
+    gap:10px;
+}
+
+.actions button {
+    flex:1;
+    padding: 12px;
+    border-radius: 12px;
+    border:none;
+}
+
+.confirm {
+    background:#133a5c;
+    color:white;
+}
+
+/* BOTTOM BAR */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #133a5c;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.bottom-bar div {
+    color: white;
+}
+
+.center-button {
+    background: #d4a843;
+    padding: 12px;
+    border-radius: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div>🚆 TrenoScommesse</div>
+    <div class="balance">1000€</div>
+</div>
+
+<div class="container">
+
+<div class="train-card" onclick="openPopup(0)">
+    <div class="train-left">
+        <div class="module red"></div>
+        <div class="module"></div>
+        <div class="module"></div>
+        <div class="train-info">
+            <h3>Atria V-01</h3>
+            <span>Roma → Milano</span>
+            <div class="badge">Alta Velocità</div>
+        </div>
+    </div>
+    <div class="status red"></div>
+</div>
+
+<div class="train-card" onclick="openPopup(1)">
+    <div class="train-left">
+        <div class="module"></div>
+        <div class="module"></div>
+        <div class="module active"></div>
+        <div class="train-info">
+            <h3>Radian R-12</h3>
+            <span>Venezia → Roma</span>
+            <div class="badge">Velocità Lunga</div>
+        </div>
+    </div>
+    <div class="status yellow"></div>
+</div>
+
+<div class="train-card" onclick="openPopup(2)">
+    <div class="train-left">
+        <div class="module active"></div>
+        <div class="module"></div>
+        <div class="module"></div>
+        <div class="train-info">
+            <h3>Intera N-07</h3>
+            <span>Napoli → Torino</span>
+            <div class="badge">Linea Interurbana</div>
+        </div>
+    </div>
+    <div class="status red"></div>
+</div>
+
+</div>
+
+<!-- POPUP -->
+<div class="overlay" onclick="closePopup()"></div>
+
+<div class="popup">
+    <h2 id="popupName">Treno</h2>
+
+    <p>Ritardo previsto: <span id="minutes">15</span> min</p>
+    <input type="range" min="1" max="60" value="15" class="slider" id="slider">
+
+    <div class="bet-options">
+        <button onclick="selectBet(this)">50€</button>
+        <button onclick="selectBet(this)">100€</button>
+        <button onclick="selectBet(this)" class="active">200€</button>
+        <button onclick="selectBet(this)">500€</button>
+    </div>
+
+    <div class="actions">
+        <button onclick="closePopup()">Annulla</button>
+        <button class="confirm">Conferma</button>
+    </div>
+</div>
+
+<!-- BOTTOM -->
+<div class="bottom-bar">
+    <div>👤</div>
+    <div class="center-button">🚉</div>
+    <div>🎯</div>
+</div>
+
+<script>
+let slider = document.getElementById("slider");
+let minutes = document.getElementById("minutes");
+
+slider.oninput = () => {
+    minutes.innerText = slider.value;
+}
+
+function openPopup(index){
+    document.querySelector(".overlay").style.display="block";
+    document.querySelector(".popup").style.display="block";
+}
+
+function closePopup(){
+    document.querySelector(".overlay").style.display="none";
+    document.querySelector(".popup").style.display="none";
+}
+
+function selectBet(btn){
+    document.querySelectorAll(".bet-options button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrenoScommesse</title>
+
+  <style>
+    :root{
+      --bg:#f4efe6;
+      --navy:#11385a;
+      --gold:#d3a93e;
+      --card:#d8cfbf;
+      --card-border:#c8bca9;
+      --text:#171717;
+      --muted:#5d5d5d;
+      --panel:#f8f4ec;
+      --board:#12100d;
+      --board-text:#e2b04a;
+      --shadow:0 8px 20px rgba(0,0,0,0.10);
+      --red:#d93a2f;
+      --yellow:#e0b100;
+      --green:#2f9b63;
+      --rail:#373737;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:100;
+      height:76px;
+      background:var(--navy);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 18px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.16);
+    }
+
+    .brand{
+      font-size:18px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .balance{
+      background:var(--gold);
+      color:#111;
+      padding:12px 18px;
+      border-radius:16px;
+      font-size:18px;
+      font-weight:800;
+      min-width:112px;
+      text-align:center;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+
+    .container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:20px 18px 120px;
+    }
+
+    .page{display:none}
+    .page.active{display:block}
+
+    .section-title{
+      font-size:26px;
+      margin:6px 0 18px;
+      font-weight:800;
+    }
+
+    /* CARD TRENI */
+    .train-card{
+      position:relative;
+      border-radius:30px;
+      overflow:hidden;
+      margin-bottom:24px;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      transition:transform .16s ease;
+      min-height:220px;
+      background:#b9c3cc;
+    }
+
+    .train-card:active{ transform:scale(0.993); }
+
+    .train-bg{
+      position:absolute;
+      inset:0;
+      overflow:hidden;
+    }
+
+    .train-bg::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.00) 40%),
+        linear-gradient(0deg, rgba(0,0,0,0.30), rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.10)),
+        linear-gradient(90deg, #eef2f6 0%, #d6dde5 45%, #c4ced9 100%);
+    }
+
+    .scheme-red .train-bg::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.00) 40%),
+        linear-gradient(0deg, rgba(0,0,0,0.28), rgba(0,0,0,0.03) 45%, rgba(0,0,0,0.10)),
+        linear-gradient(90deg, #f1f3f5 0%, #d8dde2 38%, #c92f2f 72%, #a91f1f 100%);
+    }
+
+    .scheme-white .train-bg::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.00) 40%),
+        linear-gradient(0deg, rgba(0,0,0,0.24), rgba(0,0,0,0.02) 45%, rgba(0,0,0,0.08)),
+        linear-gradient(90deg, #f7f7f7 0%, #ececec 55%, #d7d7d7 100%);
+    }
+
+    .scheme-blue .train-bg::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.00) 40%),
+        linear-gradient(0deg, rgba(0,0,0,0.28), rgba(0,0,0,0.03) 45%, rgba(0,0,0,0.10)),
+        linear-gradient(90deg, #edf2f8 0%, #d8e2ef 36%, #2b6fbe 72%, #194f8f 100%);
+    }
+
+    .scheme-dark .train-bg::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.00) 40%),
+        linear-gradient(0deg, rgba(0,0,0,0.30), rgba(0,0,0,0.03) 45%, rgba(0,0,0,0.14)),
+        linear-gradient(90deg, #ebedf0 0%, #cfd5dc 34%, #6b727a 74%, #474d54 100%);
+    }
+
+    .scheme-orange .train-bg::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.00) 40%),
+        linear-gradient(0deg, rgba(0,0,0,0.28), rgba(0,0,0,0.03) 45%, rgba(0,0,0,0.10)),
+        linear-gradient(90deg, #f4f2ee 0%, #ddd6ca 36%, #dd6a27 72%, #b94d12 100%);
+    }
+
+    .scheme-silver .train-bg::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.00) 40%),
+        linear-gradient(0deg, rgba(0,0,0,0.25), rgba(0,0,0,0.03) 45%, rgba(0,0,0,0.10)),
+        linear-gradient(90deg, #f5f6f7 0%, #dde2e7 42%, #a8b2bc 76%, #8f9aa4 100%);
+    }
+
+    .train-shape{
+      position:absolute;
+      left:26px;
+      right:26px;
+      bottom:44px;
+      height:118px;
+      display:flex;
+      align-items:flex-end;
+      gap:10px;
+    }
+
+    .nose{
+      width:220px;
+      height:96px;
+      border-radius:34px 20px 16px 34px;
+      position:relative;
+      flex-shrink:0;
+      box-shadow:inset 0 -10px 14px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.28);
+      overflow:hidden;
+    }
+
+    .scheme-red .nose{ background:linear-gradient(135deg,#ff6861 0%, #d53030 70%); }
+    .scheme-white .nose{ background:linear-gradient(135deg,#ffffff 0%, #e3e3e3 70%); }
+    .scheme-blue .nose{ background:linear-gradient(135deg,#5caeff 0%, #2364b1 70%); }
+    .scheme-dark .nose{ background:linear-gradient(135deg,#8d9399 0%, #575d64 70%); }
+    .scheme-orange .nose{ background:linear-gradient(135deg,#ffb35d 0%, #d8611d 70%); }
+    .scheme-silver .nose{ background:linear-gradient(135deg,#dbe0e5 0%, #99a6b0 70%); }
+
+    .nose::before{
+      content:"";
+      position:absolute;
+      top:14px;
+      left:22px;
+      width:86px;
+      height:24px;
+      border-radius:12px;
+      background:rgba(255,255,255,0.72);
+      transform:skewX(-18deg);
+    }
+
+    .nose::after{
+      content:"";
+      position:absolute;
+      right:-18px;
+      top:18px;
+      width:38px;
+      height:56px;
+      border-radius:0 16px 16px 0;
+      background:rgba(0,0,0,0.18);
+    }
+
+    .car-group{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+    }
+
+    .carriage{
+      width:118px;
+      height:74px;
+      border-radius:20px 14px 14px 20px;
+      background:linear-gradient(180deg,#c9cfd5,#9ea7b0);
+      position:relative;
+      box-shadow:inset 0 -10px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+
+    .carriage::before{
+      content:"";
+      position:absolute;
+      top:12px;
+      left:12px;
+      right:12px;
+      height:18px;
+      border-radius:8px;
+      background:rgba(255,255,255,0.58);
+    }
+
+    .carriage::after{
+      content:"";
+      position:absolute;
+      bottom:10px;
+      left:18px;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:#494949;
+      box-shadow:58px 0 0 #494949;
+      opacity:.86;
+    }
+
+    .card-overlay{
+      position:absolute;
+      inset:auto 0 0 0;
+      padding:20px 24px 18px;
+      background:linear-gradient(to top, rgba(0,0,0,0.64), rgba(0,0,0,0.26), rgba(0,0,0,0.02));
+      color:#fff;
+    }
+
+    .train-name{
+      font-size:24px;
+      font-weight:800;
+      margin-bottom:5px;
+    }
+
+    .train-route{
+      font-size:16px;
+      opacity:0.92;
+      margin-bottom:10px;
+    }
+
+    .train-badge{
+      display:inline-block;
+      background:rgba(255,255,255,0.18);
+      border:1px solid rgba(255,255,255,0.22);
+      padding:8px 12px;
+      border-radius:16px;
+      font-size:13px;
+      font-weight:700;
+      backdrop-filter:blur(4px);
+    }
+
+    .card-status{
+      position:absolute;
+      right:24px;
+      top:22px;
+      padding:8px 12px;
+      border-radius:16px;
+      font-size:13px;
+      font-weight:800;
+      color:#fff;
+      background:rgba(0,0,0,0.28);
+      backdrop-filter:blur(4px);
+      border:1px solid rgba(255,255,255,0.18);
+    }
+
+    .status-red{ background:rgba(190,40,40,0.72); }
+    .status-yellow{ background:rgba(188,140,20,0.72); }
+    .status-green{ background:rgba(36,134,84,0.72); }
+
+    /* STAZIONE */
+    .station-map{
+      position:relative;
+      height:420px;
+      background:linear-gradient(180deg,#ded8cb,#d2c9b7);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-bottom:18px;
+    }
+
+    .station-grid{
+      position:absolute;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size:36px 36px;
+      opacity:.5;
+    }
+
+    .rail-line{
+      position:absolute;
+      left:30px;
+      right:30px;
+      top:52%;
+      height:8px;
+      background:var(--rail);
+      border-radius:999px;
+      box-shadow:0 0 0 8px rgba(0,0,0,0.05);
+      cursor:pointer;
+    }
+
+    .station-node{
+      position:absolute;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .station-bubble{
+      width:88px;
+      height:88px;
+      border-radius:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:40px;
+      background:rgba(255,255,255,0.28);
+      border:1px solid rgba(255,255,255,0.25);
+      box-shadow:0 10px 20px rgba(0,0,0,0.10);
+      backdrop-filter:blur(4px);
+    }
+
+    .station-label{
+      font-size:14px;
+      font-weight:800;
+      color:#223;
+      background:rgba(255,255,255,0.65);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+
+    .station-train{
+      position:absolute;
+      left:50%;
+      top:52%;
+      transform:translate(-50%,-58%);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+    }
+
+    .steam-train{
+      font-size:60px;
+      filter:drop-shadow(0 8px 8px rgba(0,0,0,0.14));
+    }
+
+    .station-stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+    }
+
+    .stat-box{
+      background:#efe8dc;
+      border:1px solid #d6c8b4;
+      border-radius:20px;
+      padding:16px 14px;
+      box-shadow:var(--shadow);
+    }
+
+    .stat-title{
+      font-size:13px;
+      font-weight:800;
+      color:#666;
+      margin-bottom:8px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    .stat-value{
+      font-size:30px;
+      font-weight:800;
+      color:#12395b;
+      line-height:1;
+    }
+
+    .stat-sub{
+      font-size:13px;
+      color:#666;
+      margin-top:6px;
+    }
+
+    /* PROFILO */
+    .profile-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+
+    .profile-card{
+      background:#efe8dc;
+      border:1px solid #d6c8b4;
+      border-radius:22px;
+      padding:18px 16px;
+      box-shadow:var(--shadow);
+    }
+
+    .profile-name{
+      font-size:30px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .profile-role{
+      font-size:15px;
+      color:#666;
+    }
+
+    .board-wrap{
+      margin-top:26px;
+    }
+
+    .board-title{
+      font-size:18px;
+      font-weight:800;
+      margin-bottom:12px;
+    }
+
+    .board{
+      background:var(--board);
+      color:var(--board-text);
+      border-radius:22px;
+      padding:18px 18px 10px;
+      font-family:"Courier New",monospace;
+      box-shadow:var(--shadow);
+    }
+
+    .board-head,
+    .board-row{
+      display:grid;
+      grid-template-columns:1.2fr 1.5fr .7fr .7fr;
+      gap:12px;
+      align-items:center;
+    }
+
+    .board-head{
+      font-size:14px;
+      font-weight:700;
+      text-transform:uppercase;
+      padding:6px 10px 14px;
+      border-bottom:1px solid rgba(226,176,74,.2);
+      letter-spacing:.04em;
+    }
+
+    .board-row{
+      padding:14px 10px;
+      border-bottom:1px solid rgba(226,176,74,.12);
+      font-size:15px;
+    }
+
+    .board-row:last-child{ border-bottom:none; }
+
+    .s-ok{color:#87d7a1}
+    .s-mid{color:#f3d36d}
+    .s-bad{color:#f08c8c}
+
+    /* POPUP */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.42);
+      display:none;
+      z-index:150;
+    }
+
+    .popup{
+      position:fixed;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      width:min(470px, calc(100vw - 36px));
+      background:var(--panel);
+      border-radius:28px;
+      padding:24px 24px 18px;
+      display:none;
+      z-index:160;
+      box-shadow:0 20px 40px rgba(0,0,0,0.22);
+    }
+
+    .popup-title{
+      font-size:22px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .popup-sub{
+      color:var(--muted);
+      font-size:16px;
+      margin-bottom:22px;
+    }
+
+    .popup-label{
+      font-size:13px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      color:#4f4f4f;
+      margin-bottom:10px;
+    }
+
+    .minutes-row{
+      font-size:18px;
+      margin-bottom:8px;
+    }
+
+    .minutes-row strong{
+      font-size:44px;
+      line-height:1;
+      margin-right:6px;
+    }
+
+    .slider{
+      width:100%;
+      margin-bottom:18px;
+    }
+
+    .chips{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+    }
+
+    .chip{
+      border:none;
+      background:#ece7dd;
+      color:#163b5c;
+      padding:14px 10px;
+      border-radius:16px;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.55);
+    }
+
+    .chip.active{
+      background:var(--navy);
+      color:#fff;
+    }
+
+    .upgrade-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .upgrade-box{
+      background:#ece7dd;
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .upgrade-box-title{
+      font-size:12px;
+      font-weight:800;
+      text-transform:uppercase;
+      color:#666;
+      margin-bottom:8px;
+    }
+
+    .upgrade-box-value{
+      font-size:28px;
+      font-weight:800;
+      color:#12395b;
+      line-height:1;
+    }
+
+    .upgrade-button{
+      width:100%;
+      border:none;
+      background:var(--navy);
+      color:#fff;
+      padding:14px 12px;
+      border-radius:18px;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+      margin-top:8px;
+    }
+
+    .upgrade-button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .popup-note{
+      margin-top:16px;
+      font-size:13px;
+      color:#666;
+    }
+
+    /* NAV */
+    .bottom-bar{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      background:var(--navy);
+      padding:18px 18px 14px;
+      display:flex;
+      justify-content:space-around;
+      align-items:flex-end;
+      border-radius:26px 26px 0 0;
+      box-shadow:0 -6px 18px rgba(0,0,0,0.18);
+      z-index:120;
+    }
+
+    .nav-item{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      color:#dbe8f7;
+      min-width:96px;
+      cursor:pointer;
+    }
+
+    .nav-icon{
+      font-size:34px;
+      line-height:1;
+      opacity:.95;
+    }
+
+    .nav-label{
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .nav-center{
+      transform:translateY(-12px);
+    }
+
+    .nav-center .nav-icon-wrap{
+      width:72px;
+      height:72px;
+      border-radius:22px;
+      background:var(--gold);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 10px 20px rgba(0,0,0,0.24);
+    }
+
+    .nav-center .nav-icon{
+      font-size:34px;
+      color:#0e2d47;
+    }
+
+    .nav-side .nav-icon-wrap{
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(255,255,255,0.03);
+    }
+
+    @media (max-width:900px){
+      .train-card{ min-height:200px; }
+      .train-shape{
+        left:18px;
+        right:18px;
+        bottom:56px;
+        height:96px;
+      }
+      .nose{ width:150px; height:72px; }
+      .carriage{ width:88px; height:60px; }
+      .card-overlay{ padding:18px 18px 16px; }
+      .train-name{ font-size:21px; }
+
+      .station-stats,
+      .profile-grid,
+      .upgrade-grid,
+      .chips{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .board-head,
+      .board-row{
+        grid-template-columns:1fr 1.15fr .7fr .7fr;
+        font-size:13px;
+      }
+    }
+
+    @media (max-width:640px){
+      .station-stats,
+      .profile-grid,
+      .upgrade-grid,
+      .chips{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">🚆 TrenoScommesse</div>
+    <div class="balance" id="balanceBox">1000€</div>
+  </div>
+
+  <div class="container">
+    <!-- PAGINA SCOMMESSE -->
+    <div id="pageBets" class="page active">
+      <div class="section-title">Scommesse</div>
+
+      <div class="train-card scheme-red" onclick="openBetPopup(0)">
+        <div class="train-bg"></div>
+        <div class="train-shape">
+          <div class="nose"></div>
+          <div class="car-group">
+            <div class="carriage"></div>
+            <div class="carriage"></div>
+          </div>
+        </div>
+        <div class="card-status status-red">+16 min</div>
+        <div class="card-overlay">
+          <div class="train-name">Atria V-01</div>
+          <div class="train-route">Roma → Milano</div>
+          <div class="train-badge">Alta Velocità</div>
+        </div>
+      </div>
+
+      <div class="train-card scheme-white" onclick="openBetPopup(1)">
+        <div class="train-bg"></div>
+        <div class="train-shape">
+          <div class="nose"></div>
+          <div class="car-group">
+            <div class="carriage"></div>
+            <div class="carriage"></div>
+          </div>
+        </div>
+        <div class="card-status status-yellow">+13 min</div>
+        <div class="card-overlay">
+          <div class="train-name">Radian R-12</div>
+          <div class="train-route">Venezia → Roma</div>
+          <div class="train-badge">Velocità Lunga</div>
+        </div>
+      </div>
+
+      <div class="train-card scheme-blue" onclick="openBetPopup(2)">
+        <div class="train-bg"></div>
+        <div class="train-shape">
+          <div class="nose"></div>
+          <div class="car-group">
+            <div class="carriage"></div>
+            <div class="carriage"></div>
+          </div>
+        </div>
+        <div class="card-status status-red">+20 min</div>
+        <div class="card-overlay">
+          <div class="train-name">Intera N-07</div>
+          <div class="train-route">Napoli → Torino</div>
+          <div class="train-badge">Linea Interurbana</div>
+        </div>
+      </div>
+
+      <div class="train-card scheme-dark" onclick="openBetPopup(3)">
+        <div class="train-bg"></div>
+        <div class="train-shape">
+          <div class="nose"></div>
+          <div class="car-group">
+            <div class="carriage"></div>
+            <div class="carriage"></div>
+          </div>
+        </div>
+        <div class="card-status status-green">0 min</div>
+        <div class="card-overlay">
+          <div class="train-name">Modulo C-4</div>
+          <div class="train-route">Bari → Taranto</div>
+          <div class="train-badge">Convoglio Costiero</div>
+        </div>
+      </div>
+
+      <div class="train-card scheme-orange" onclick="openBetPopup(4)">
+        <div class="train-bg"></div>
+        <div class="train-shape">
+          <div class="nose"></div>
+          <div class="car-group">
+            <div class="carriage"></div>
+            <div class="carriage"></div>
+          </div>
+        </div>
+        <div class="card-status status-red">+22 min</div>
+        <div class="card-overlay">
+          <div class="train-name">Linea B-2</div>
+          <div class="train-route">Palermo → Messina</div>
+          <div class="train-badge">Linea Breve</div>
+        </div>
+      </div>
+
+      <div class="train-card scheme-silver" onclick="openBetPopup(5)">
+        <div class="train-bg"></div>
+        <div class="train-shape">
+          <div class="nose"></div>
+          <div class="car-group">
+            <div class="carriage"></div>
+            <div class="carriage"></div>
+          </div>
+        </div>
+        <div class="card-status status-red">+24 min</div>
+        <div class="card-overlay">
+          <div class="train-name">Sistema L-9</div>
+          <div class="train-route">Milano → Lecce</div>
+          <div class="train-badge">Lunga Direttrice</div>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board-title">Quadro orari</div>
+        <div class="board">
+          <div class="board-head">
+            <div>Treno</div>
+            <div>Tratta</div>
+            <div>Ora</div>
+            <div>Stato</div>
+          </div>
+          <div id="boardRows"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA STAZIONE -->
+    <div id="pageStation" class="page">
+      <div class="section-title">La tua stazione</div>
+
+      <div class="station-map">
+        <div class="station-grid"></div>
+        <div class="rail-line" onclick="openUpgradePopup('track')"></div>
+
+        <div class="station-node" style="top:24px; left:24px;" onclick="openUpgradePopup('station')">
+          <div class="station-bubble">🏢</div>
+          <div class="station-label">Stazione</div>
+        </div>
+
+        <div class="station-train" onclick="openUpgradePopup('train')">
+          <div class="steam-train">🚂</div>
+          <div class="station-label">Il tuo treno</div>
+        </div>
+
+        <div class="station-node" style="right:24px; bottom:28px;" onclick="openUpgradePopup('infra')">
+          <div class="station-bubble">⚙️</div>
+          <div class="station-label">Infrastruttura</div>
+        </div>
+      </div>
+
+      <div class="station-stats">
+        <div class="stat-box">
+          <div class="stat-title">Livello treno</div>
+          <div class="stat-value" id="trainLevelValue">1</div>
+          <div class="stat-sub">upgrade principale</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-title">Binario</div>
+          <div class="stat-value" id="trackLevelValue">1</div>
+          <div class="stat-sub">riduzione ritardi</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-title">Stazione</div>
+          <div class="stat-value" id="stationLevelValue">1</div>
+          <div class="stat-sub">ordine operativo</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-title">Infrastruttura</div>
+          <div class="stat-value" id="infraLevelValue">1</div>
+          <div class="stat-sub">supporto tecnico</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA PROFILO -->
+    <div id="pageProfile" class="page">
+      <div class="section-title">Profilo</div>
+
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-name">Operatore</div>
+          <div class="profile-role">Macchinista di vecchia scuola</div>
+        </div>
+
+        <div class="profile-card">
+          <div class="stat-title">Saldo</div>
+          <div class="stat-value" id="profileBalanceValue">1000€</div>
+          <div class="stat-sub">budget disponibile</div>
+        </div>
+
+        <div class="profile-card">
+          <div class="stat-title">Scommesse</div>
+          <div class="stat-value" id="betsCountValue">0</div>
+          <div class="stat-sub">totali effettuate</div>
+        </div>
+
+        <div class="profile-card">
+          <div class="stat-title">Livello treno</div>
+          <div class="stat-value" id="profileTrainLevelValue">1</div>
+          <div class="stat-sub">progresso personale</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closePopup()"></div>
+
+  <div class="popup" id="popup">
+    <div class="popup-title" id="popupTitle">Titolo</div>
+    <div class="popup-sub" id="popupSub">Dettaglio</div>
+
+    <div id="betSection">
+      <div class="popup-label">Ritardo previsto</div>
+      <div class="minutes-row"><strong id="minutesValue">15</strong> min</div>
+      <input class="slider" id="minutesSlider" type="range" min="0" max="120" value="15" />
+
+      <div class="popup-label">Puntata</div>
+      <div class="chips">
+        <button class="chip" onclick="selectBet(50)">50€</button>
+        <button class="chip" onclick="selectBet(100)">100€</button>
+        <button class="chip active" onclick="selectBet(200)">200€</button>
+        <button class="chip" onclick="selectBet(500)">500€</button>
+      </div>
+    </div>
+
+    <div id="upgradeSection" style="display:none;">
+      <div class="upgrade-grid">
+        <div class="upgrade-box">
+          <div class="upgrade-box-title">Livello</div>
+          <div class="upgrade-box-value" id="upgradeLevelValue">1</div>
+        </div>
+        <div class="upgrade-box">
+          <div class="upgrade-box-title">Costo</div>
+          <div class="upgrade-box-value" id="upgradeCostValue">100€</div>
+        </div>
+      </div>
+
+      <button class="upgrade-button" id="upgradeButton" onclick="doUpgrade()">Migliora</button>
+    </div>
+
+    <div class="popup-note" id="popupNote">Tocca fuori dal pannello per chiudere.</div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="nav-item nav-side" onclick="showPage('profile')">
+      <div class="nav-icon-wrap"><div class="nav-icon">👤</div></div>
+      <div class="nav-label">Profilo</div>
+    </div>
+
+    <div class="nav-item nav-center" onclick="showPage('station')">
+      <div class="nav-icon-wrap"><div class="nav-icon">🚉</div></div>
+      <div class="nav-label">Stazione</div>
+    </div>
+
+    <div class="nav-item nav-side" onclick="showPage('bets')">
+      <div class="nav-icon-wrap"><div class="nav-icon">🎯</div></div>
+      <div class="nav-label">Scommesse</div>
+    </div>
+  </div>
+
+  <script>
+    const trains = [
+      { name: "Atria V-01", route: "Roma → Milano", type: "Alta Velocità", time: "08:12", delay: "+6", statusClass: "s-mid", base: 8, variance: 14 },
+      { name: "Radian R-12", route: "Venezia → Roma", type: "Velocità Lunga", time: "09:45", delay: "+13", statusClass: "s-mid", base: 10, variance: 16 },
+      { name: "Intera N-07", route: "Napoli → Torino", type: "Linea Interurbana", time: "10:20", delay: "+20", statusClass: "s-bad", base: 18, variance: 22 },
+      { name: "Modulo C-4", route: "Bari → Taranto", type: "Convoglio Costiero", time: "11:05", delay: "Puntuale", statusClass: "s-ok", base: 22, variance: 20 },
+      { name: "Linea B-2", route: "Palermo → Messina", type: "Linea Breve", time: "12:40", delay: "+22", statusClass: "s-bad", base: 28, variance: 24 },
+      { name: "Sistema L-9", route: "Milano → Lecce", type: "Lunga Direttrice", time: "13:10", delay: "+24", statusClass: "s-bad", base: 24, variance: 28 }
+    ];
+
+    let balance = 1000;
+    let selectedBet = 200;
+    let betsCount = 0;
+    let currentMode = "bet";
+    let currentUpgradeKey = null;
+
+    const levels = {
+      train: 1,
+      track: 1,
+      station: 1,
+      infra: 1
+    };
+
+    const upgradeNames = {
+      train: "Treno a vapore",
+      track: "Binario",
+      station: "Stazione",
+      infra: "Infrastruttura"
+    };
+
+    function getUpgradeCost(key) {
+      const level = levels[key];
+      const baseCosts = {
+        train: [100, 300, 700, 1500, 3000, 6000, 12000, 20000, 35000],
+        track: [80, 220, 500, 1100, 2300, 4800, 9000, 15000, 24000],
+        station: [90, 260, 600, 1300, 2600, 5200, 9600, 16000, 25000],
+        infra: [70, 180, 420, 900, 1800, 3800, 7600, 13000, 21000]
+      };
+      return level >= 10 ? null : baseCosts[key][level - 1];
+    }
+
+    const pageBets = document.getElementById("pageBets");
+    const pageStation = document.getElementById("pageStation");
+    const pageProfile = document.getElementById("pageProfile");
+
+    const overlay = document.getElementById("overlay");
+    const popup = document.getElementById("popup");
+    const popupTitle = document.getElementById("popupTitle");
+    const popupSub = document.getElementById("popupSub");
+    const betSection = document.getElementById("betSection");
+    const upgradeSection = document.getElementById("upgradeSection");
+    const popupNote = document.getElementById("popupNote");
+
+    const minutesSlider = document.getElementById("minutesSlider");
+    const minutesValue = document.getElementById("minutesValue");
+    const boardRows = document.getElementById("boardRows");
+    const balanceBox = document.getElementById("balanceBox");
+    const profileBalanceValue = document.getElementById("profileBalanceValue");
+    const betsCountValue = document.getElementById("betsCountValue");
+    const profileTrainLevelValue = document.getElementById("profileTrainLevelValue");
+
+    const trainLevelValue = document.getElementById("trainLevelValue");
+    const trackLevelValue = document.getElementById("trackLevelValue");
+    const stationLevelValue = document.getElementById("stationLevelValue");
+    const infraLevelValue = document.getElementById("infraLevelValue");
+
+    const upgradeLevelValue = document.getElementById("upgradeLevelValue");
+    const upgradeCostValue = document.getElementById("upgradeCostValue");
+    const upgradeButton = document.getElementById("upgradeButton");
+
+    function updateAllUI() {
+      balanceBox.textContent = balance + "€";
+      profileBalanceValue.textContent = balance + "€";
+      betsCountValue.textContent = betsCount;
+      profileTrainLevelValue.textContent = levels.train;
+
+      trainLevelValue.textContent = levels.train;
+      trackLevelValue.textContent = levels.track;
+      stationLevelValue.textContent = levels.station;
+      infraLevelValue.textContent = levels.infra;
+    }
+
+    function buildBoard() {
+      boardRows.innerHTML = "";
+      trains.forEach(train => {
+        const row = document.createElement("div");
+        row.className = "board-row";
+        row.innerHTML = `
+          <div>${train.name}</div>
+          <div>${train.route}</div>
+          <div>${train.time}</div>
+          <div class="${train.statusClass}">${train.delay}</div>
+        `;
+        boardRows.appendChild(row);
+      });
+    }
+
+    function showPage(page) {
+      pageBets.classList.remove("active");
+      pageStation.classList.remove("active");
+      pageProfile.classList.remove("active");
+
+      if (page === "bets") pageBets.classList.add("active");
+      if (page === "station") pageStation.classList.add("active");
+      if (page === "profile") pageProfile.classList.add("active");
+    }
+
+    function openBetPopup(index) {
+      const train = trains[index];
+      currentMode = "bet";
+      currentUpgradeKey = null;
+
+      popupTitle.textContent = train.name;
+      popupSub.textContent = `${train.route} · ${train.type}`;
+      betSection.style.display = "block";
+      upgradeSection.style.display = "none";
+      popupNote.textContent = "Tocca fuori dal pannello per chiudere.";
+
+      minutesSlider.value = 15;
+      minutesValue.textContent = 15;
+      setActiveChip(200);
+
+      overlay.style.display = "block";
+      popup.style.display = "block";
+    }
+
+    function openUpgradePopup(key) {
+      currentMode = "upgrade";
+      currentUpgradeKey = key;
+
+      popupTitle.textContent = upgradeNames[key];
+      popupSub.textContent = "Potenziamento struttura";
+
+      betSection.style.display = "none";
+      upgradeSection.style.display = "block";
+
+      upgradeLevelValue.textContent = levels[key];
+
+      const cost = getUpgradeCost(key);
+      if (cost === null) {
+        upgradeCostValue.textContent = "MAX";
+        upgradeButton.disabled = true;
+        upgradeButton.textContent = "Livello massimo";
+      } else {
+        upgradeCostValue.textContent = cost + "€";
+        upgradeButton.disabled = false;
+        upgradeButton.textContent = "Migliora";
+      }
+
+      popupNote.textContent = "Il potenziamento è lento e costoso: il progresso richiede tempo.";
+
+      overlay.style.display = "block";
+      popup.style.display = "block";
+    }
+
+    function closePopup() {
+      overlay.style.display = "none";
+      popup.style.display = "none";
+    }
+
+    function setActiveChip(value) {
+      selectedBet = value;
+      document.querySelectorAll(".chip").forEach(chip => chip.classList.remove("active"));
+      const target = [...document.querySelectorAll(".chip")].find(chip => chip.textContent.trim() === value + "€");
+      if (target) target.classList.add("active");
+    }
+
+    function selectBet(value) {
+      setActiveChip(value);
+    }
+
+    minutesSlider.addEventListener("input", () => {
+      minutesValue.textContent = minutesSlider.value;
+    });
+
+    function doUpgrade() {
+      if (!currentUpgradeKey) return;
+
+      const cost = getUpgradeCost(currentUpgradeKey);
+      if (cost === null) return;
+
+      if (balance < cost) {
+        popupNote.textContent = "Saldo insufficiente per questo upgrade.";
+        return;
+      }
+
+      balance -= cost;
+      levels[currentUpgradeKey] += 1;
+      updateAllUI();
+      openUpgradePopup(currentUpgradeKey);
+    }
+
+    buildBoard();
+    updateAllUI();
+  </script>
+</body>
+</html>

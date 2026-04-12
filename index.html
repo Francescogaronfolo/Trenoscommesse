@@ -145,3 +145,92 @@ transition:.3s;
 
 </style>
 </head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">Treno<span>Scommesse</span></div>
+  <div class="balance-pill" id="balance">1000€</div>
+</div>
+
+<!-- CONTENUTO -->
+<div style="padding:16px; padding-bottom:100px;">
+
+  <!-- PAGINA STAZIONE -->
+  <div id="pageStation">
+
+    <h2 style="margin-bottom:10px;">La tua Stazione</h2>
+
+    <div style="
+      height:220px;
+      border-radius:20px;
+      background:linear-gradient(160deg,#0a1628,#0d2040);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:rgba(255,255,255,0.3);
+      font-size:14px;
+      border:1px solid var(--border);
+      margin-bottom:20px;
+    ">
+      (Qui dopo mettiamo la stazione 3D migliorata)
+    </div>
+
+  </div>
+
+  <!-- PAGINA SCOMMESSE -->
+  <div id="pageBets" style="display:none;">
+
+    <h2 style="margin-bottom:10px;">Scommesse</h2>
+
+    <div id="betList">
+
+      <div class="bet-card" onclick="openBet()">
+        <div style="padding:14px;">
+          <div style="font-weight:800;">Frecciarossa</div>
+          <div style="font-size:12px;color:var(--muted);">Roma → Milano</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PAGINA COLLEZIONE -->
+  <div id="pageCollection" style="display:none;">
+    <h2>Collezione</h2>
+    <p style="color:var(--muted);">Qui metteremo le carte treno</p>
+  </div>
+
+  <!-- PAGINA PROFILO -->
+  <div id="pageProfile" style="display:none;">
+    <h2>Profilo</h2>
+    <p style="color:var(--muted);">Statistiche giocatore</p>
+  </div>
+
+</div>
+
+<!-- NAVBAR -->
+<div class="bottom-nav">
+
+  <div class="nav-btn active" onclick="showPage('Station',this)">
+    <div class="nav-icon">🏛️</div>
+    Stazione
+  </div>
+
+  <div class="nav-btn" onclick="showPage('Bets',this)">
+    <div class="nav-icon">🎲</div>
+    Scommesse
+  </div>
+
+  <div class="nav-btn" onclick="showPage('Collection',this)">
+    <div class="nav-icon">🃏</div>
+    Carte
+  </div>
+
+  <div class="nav-btn" onclick="showPage('Profile',this)">
+    <div class="nav-icon">👤</div>
+    Profilo
+  </div>
+
+</div>

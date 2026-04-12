@@ -234,3 +234,53 @@ transition:.3s;
   </div>
 
 </div>
+<!-- POPUP -->
+<div class="popup" id="popup">
+  <h3 style="margin-bottom:8px;">Scommessa</h3>
+  <p style="color:var(--muted); margin-bottom:14px;">Qui dopo mettiamo il popup completo con slider, puntata e risultato.</p>
+  <button onclick="closePopup()" style="
+    background:var(--blue);
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:12px;
+    font-weight:700;
+    cursor:pointer;
+  ">
+    Chiudi
+  </button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Messaggio</div>
+
+<script>
+function showPage(name, btn){
+  document.getElementById('pageStation').style.display = 'none';
+  document.getElementById('pageBets').style.display = 'none';
+  document.getElementById('pageCollection').style.display = 'none';
+  document.getElementById('pageProfile').style.display = 'none';
+
+  document.getElementById('page' + name).style.display = 'block';
+
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+function openBet(){
+  document.getElementById('popup').classList.add('open');
+}
+
+function closePopup(){
+  document.getElementById('popup').classList.remove('open');
+}
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 1800);
+}
+</script>

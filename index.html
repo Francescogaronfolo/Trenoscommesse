@@ -518,7 +518,8 @@ function openBet(){
 }
 
 function closePopup(){
-  document.getElementById('popup').classList.remove('open');
+  const popup = document.getElementById('popup');
+  popup.classList.remove('open');
 }
 
 function showToast(msg){

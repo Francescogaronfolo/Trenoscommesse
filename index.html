@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mappa Ferroviaria V2</title>
+
+<style>
+body{
+  margin:0;
+  background:#d7d3c8;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:sans-serif;
+}
+
+.map{
+  width:1200px;
+  height:600px;
+  background:#e7e3d8;
+  position:relative;
+  border-radius:10px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.25);
+}
+
+/* === LINEE === */
+.line{
+  position:absolute;
+  background:#2e2e2e;
+}
+
+.main{
+  height:10px;
+  width:80%;
+  top:240px;
+  left:10%;
+}
+
+.branch{
+  height:8px;
+}
+
+.vertical{
+  width:8px;
+}
+
+/* === NODI === */
+.node{
+  position:absolute;
+  width:80px;
+  height:80px;
+  border:6px solid #2e2e2e;
+  background:#e7e3d8;
+}
+
+.inner{
+  position:absolute;
+  inset:10px;
+  border:4px solid #2e2e2e;
+}
+
+/* === STAZIONE === */
+.station{
+  width:90px;
+  height:130px;
+  top:260px;
+  left:42%;
+}
+
+.doors{
+  position:absolute;
+  inset:10px;
+  background:repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 6px,
+    #2e2e2e 6px,
+    #2e2e2e 8px
+  );
+}
+
+/* === DEPOSITO === */
+.depot{
+  top:140px;
+  left:10%;
+}
+
+/* === TRENI === */
+.train{
+  position:absolute;
+  width:44px;
+  height:14px;
+  background:#111;
+  border-radius:2px;
+}
+
+.t1{ left:14%; top:232px;}
+.t2{ left:19%; top:232px;}
+
+/* === BINARI PRINCIPALI (pattern realistico) === */
+.tracks{
+  top:120px;
+  left:55%;
+}
+
+.tracks-pattern{
+  position:absolute;
+  inset:10px;
+  background:repeating-linear-gradient(
+    0deg,
+    #2e2e2e,
+    #2e2e2e 2px,
+    transparent 2px,
+    transparent 8px
+  );
+}
+
+/* === CONTROLLO === */
+.control{
+  top:160px;
+  left:72%;
+}
+
+.control-pattern{
+  position:absolute;
+  inset:12px;
+  background:
+    linear-gradient(#2e2e2e 0 0) center/60% 4px no-repeat,
+    linear-gradient(#2e2e2e 0 0) center/4px 60% no-repeat;
+}
+
+/* === MERCI === */
+.cargo{
+  top:230px;
+  left:88%;
+}
+
+.cargo-pattern{
+  position:absolute;
+  inset:10px;
+  background:
+    linear-gradient(#2e2e2e 0 0) 10px 10px/20px 10px no-repeat,
+    linear-gradient(#2e2e2e 0 0) 40px 20px/20px 10px no-repeat,
+    linear-gradient(#2e2e2e 0 0) 25px 40px/20px 10px no-repeat;
+}
+
+/* === ENERGIA === */
+.energy{
+  top:400px;
+  left:55%;
+}
+
+.circle{
+  position:absolute;
+  inset:14px;
+  border:4px solid #2e2e2e;
+  border-radius:50%;
+}
+
+/* === TRASMISSIONE ENERGIA === */
+.energy-line{
+  position:absolute;
+  width:6px;
+  height:140px;
+  left:58%;
+  top:260px;
+  background:repeating-linear-gradient(
+    180deg,
+    #2e2e2e,
+    #2e2e2e 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+/* === RAMI === */
+.branch-left{
+  width:120px;
+  left:10%;
+  top:240px;
+}
+
+.branch-up{
+  height:80px;
+  left:10%;
+  top:160px;
+}
+
+.branch-right{
+  width:140px;
+  left:80%;
+  top:240px;
+}
+
+.branch-down{
+  height:140px;
+  left:58%;
+  top:240px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="map">
+
+<!-- LINEA PRINCIPALE -->
+<div class="line main"></div>
+
+<!-- RAMI -->
+<div class="line branch branch-left"></div>
+<div class="line vertical branch-up"></div>
+<div class="line branch branch-right"></div>
+<div class="line vertical branch-down"></div>
+
+<!-- DEPOSITO -->
+<div class="node depot">
+  <div class="inner"></div>
+</div>
+
+<!-- TRENI -->
+<div class="train t1"></div>
+<div class="train t2"></div>
+
+<!-- STAZIONE -->
+<div class="node station">
+  <div class="inner">
+    <div class="doors"></div>
+  </div>
+</div>
+
+<!-- BINARI PRINCIPALI -->
+<div class="node tracks">
+  <div class="tracks-pattern"></div>
+</div>
+
+<!-- CONTROLLO -->
+<div class="node control">
+  <div class="control-pattern"></div>
+</div>
+
+<!-- MERCI -->
+<div class="node cargo">
+  <div class="cargo-pattern"></div>
+</div>
+
+<!-- ENERGIA -->
+<div class="node energy">
+  <div class="circle"></div>
+</div>
+
+<!-- LINEA ENERGIA -->
+<div class="energy-line"></div>
+
+</div>
+
+</body>
+</html>

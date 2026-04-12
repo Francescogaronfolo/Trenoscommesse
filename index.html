@@ -1,0 +1,106 @@
+<div class="station-map">
+  <div class="map-grid"></div>
+
+  <!-- terreno -->
+  <div class="terrain grass" style="left:-30px; top:-20px; width:250px; height:150px;"></div>
+  <div class="terrain grass" style="right:-20px; top:24px; width:260px; height:140px;"></div>
+  <div class="terrain earth" style="left:220px; top:210px; width:190px; height:112px; transform:rotate(-7deg);"></div>
+  <div class="terrain earth" style="right:120px; top:150px; width:175px; height:92px; transform:rotate(12deg);"></div>
+  <div class="terrain water" style="right:44px; bottom:-36px; width:290px; height:170px; transform:rotate(-22deg);"></div>
+  <div class="terrain water" style="left:-72px; bottom:18px; width:210px; height:104px; transform:rotate(10deg);"></div>
+
+  <!-- aree di servizio -->
+  <div class="service-yard" style="left:84px; top:88px; width:110px; height:84px;"></div>
+  <div class="service-yard" style="left:230px; top:236px; width:138px; height:92px;"></div>
+  <div class="service-yard" style="left:430px; top:80px; width:106px; height:96px;"></div>
+  <div class="service-yard" style="left:585px; top:206px; width:86px; height:104px;"></div>
+  <div class="service-yard" style="left:727px; top:78px; width:130px; height:86px;"></div>
+  <div class="service-yard" style="left:714px; top:205px; width:94px; height:94px;"></div>
+
+  <div class="network">
+
+    <!-- binari principali -->
+    <div class="track track-h sleepers-h" style="left:132px; top:172px; width:350px;"></div>
+    <div class="track track-h sleepers-h" style="left:482px; top:172px; width:168px;"></div>
+
+    <!-- diramazioni -->
+    <div class="track track-v sleepers-v" style="left:462px; top:104px; height:82px;"></div>
+    <div class="track track-v sleepers-v" style="left:292px; top:172px; height:92px;"></div>
+    <div class="track track-h" style="left:292px; top:252px; width:215px;"></div>
+    <div class="track track-v sleepers-v" style="left:632px; top:172px; height:92px;"></div>
+
+    <!-- rete merci / energia -->
+    <div class="track track-h light" style="left:640px; top:250px; width:145px;"></div>
+    <div class="track track-v light sleepers-v" style="left:776px; top:122px; height:142px;"></div>
+    <div class="track track-h light" style="left:690px; top:112px; width:94px;"></div>
+
+    <!-- deposito -->
+    <div class="track track-v sleepers-v" style="left:84px; top:128px; height:58px;"></div>
+    <div class="track track-h" style="left:80px; top:118px; width:64px;"></div>
+    <div class="track track-v sleepers-v" style="left:78px; top:118px; height:120px;"></div>
+    <div class="track track-h" style="left:78px; top:226px; width:222px;"></div>
+
+    <!-- scambi e giunti -->
+    <div class="track-node" style="left:126px; top:166px;"></div>
+    <div class="track-node" style="left:452px; top:166px;"></div>
+    <div class="track-node" style="left:280px; top:246px;"></div>
+    <div class="track-node" style="left:620px; top:244px;"></div>
+    <div class="track-node" style="left:764px; top:106px;"></div>
+    <div class="track-node" style="left:56px; top:214px;"></div>
+
+    <div class="junction" style="left:518px; top:176px;"></div>
+    <div class="junction" style="left:548px; top:176px;"></div>
+    <div class="junction" style="left:578px; top:176px;"></div>
+
+    <!-- tuo treno -->
+    <div class="mini-train" style="left:518px; top:166px;" title="Il tuo treno"></div>
+
+    <!-- deposito -->
+    <div class="station-building" style="left:72px; top:76px;" onclick="openUpgradePopup('train')">
+      <div class="depot-shape">
+        <div class="depot-rails"><span></span><span></span></div>
+      </div>
+      <div class="station-name-tag">Deposito treni</div>
+    </div>
+
+    <!-- tua stazione -->
+    <div class="station-building" style="left:220px; top:228px;" onclick="openUpgradePopup('personal')">
+      <div class="personal-shape"></div>
+      <div class="station-name-tag">La tua stazione</div>
+    </div>
+
+    <!-- binari -->
+    <div class="station-building" style="left:430px; top:78px;" onclick="openUpgradePopup('station')">
+      <div class="tracks-shape"></div>
+      <div class="station-name-tag">Binari principali</div>
+    </div>
+
+    <!-- controllo -->
+    <div class="station-building" style="left:594px; top:206px;" onclick="openUpgradePopup('control')">
+      <div class="control-shape"></div>
+      <div class="station-name-tag">Centro controllo</div>
+    </div>
+
+    <!-- merci -->
+    <div class="station-building" style="left:722px; top:82px;" onclick="openUpgradePopup('logistics')">
+      <div class="cargo-shape"></div>
+      <div class="station-name-tag">Terminale merci</div>
+    </div>
+
+    <!-- energia -->
+    <div class="station-building" style="left:758px; top:198px;" onclick="openUpgradePopup('logistics')">
+      <div class="energy-shape">
+        <div class="energy-cap"></div>
+        <div class="energy-pillar"></div>
+      </div>
+      <div class="station-name-tag">Centrale energia</div>
+    </div>
+
+    <!-- nodo est -->
+    <div class="station-building" style="left:882px; top:106px;" onclick="openUpgradePopup('station')">
+      <div class="node-east-shape"></div>
+      <div class="station-name-tag">Nodo est</div>
+    </div>
+
+  </div>
+</div>

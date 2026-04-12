@@ -461,16 +461,56 @@ transition:.3s;
 <div class="toast" id="toast">Messaggio</div>
 
 <script>
-function showPage(name, btn){
-  document.getElementById('pageStation').style.display = 'none';
-  document.getElementById('pageBets').style.display = 'none';
-  document.getElementById('pageCollection').style.display = 'none';
-  document.getElementById('pageProfile').style.display = 'none';
+function openBet(trainName, route, type){
+  const popup = document.getElementById('popup');
+  popup.classList.add('open');
 
-  document.getElementById('page' + name).style.display = 'block';
+  popup.innerHTML = `
+    <h3 style="margin-bottom:8px; font-family:'Barlow Condensed',sans-serif; font-size:26px;">${trainName}</h3>
+    <p style="color:var(--muted); margin-bottom:6px;">${route}</p>
+    <p style="color:var(--muted); margin-bottom:16px; font-size:13px;">${type}</p>
 
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+    <div style="margin-bottom:10px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;">Ritardo previsto</div>
+
+    <div style="font-size:54px; font-weight:900; font-family:'Barlow Condensed',sans-serif; margin-bottom:10px;">15 <span style="font-size:18px; color:var(--muted);">min</span></div>
+
+    <input type="range" min="0" max="120" value="15" style="width:100%; margin-bottom:18px;" />
+
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:18px;">
+      <button style="padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:white;">50€</button>
+      <button style="padding:10px; border-radius:12px; border:none; background:var(--blue); color:white; font-weight:700;">200€</button>
+      <button style="padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:white;">500€</button>
+      <button style="padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:white;">1k€</button>
+    </div>
+
+    <button onclick="showToast('Scommessa piazzata'); closePopup();" style="
+      width:100%;
+      background:var(--blue);
+      color:white;
+      border:none;
+      padding:14px 16px;
+      border-radius:14px;
+      font-weight:800;
+      font-size:16px;
+      cursor:pointer;
+      margin-bottom:10px;
+    ">
+      Piazza scommessa
+    </button>
+
+    <button onclick="closePopup()" style="
+      width:100%;
+      background:rgba(255,255,255,0.06);
+      color:white;
+      border:1px solid rgba(255,255,255,0.08);
+      padding:12px 16px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+    ">
+      Chiudi
+    </button>
+  `;
 }
 
 function openBet(){

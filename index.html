@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mappa Ferroviaria Realistica</title>
+
+<style>
+body{
+  margin:0;
+  background:#dcd8cf;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:Arial;
+}
+
+.map{
+  width:1400px;
+  height:600px;
+  background:#e6e1d7;
+  border-radius:18px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,0.25);
+}
+
+/* terreno */
+.terrain{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+
+/* binari */
+.track{
+  position:absolute;
+  height:6px;
+  background:#3a3a3a;
+}
+
+.track::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 18px,
+      #8b6f47 18px,
+      #8b6f47 22px
+    );
+}
+
+/* fascio principale */
+.main-track{
+  width:600px;
+}
+
+/* raccordi */
+.curve{
+  border-radius:40px;
+}
+
+/* stazione */
+.station{
+  position:absolute;
+  width:140px;
+  height:70px;
+  background:#4a5563;
+  border-radius:6px;
+  box-shadow:0 6px 14px rgba(0,0,0,0.25);
+}
+
+.platform{
+  position:absolute;
+  width:500px;
+  height:12px;
+  background:#c9c3b6;
+  border-radius:2px;
+}
+
+/* deposito */
+.depot{
+  position:absolute;
+  width:100px;
+  height:60px;
+  background:#5b6675;
+}
+
+/* merci */
+.cargo{
+  position:absolute;
+  width:120px;
+  height:70px;
+  background:#3f5f5a;
+}
+
+/* energia */
+.energy{
+  position:absolute;
+  width:60px;
+  height:80px;
+  background:#666;
+}
+
+/* treno */
+.train{
+  position:absolute;
+  width:60px;
+  height:14px;
+  background:#c0392b;
+  border-radius:4px;
+}
+
+/* strada */
+.road{
+  position:absolute;
+  height:10px;
+  background:#8c8c8c;
+  opacity:0.6;
+}
+
+/* acqua */
+.water{
+  position:absolute;
+  background:#a9cbd3;
+  border-radius:20px;
+}
+
+/* label */
+.label{
+  position:absolute;
+  font-size:12px;
+  color:#333;
+  background:rgba(255,255,255,0.8);
+  padding:2px 6px;
+  border-radius:4px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="map">
+
+<div class="terrain"></div>
+
+<!-- fascio binari centrale -->
+<div class="track main-track" style="top:260px; left:200px;"></div>
+<div class="track main-track" style="top:280px; left:200px;"></div>
+<div class="track main-track" style="top:300px; left:200px;"></div>
+
+<!-- piattaforme -->
+<div class="platform" style="top:252px; left:250px;"></div>
+<div class="platform" style="top:292px; left:250px;"></div>
+
+<!-- stazione -->
+<div class="station" style="top:200px; left:430px;"></div>
+<div class="label" style="top:180px; left:440px;">Stazione Centrale</div>
+
+<!-- deposito raccordo -->
+<div class="track" style="top:280px; left:200px; width:100px;"></div>
+<div class="track curve" style="top:200px; left:120px; width:120px; height:80px;"></div>
+<div class="depot" style="top:140px; left:80px;"></div>
+<div class="label" style="top:120px; left:80px;">Deposito</div>
+
+<!-- terminale merci -->
+<div class="track" style="top:300px; left:800px; width:120px;"></div>
+<div class="track curve" style="top:300px; left:800px; width:120px; height:80px;"></div>
+<div class="cargo" style="top:380px; left:880px;"></div>
+<div class="label" style="top:460px; left:880px;">Terminale merci</div>
+
+<!-- energia -->
+<div class="track" style="top:260px; left:800px; width:100px;"></div>
+<div class="energy" style="top:160px; left:880px;"></div>
+<div class="label" style="top:140px; left:880px;">Energia</div>
+
+<!-- strada -->
+<div class="road" style="top:340px; left:100px; width:1100px;"></div>
+
+<!-- acqua -->
+<div class="water" style="bottom:-40px; right:0; width:300px; height:180px;"></div>
+
+<!-- treno -->
+<div class="train" style="top:282px; left:500px;"></div>
+
+</div>
+
+</body>
+</html>

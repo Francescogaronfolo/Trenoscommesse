@@ -1063,3 +1063,170 @@ body{
     <div class="nav-lbl">Collezione</div>
   </div>
 </div>
+<script>
+
+// NAV
+function showPage(name){
+  const pages = ['Station','Map','Bets','Collection','Profile'];
+
+  pages.forEach(p=>{
+    document.getElementById('page'+p).classList.remove('active');
+    document.getElementById('nav'+p).classList.remove('active');
+  });
+
+  document.getElementById('page'+name).classList.add('active');
+  document.getElementById('nav'+name).classList.add('active');
+
+  if(name === 'Bets') buildBetList();
+  if(name === 'Collection') buildCollection();
+}
+
+// POPUP
+function openPopup(){
+  document.getElementById('overlay').style.display='block';
+  const p=document.getElementById('popup');
+  p.style.display='block';
+  requestAnimationFrame(()=>p.classList.add('open'));
+}
+
+function closePopup(){
+  const p=document.getElementById('popup');
+  p.classList.remove('open');
+  setTimeout(()=>{
+    p.style.display='none';
+    document.getElementById('overlay').style.display='none';
+  },300);
+}
+
+// TOAST
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// BALANCE
+let balance = 1000;
+
+function fmt(n){
+  return n.toLocaleString('it-IT')+'€';
+}
+
+function updateUI(){
+  document.getElementById('balBox').textContent = fmt(balance);
+  document.getElementById('scBal').textContent = fmt(balance);
+}
+
+// BETS (semplice demo migliorabile)
+const trains = [
+  {name:'Frecciarossa', route:'Roma → Milano'},
+  {name:'InterCity', route:'Venezia → Roma'},
+  {name:'Regionale', route:'Bari → Taranto'}
+];
+
+function buildBetList(){
+  document.getElementById('betList').innerHTML = trains.map((t,i)=>`
+    <div class="bet-card" onclick="fakeBet(${i})">
+      <div class="bet-card-inner">
+        <div class="train-visual">🚄</div>
+        <div class="bet-info">
+          <div class="bet-name">${t.name}</div>
+          <div class="bet-route">${t.route}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function fakeBet(){
+  const win = Math.random()>0.5;
+  if(win){
+    balance += 100;
+    showToast('Hai vinto! +100€');
+  }else{
+    balance -= 100;
+    showToast('Hai perso! -100€');
+  }
+  updateUI();
+}
+
+// COLLECTION
+function buildCollection(){
+  document.getElementById('collectionGrid').innerHTML = trains.map(t=>`
+    <div class="coll-card owned">
+      <div class="card-name">${t.name}</div>
+      <div class="card-driver">Macchinista</div>
+    </div>
+  `).join('');
+}
+
+// MAP CANVAS (versione migliorata semplice)
+const mapCanvas = document.getElementById('italyCanvas');
+if(mapCanvas){
+  const ctx = mapCanvas.getContext('2d');
+
+  function drawMap(){
+    const w = mapCanvas.clientWidth;
+    const h = mapCanvas.clientHeight;
+
+    mapCanvas.width = w;
+    mapCanvas.height = h;
+
+    ctx.clearRect(0,0,w,h);
+
+    // mare
+    ctx.fillStyle='#0e1e38';
+    ctx.fillRect(0,0,w,h);
+
+    // punti città
+    const points = [
+      [0.3,0.2],
+      [0.5,0.4],
+      [0.4,0.7]
+    ];
+
+    points.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p[0]*w,p[1]*h,10,0,Math.PI*2);
+      ctx.fillStyle='#00bfa5';
+      ctx.fill();
+    });
+  }
+
+  drawMap();
+  window.addEventListener('resize',drawMap);
+}
+
+// ISO CANVAS placeholder (puoi migliorarlo dopo)
+const isoCanvas = document.getElementById('isoCanvas');
+if(isoCanvas){
+  const ctx = isoCanvas.getContext('2d');
+
+  function drawIso(){
+    const w = isoCanvas.clientWidth;
+    const h = isoCanvas.clientHeight;
+
+    isoCanvas.width = w;
+    isoCanvas.height = h;
+
+    ctx.fillStyle='#0d2040';
+    ctx.fillRect(0,0,w,h);
+
+    ctx.fillStyle='#fff';
+    ctx.font='20px sans-serif';
+    ctx.fillText('Stazione (upgrade futuro)',20,40);
+  }
+
+  drawIso();
+  window.addEventListener('resize',drawIso);
+}
+
+// INIT
+updateUI();
+buildBetList();
+
+</script>
+
+</body>
+</html>

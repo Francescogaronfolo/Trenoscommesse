@@ -25,6 +25,12 @@
       --muted:#7a6a5a;
       --shadow:0 6px 24px rgba(0,0,0,0.10);
       --shadow-lg:0 12px 40px rgba(0,0,0,0.16);
+
+      --neutral-1:#e9e3da;
+      --neutral-2:#d7d0c6;
+      --neutral-3:#948a7f;
+      --neutral-4:#5c6670;
+      --neutral-5:#313b44;
     }
 
     *{box-sizing:border-box;margin:0;padding:0}
@@ -37,7 +43,6 @@
       min-height:100vh;
     }
 
-    /* ── TOPBAR ── */
     .topbar{
       position:sticky;
       top:0;
@@ -78,7 +83,6 @@
       50%{transform:scale(1.12)}
     }
 
-    /* ── PAGES ── */
     .container{
       max-width:520px;
       margin:0 auto;
@@ -101,7 +105,7 @@
       margin-bottom:20px;
     }
 
-    /* ── METRO MAP ── */
+    /* MAPPA */
     .metro-wrap{
       position:relative;
       background:var(--navy);
@@ -113,13 +117,12 @@
       border:1px solid rgba(255,255,255,0.06);
     }
 
-    .metro-canvas{
+    #metroCanvas{
+      display:block;
       width:100%;
       height:100%;
-      display:block;
     }
 
-    /* station cards */
     .upgrade-grid{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -149,12 +152,8 @@
       right:0;
       height:4px;
       border-radius:20px 20px 0 0;
+      background:linear-gradient(90deg,var(--neutral-4),var(--neutral-3));
     }
-
-    .upg-card.c-red::before{background:var(--red)}
-    .upg-card.c-blue::before{background:var(--blue)}
-    .upg-card.c-teal::before{background:var(--teal)}
-    .upg-card.c-gold::before{background:var(--gold)}
 
     .upg-lbl{
       font-size:11px;
@@ -178,7 +177,7 @@
       margin-top:6px;
     }
 
-    /* ── SCOMMESSE ── */
+    /* SCOMMESSE */
     .train-cards{
       display:grid;
       gap:14px;
@@ -196,11 +195,7 @@
     }
 
     .t-card:active{transform:scale(.98)}
-
-    .t-bg{
-      position:absolute;
-      inset:0;
-    }
+    .t-bg{position:absolute;inset:0}
 
     .t-av .t-bg{background:linear-gradient(135deg,#c0392b 0%,#8e1414 55%,#3d0808 100%)}
     .t-ic .t-bg{background:linear-gradient(135deg,#1a5faa 0%,#0e3a6e 55%,#071f3c 100%)}
@@ -305,7 +300,6 @@
     .chip-yellow{background:rgba(200,160,20,.7);color:#fff}
     .chip-green{background:rgba(30,160,80,.7);color:#fff}
 
-    /* board */
     .board{
       background:#0a1c2e;
       border-radius:20px;
@@ -335,17 +329,14 @@
       padding-bottom:12px;
     }
 
-    .board-row{
-      border-bottom:1px solid rgba(232,200,112,.07);
-    }
-
+    .board-row{border-bottom:1px solid rgba(232,200,112,.07)}
     .board-row:last-child{border:none}
 
     .s-ok{color:#4ddb90}
     .s-mid{color:#f5c842}
     .s-bad{color:#f06060}
 
-    /* ── PROFILO ── */
+    /* PROFILO */
     .profile-hero{
       background:var(--navy);
       border-radius:24px;
@@ -465,7 +456,7 @@
       color:var(--navy);
     }
 
-    /* ── POPUP ── */
+    /* POPUP */
     .overlay{
       position:fixed;
       inset:0;
@@ -553,12 +544,7 @@
       width:100%;
       height:6px;
       appearance:none;
-      background:linear-gradient(
-        to right,
-        var(--navy) 0%,
-        var(--navy) var(--pct,12.5%),
-        #ddd var(--pct,12.5%)
-      );
+      background:linear-gradient(to right,var(--navy) 0%,var(--navy) var(--pct,12.5%),#ddd var(--pct,12.5%));
       border-radius:3px;
       outline:none;
       cursor:pointer;
@@ -575,9 +561,7 @@
       transition:transform .1s;
     }
 
-    input[type=range]:active::-webkit-slider-thumb{
-      transform:scale(1.15);
-    }
+    input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15)}
 
     .slider-labels{
       display:flex;
@@ -690,7 +674,7 @@
     .result-amount.win{color:var(--green)}
     .result-amount.lose{color:var(--red)}
 
-    /* ── BOTTOM NAV ── */
+    /* NAV */
     .bottom-nav{
       position:fixed;
       bottom:0;
@@ -748,19 +732,11 @@
       transform:translateY(-8px);
     }
 
-    .nav-btn.center-btn.active .nav-icon{
-      transform:translateY(-12px);
-    }
+    .nav-btn.center-btn.active .nav-icon{transform:translateY(-12px)}
 
     .nav-lbl{
       font-size:12px;
       font-weight:700;
-    }
-
-    #metroCanvas{
-      display:block;
-      width:100%;
-      height:100%;
     }
 
     .toast{
@@ -818,7 +794,6 @@
 
   <div class="container">
 
-    <!-- PAGE: STAZIONE -->
     <div id="pageStation" class="page active">
       <div class="section-title">La tua stazione</div>
       <div class="section-sub">Potenzia la rete per migliorare le scommesse.</div>
@@ -828,30 +803,32 @@
       </div>
 
       <div class="upgrade-grid">
-        <div class="upg-card c-red" onclick="openUpgrade('train')">
+        <div class="upg-card" onclick="openUpgrade('train')">
           <div class="upg-lbl">Deposito treni</div>
           <div class="upg-val" id="lvTrain">1</div>
           <div class="upg-sub">riduce la variabilità</div>
         </div>
-        <div class="upg-card c-blue" onclick="openUpgrade('station')">
-          <div class="upg-lbl">Binari</div>
+
+        <div class="upg-card" onclick="openUpgrade('station')">
+          <div class="upg-lbl">Binari principali</div>
           <div class="upg-val" id="lvStation">1</div>
           <div class="upg-sub">abbassa il ritardo medio</div>
         </div>
-        <div class="upg-card c-teal" onclick="openUpgrade('control')">
-          <div class="upg-lbl">Controllo</div>
+
+        <div class="upg-card" onclick="openUpgrade('control')">
+          <div class="upg-lbl">Centro controllo</div>
           <div class="upg-val" id="lvControl">1</div>
           <div class="upg-sub">aumenta la finestra utile</div>
         </div>
-        <div class="upg-card c-gold" onclick="openUpgrade('logistics')">
-          <div class="upg-lbl">Logistica</div>
+
+        <div class="upg-card" onclick="openUpgrade('logistics')">
+          <div class="upg-lbl">Terminale merci</div>
           <div class="upg-val" id="lvLogistics">1</div>
           <div class="upg-sub">alza la rendita passiva</div>
         </div>
       </div>
     </div>
 
-    <!-- PAGE: SCOMMESSE -->
     <div id="pageBets" class="page">
       <div class="section-title">Scommesse</div>
       <div class="section-sub">Scommetti sui minuti di ritardo.</div>
@@ -910,7 +887,6 @@
       </div>
     </div>
 
-    <!-- PAGE: PROFILO -->
     <div id="pageProfile" class="page">
       <div class="section-title">Profilo</div>
       <div class="section-sub">Le tue statistiche e la classifica.</div>
@@ -958,7 +934,6 @@
     </div>
   </div>
 
-  <!-- OVERLAY + POPUP -->
   <div class="overlay" id="overlay" onclick="closePopup()"></div>
 
   <div class="popup" id="popup">
@@ -981,7 +956,7 @@
       </div>
 
       <div class="pop-label">Puntata</div>
-      <div class="chips" id="chipRow">
+      <div class="chips">
         <button class="chip" onclick="selChip(50,this)">50€</button>
         <button class="chip active" onclick="selChip(200,this)">200€</button>
         <button class="chip" onclick="selChip(500,this)">500€</button>
@@ -1020,7 +995,6 @@
   <div class="toast" id="toast"></div>
   <div class="income-flash" id="incFlash"></div>
 
-  <!-- BOTTOM NAV -->
   <div class="bottom-nav">
     <div class="nav-btn" id="navProfile" onclick="showPage('profile')">
       <div class="nav-icon">PR</div>
@@ -1039,9 +1013,6 @@
   </div>
 
   <script>
-    // ─────────────────────────────
-    // STATE
-    // ─────────────────────────────
     let balance = 1000;
     let selectedBet = 200;
     let selectedTrainIdx = 0;
@@ -1064,9 +1035,6 @@
       { name: "Linea B-2",   route: "PA→ME",   time: "12:40", delay: "+22",      sc: "s-bad" }
     ];
 
-    // ─────────────────────────────
-    // HELPERS
-    // ─────────────────────────────
     function fmt(n) {
       return n.toLocaleString("it-IT") + "€";
     }
@@ -1099,8 +1067,8 @@
       if (Math.random() < Math.max(0.03, 0.10 - (levels.station * 0.006))) {
         d += 20 + Math.random() * 20;
       }
-
       if (Math.random() < 0.05) d = 0;
+
       return Math.max(0, Math.round(d));
     }
 
@@ -1110,17 +1078,15 @@
       return Math.round(bet * cb * pb);
     }
 
-    // ─────────────────────────────
-    // METRO MAP CANVAS
-    // ─────────────────────────────
     const COLORS = {
       red: "#e03030",
       blue: "#2979c8",
       teal: "#1ab8a0",
       yellow: "#e8a820",
       orange: "#e86820",
-      purple: "#7c5cbf",
-      green: "#28a060"
+      neutralDark: "#303a43",
+      neutralMid: "#7f8a93",
+      neutralLight: "#d8d2c8"
     };
 
     function drawMetro() {
@@ -1142,14 +1108,19 @@
       const H = logicalHeight;
       const s = W / 600;
 
-      // background
+      // sfondo
       const bg = ctx.createLinearGradient(0, 0, W, H);
-      bg.addColorStop(0, "#173955");
-      bg.addColorStop(1, "#0c2032");
+      bg.addColorStop(0, "#183751");
+      bg.addColorStop(1, "#0c1f30");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, W, H);
 
-      // subtle grid
+      // terreno leggero
+      drawBlob(ctx, 70*s, 300*s, 110*s, 60*s, "rgba(255,255,255,0.035)");
+      drawBlob(ctx, 490*s, 95*s, 120*s, 90*s, "rgba(255,255,255,0.03)");
+      drawBlob(ctx, 455*s, 355*s, 135*s, 72*s, "rgba(255,255,255,0.025)");
+
+      // griglia
       ctx.strokeStyle = "rgba(255,255,255,0.035)";
       ctx.lineWidth = 1;
       for (let x = 0; x < W; x += 30 * s) {
@@ -1165,53 +1136,67 @@
         ctx.stroke();
       }
 
-      // Lines
-      drawLine(ctx, s, COLORS.red, [
-        [60,180],[160,180],[280,180],[380,180],[500,180],[560,120]
-      ]);
-      drawLine(ctx, s, COLORS.blue, [
-        [80,320],[180,220],[280,180],[360,260],[460,300],[520,380]
-      ]);
-      drawLine(ctx, s, COLORS.teal, [
-        [100,400],[200,360],[300,320],[380,340],[460,300]
-      ]);
-      drawLine(ctx, s, COLORS.yellow, [
-        [280,60],[280,180],[280,300],[300,380]
-      ]);
-      drawLine(ctx, s, COLORS.orange, [
-        [380,120],[380,180],[380,260],[400,340]
-      ]);
+      // linee ferroviarie
+      const redLine = [[70,190],[160,190],[255,190],[340,190],[430,190],[510,155]];
+      const blueLine = [[110,325],[190,250],[255,190],[330,240],[410,290],[500,335]];
+      const tealLine = [[110,405],[195,370],[275,335],[355,345],[430,300]];
+      const yellowLine = [[275,75],[275,145],[275,190],[275,250],[290,340]];
+      const orangeLine = [[430,120],[430,190],[430,250],[430,300]];
 
-      const stations = [
-        {x:60,  y:180, name:"Deposito",  lines:[COLORS.red],                           lv:levels.train},
-        {x:160, y:180, name:"Binari",    lines:[COLORS.red],                           lv:levels.station},
-        {x:280, y:180, name:"Centrale",  lines:[COLORS.red, COLORS.blue, COLORS.yellow], lv:3},
-        {x:280, y:60,  name:"Nord",      lines:[COLORS.yellow],                        lv:1},
-        {x:380, y:180, name:"Controllo", lines:[COLORS.red, COLORS.blue, COLORS.orange], lv:levels.control},
-        {x:460, y:300, name:"Logistica", lines:[COLORS.blue, COLORS.teal],            lv:levels.logistics},
-        {x:560, y:120, name:"Ovest",     lines:[COLORS.red],                           lv:1},
-        {x:520, y:380, name:"Est",       lines:[COLORS.blue],                          lv:1},
-        {x:100, y:400, name:"Sud",       lines:[COLORS.teal],                          lv:1},
-        {x:300, y:380, name:"Giunzione", lines:[COLORS.teal, COLORS.yellow],           lv:1}
-      ];
+      drawLine(ctx, s, COLORS.red, redLine);
+      drawLine(ctx, s, COLORS.blue, blueLine);
+      drawLine(ctx, s, COLORS.teal, tealLine);
+      drawLine(ctx, s, COLORS.yellow, yellowLine);
+      drawLine(ctx, s, COLORS.orange, orangeLine);
 
-      stations.forEach(st => drawStation(ctx, s, st.x, st.y, st.lines, st.name, st.lv));
+      // nodi linea
+      drawNode(ctx, s, 255, 190, [COLORS.red, COLORS.blue, COLORS.yellow]);
+      drawNode(ctx, s, 430, 190, [COLORS.red, COLORS.orange]);
+      drawNode(ctx, s, 430, 300, [COLORS.orange, COLORS.teal]);
+      drawNode(ctx, s, 290, 340, [COLORS.yellow, COLORS.teal]);
 
-      drawTrainOnTrack(ctx, s, COLORS.red,  metroAnim.t1);
-      drawTrainOnTrack(ctx, s, COLORS.blue, metroAnim.t2);
-      drawTrainOnTrack(ctx, s, COLORS.teal, metroAnim.t3);
+      // infrastrutture dallo schema
+      drawDepot(ctx, s, 52, 148, levels.train);               // deposito treni
+      drawMainTracksBlock(ctx, s, 245, 58, levels.station);   // binari principali
+      drawControlBlock(ctx, s, 350, 125, levels.control);     // centro controllo
+      drawFreightBlock(ctx, s, 428, 155, levels.logistics);   // terminale merci
+      drawEnergyBlock(ctx, s, 355, 300);                      // centrale energia
+      drawPlayerStation(ctx, s, 205, 205);                    // tua stazione
+
+      // collegamenti strutture
+      drawInfraLink(ctx, s, [[95,188],[95,150],[82,150]]);
+      drawInfraLink(ctx, s, [[255,190],[255,135],[273,135]]);
+      drawInfraLink(ctx, s, [[348,190],[348,160],[350,160]]);
+      drawInfraLink(ctx, s, [[430,190],[430,187],[428,187]]);
+      drawInfraLink(ctx, s, [[255,190],[215,190],[215,242]]);
+      drawInfraLink(ctx, s, [[355,300],[320,250],[320,215]]);
+
+      // trasmissione energia
+      drawEnergyTransmission(ctx, s, [[378,300],[350,270],[325,235]]);
+
+      // treni piccoli
+      drawTrainOnTrack(ctx, s, COLORS.red, redLine, metroAnim.t1);
+      drawTrainOnTrack(ctx, s, COLORS.blue, blueLine, metroAnim.t2);
+      drawTrainOnTrack(ctx, s, COLORS.teal, tealLine, metroAnim.t3);
+    }
+
+    function drawBlob(ctx, x, y, w, h, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(x, y, w, h, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
 
     function drawLine(ctx, s, color, points) {
       ctx.save();
-
       ctx.shadowColor = color;
       ctx.shadowBlur = 12;
       ctx.strokeStyle = color;
       ctx.lineWidth = 7 * s;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-
       ctx.beginPath();
       points.forEach(([x, y], i) => {
         if (i === 0) ctx.moveTo(x * s, y * s);
@@ -1220,7 +1205,7 @@
       ctx.stroke();
 
       ctx.shadowBlur = 0;
-      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.strokeStyle = "rgba(255,255,255,0.16)";
       ctx.lineWidth = 2 * s;
       ctx.beginPath();
       points.forEach(([x, y], i) => {
@@ -1228,67 +1213,224 @@
         else ctx.lineTo(x * s, y * s);
       });
       ctx.stroke();
-
       ctx.restore();
     }
 
-    function drawStation(ctx, s, x, y, lines, name, lv) {
-      const cx = x * s;
-      const cy = y * s;
-      const r = lv >= 3 ? 16 * s : lv >= 2 ? 13 * s : 10 * s;
-
-      ctx.save();
-      ctx.shadowColor = "rgba(255,255,255,0.3)";
-      ctx.shadowBlur = 16;
+    function drawNode(ctx, s, x, y, colors) {
+      const cx = x*s;
+      const cy = y*s;
+      const r = 12*s;
       ctx.beginPath();
-      ctx.arc(cx, cy, r + 3 * s, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255,255,255,0.12)";
+      ctx.arc(cx, cy, r+2*s, 0, Math.PI*2);
+      ctx.fillStyle = "#ffffff";
       ctx.fill();
-      ctx.restore();
+
+      const slice = (Math.PI*2)/colors.length;
+      colors.forEach((c,i)=>{
+        ctx.beginPath();
+        ctx.moveTo(cx,cy);
+        ctx.arc(cx,cy,r-2*s,i*slice,(i+1)*slice);
+        ctx.closePath();
+        ctx.fillStyle = c;
+        ctx.fill();
+      });
 
       ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 3.5*s, 0, Math.PI*2);
       ctx.fillStyle = "#fff";
       ctx.fill();
-
-      if (lines.length > 1) {
-        const slice = (Math.PI * 2) / lines.length;
-        lines.forEach((c, i) => {
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.arc(cx, cy, r - 3 * s, i * slice, (i + 1) * slice);
-          ctx.closePath();
-          ctx.fillStyle = c;
-          ctx.fill();
-        });
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, 4 * s, 0, Math.PI * 2);
-        ctx.fillStyle = "#fff";
-        ctx.fill();
-      } else {
-        ctx.beginPath();
-        ctx.arc(cx, cy, r - 3 * s, 0, Math.PI * 2);
-        ctx.fillStyle = lines[0];
-        ctx.fill();
-      }
-
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
-      ctx.font = `bold ${10 * s}px -apple-system,sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "top";
-      ctx.fillText(name, cx, cy + r + 5 * s);
     }
 
-    function drawTrainOnTrack(ctx, s, color, progress) {
-      const paths = {
-        [COLORS.red]:  [[60,180],[160,180],[280,180],[380,180],[500,180],[560,120]],
-        [COLORS.blue]: [[80,320],[180,220],[280,180],[360,260],[460,300],[520,380]],
-        [COLORS.teal]: [[100,400],[200,360],[300,320],[380,340],[460,300]]
-      };
-      const path = paths[color];
-      if (!path) return;
+    function drawInfraBase(ctx, s, x, y, w, h) {
+      const X = x*s, Y = y*s, W = w*s, H = h*s;
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,0.22)";
+      roundRect(ctx, X + 8*s, Y + 10*s, W, H, 12*s);
+      ctx.fill();
 
+      ctx.fillStyle = COLORS.neutralDark;
+      roundRect(ctx, X, Y, W, H, 12*s);
+      ctx.fill();
+
+      ctx.fillStyle = "#e9e5dd";
+      roundRect(ctx, X + 9*s, Y + 9*s, W - 18*s, H - 18*s, 8*s);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawDepot(ctx, s, x, y, lv) {
+      drawInfraBase(ctx, s, x, y, 54, 54);
+
+      const X = x*s, Y = y*s;
+      // quadrato interno
+      ctx.strokeStyle = COLORS.neutralDark;
+      ctx.lineWidth = 3*s;
+      ctx.strokeRect(X + 16*s, Y + 15*s, 22*s, 22*s);
+
+      // due mini treni sotto
+      drawMiniTrainStatic(ctx, s, x + 4, y + 58, 0.88);
+      drawMiniTrainStatic(ctx, s, x + 4, y + 78, 0.88);
+    }
+
+    function drawMainTracksBlock(ctx, s, x, y, lv) {
+      drawInfraBase(ctx, s, x, y, 52, 72);
+      const X = x*s, Y = y*s;
+      ctx.fillStyle = COLORS.neutralDark;
+      for (let i = 0; i < 4; i++) {
+        ctx.fillRect(X + (12 + i*7)*s, Y + 10*s, 2*s, 40*s);
+      }
+      for (let i = 0; i < 5; i++) {
+        ctx.fillRect(X + 10*s, Y + (16 + i*7)*s, 32*s, 1.6*s);
+      }
+
+      // modulo basso
+      roundRect(ctx, X + 11*s, Y + 46*s, 30*s, 16*s, 5*s);
+      ctx.fillStyle = "#d8d2c8";
+      ctx.fill();
+
+      ctx.fillStyle = COLORS.neutralDark;
+      roundRect(ctx, X + 17*s, Y + 51*s, 4*s, 6*s, 2*s);
+      ctx.fill();
+      roundRect(ctx, X + 30*s, Y + 51*s, 4*s, 6*s, 2*s);
+      ctx.fill();
+    }
+
+    function drawControlBlock(ctx, s, x, y, lv) {
+      drawInfraBase(ctx, s, x, y, 34, 64);
+      const X = x*s, Y = y*s;
+
+      ctx.fillStyle = "rgba(140,130,120,0.35)";
+      ctx.beginPath();
+      ctx.moveTo(X + 13*s, Y + 14*s);
+      ctx.lineTo(X + 26*s, Y + 14*s);
+      ctx.lineTo(X + 21*s, Y + 49*s);
+      ctx.lineTo(X + 8*s, Y + 49*s);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = COLORS.neutralDark;
+      ctx.lineWidth = 2*s;
+      ctx.strokeRect(X + 12*s, Y + 13*s, 12*s, 34*s);
+    }
+
+    function drawFreightBlock(ctx, s, x, y, lv) {
+      drawInfraBase(ctx, s, x, y, 58, 32);
+      const X = x*s, Y = y*s;
+
+      ctx.strokeStyle = COLORS.neutralDark;
+      ctx.lineWidth = 2.2*s;
+      ctx.strokeRect(X + 10*s, Y + 8*s, 18*s, 16*s);
+      ctx.strokeRect(X + 28*s, Y + 8*s, 18*s, 16*s);
+
+      // merci
+      ctx.fillStyle = "#b9b1a4";
+      for (let i = 0; i < 4; i++) {
+        roundRect(ctx, X + (11 + i*6)*s, Y + 36*s, 4*s, 4*s, 1*s);
+        ctx.fill();
+      }
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.arc(X + (38 + i*5)*s, Y + 38*s, 2*s, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    function drawEnergyBlock(ctx, s, x, y) {
+      drawInfraBase(ctx, s, x, y, 64, 64);
+      const X = x*s, Y = y*s;
+
+      ctx.beginPath();
+      ctx.arc(X + 32*s, Y + 32*s, 20*s, 0, Math.PI*2);
+      ctx.strokeStyle = COLORS.neutralDark;
+      ctx.lineWidth = 4*s;
+      ctx.stroke();
+    }
+
+    function drawPlayerStation(ctx, s, x, y) {
+      drawInfraBase(ctx, s, x, y, 44, 82);
+      const X = x*s, Y = y*s;
+
+      ctx.fillStyle = "rgba(140,130,120,0.25)";
+      roundRect(ctx, X + 10*s, Y + 12*s, 24*s, 58*s, 6*s);
+      ctx.fill();
+
+      ctx.strokeStyle = COLORS.neutralDark;
+      ctx.lineWidth = 2*s;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(X + 35*s, Y + (16 + i*11)*s);
+        ctx.lineTo(X + 39*s, Y + (16 + i*11)*s);
+        ctx.stroke();
+      }
+    }
+
+    function drawInfraLink(ctx, s, points) {
+      ctx.save();
+      ctx.strokeStyle = "#d8d2c8";
+      ctx.lineWidth = 5*s;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      points.forEach(([x,y],i)=>{
+        if(i===0) ctx.moveTo(x*s,y*s);
+        else ctx.lineTo(x*s,y*s);
+      });
+      ctx.stroke();
+
+      ctx.strokeStyle = COLORS.neutralDark;
+      ctx.lineWidth = 2.2*s;
+      ctx.beginPath();
+      points.forEach(([x,y],i)=>{
+        if(i===0) ctx.moveTo(x*s,y*s);
+        else ctx.lineTo(x*s,y*s);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawEnergyTransmission(ctx, s, points) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(220,215,205,0.75)";
+      ctx.lineWidth = 1.6*s;
+      ctx.setLineDash([5*s, 5*s]);
+
+      for (let offset = -5; offset <= 5; offset += 10) {
+        ctx.beginPath();
+        points.forEach(([x, y], i) => {
+          const px = (x + offset)*s;
+          const py = y*s;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+      }
+
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    function drawMiniTrainStatic(ctx, s, x, y, scale=1) {
+      const X = x*s;
+      const Y = y*s;
+      const w = 22*s*scale;
+      const h = 8*s*scale;
+
+      ctx.fillStyle = COLORS.neutralDark;
+      roundRect(ctx, X, Y, w, h, 3*s);
+      ctx.fill();
+
+      ctx.fillStyle = "#d8d2c8";
+      roundRect(ctx, X + 3*s, Y + 2*s, 8*s, 3*s, 1.5*s);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(X + 5*s, Y + h + 1.2*s, 1.6*s, 0, Math.PI*2);
+      ctx.arc(X + 17*s, Y + h + 1.2*s, 1.6*s, 0, Math.PI*2);
+      ctx.fillStyle = "#20262b";
+      ctx.fill();
+    }
+
+    function drawTrainOnTrack(ctx, s, color, path, progress) {
       let totalLen = 0;
       const segs = [];
 
@@ -1319,22 +1461,21 @@
       ctx.translate(tx * s, ty * s);
       ctx.rotate(angle);
 
-      const tw = 28 * s;
-      const th = 13 * s;
+      const tw = 26 * s;
+      const th = 11 * s;
       ctx.shadowColor = color;
       ctx.shadowBlur = 10;
       ctx.fillStyle = color;
-
       roundRect(ctx, -tw / 2, -th / 2, tw, th, 4 * s);
       ctx.fill();
 
-      ctx.fillStyle = "rgba(255,255,255,0.5)";
-      ctx.fillRect(-tw / 2 + 4 * s, -4 * s, tw - 8 * s, 8 * s);
+      ctx.fillStyle = "rgba(255,255,255,0.55)";
+      ctx.fillRect(-tw / 2 + 4 * s, -3.5 * s, tw - 9 * s, 7 * s);
 
       ctx.beginPath();
-      ctx.moveTo(tw / 2, -th / 2 + 4 * s);
-      ctx.lineTo(tw / 2 + 6 * s, 0);
-      ctx.lineTo(tw / 2, th / 2 - 4 * s);
+      ctx.moveTo(tw / 2, -th / 2 + 3 * s);
+      ctx.lineTo(tw / 2 + 5 * s, 0);
+      ctx.lineTo(tw / 2, th / 2 - 3 * s);
       ctx.fillStyle = color;
       ctx.fill();
 
@@ -1371,9 +1512,6 @@
 
     window.addEventListener("resize", drawMetro);
 
-    // ─────────────────────────────
-    // BOARD
-    // ─────────────────────────────
     function buildBoard() {
       const body = document.getElementById("boardBody");
       body.innerHTML = boardData.map(r => `
@@ -1386,9 +1524,6 @@
       `).join("");
     }
 
-    // ─────────────────────────────
-    // POPUP HELPERS
-    // ─────────────────────────────
     function openPopup() {
       const ov = document.getElementById("overlay");
       const pp = document.getElementById("popup");
@@ -1414,9 +1549,6 @@
       document.getElementById(id).style.display = "block";
     }
 
-    // ─────────────────────────────
-    // BET FLOW
-    // ─────────────────────────────
     function openBet(idx) {
       selectedTrainIdx = idx;
       const t = trains[idx];
@@ -1489,14 +1621,11 @@
       bumpBalance();
     }
 
-    // ─────────────────────────────
-    // UPGRADE FLOW
-    // ─────────────────────────────
     const upgradeNames = {
       train: "Deposito treni",
-      station: "Binari",
+      station: "Binari principali",
       control: "Centro controllo",
-      logistics: "Logistica"
+      logistics: "Terminale merci"
     };
 
     function openUpgrade(key) {
@@ -1545,9 +1674,6 @@
       openUpgrade(currentUpgradeKey);
     }
 
-    // ─────────────────────────────
-    // PAGE NAV
-    // ─────────────────────────────
     function showPage(name) {
       ["station", "bets", "profile"].forEach(p => {
         document.getElementById("page" + p.charAt(0).toUpperCase() + p.slice(1)).classList.remove("active");
@@ -1560,9 +1686,6 @@
       if (name === "profile") updateRanking();
     }
 
-    // ─────────────────────────────
-    // UI UPDATE
-    // ─────────────────────────────
     function updateUI() {
       const b = fmt(balance);
       document.getElementById("balBox").textContent = b;
@@ -1626,7 +1749,6 @@
       setTimeout(() => t.classList.remove("show"), 2200);
     }
 
-    // passive income
     setInterval(() => {
       const inc = income();
       balance += inc;
@@ -1638,7 +1760,6 @@
       setTimeout(() => f.classList.remove("show"), 1800);
     }, 60000);
 
-    // INIT
     buildBoard();
     updateUI();
   </script>

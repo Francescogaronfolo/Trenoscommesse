@@ -832,3 +832,234 @@ body{
 }
 
 .toast.show{opacity:1;}
+.nav-btn.active .nav-icon{
+  background:var(--blue);
+  box-shadow:0 8px 20px rgba(41,121,255,0.35);
+}
+
+.nav-btn.center-btn.active .nav-icon{
+  box-shadow:0 12px 30px rgba(240,180,41,0.5);
+}
+
+.nav-lbl{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.03em;
+}
+
+.income-flash{
+  position:fixed;
+  top:66px;
+  right:16px;
+  background:rgba(0,200,83,0.9);
+  color:#000;
+  padding:7px 12px;
+  border-radius:12px;
+  font-weight:800;
+  font-size:13px;
+  opacity:0;
+  transform:translateY(0);
+  transition:all .4s;
+  z-index:400;
+  pointer-events:none;
+}
+
+.income-flash.show{
+  opacity:1;
+  transform:translateY(-6px);
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Treno<span>Scommesse</span></div>
+  <div class="top-right">
+    <button class="map-toggle-btn" id="mapToggleBtn" onclick="toggleMapMode()">🗺️ RETE</button>
+    <div class="balance-pill" id="balBox">1.000€</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div id="pageStation" class="page active">
+    <div class="sec-hd">
+      <div class="sec-title">La tua Stazione</div>
+      <div class="sec-sub">Tocca gli edifici per potenziarli.</div>
+    </div>
+    <div class="iso-wrap">
+      <canvas id="isoCanvas"></canvas>
+    </div>
+    <div class="map-hint">Tocca gli edifici per potenziare la tua stazione</div>
+  </div>
+
+  <div id="pageMap" class="page">
+    <div class="sec-hd">
+      <div class="sec-title">Conquista l'Italia</div>
+      <div class="sec-sub">Espandi la tua rete ferroviaria.</div>
+    </div>
+
+    <div class="territory-stats">
+      <div class="ts-card">
+        <div class="ts-icon">🏙️</div>
+        <div class="ts-val" id="tsCities">1</div>
+        <div class="ts-lbl">Città</div>
+      </div>
+      <div class="ts-card">
+        <div class="ts-icon">⚡</div>
+        <div class="ts-val" id="tsEnergy">50</div>
+        <div class="ts-lbl">Energia</div>
+      </div>
+      <div class="ts-card">
+        <div class="ts-icon">📦</div>
+        <div class="ts-val" id="tsCargo">20</div>
+        <div class="ts-lbl">Merci</div>
+      </div>
+    </div>
+
+    <div class="italy-wrap">
+      <canvas id="italyCanvas"></canvas>
+    </div>
+  </div>
+
+  <div id="pageBets" class="page">
+    <div class="sec-hd">
+      <div class="sec-title">Scommesse</div>
+      <div class="sec-sub">Prevedi i minuti di ritardo.</div>
+    </div>
+
+    <div class="bet-list" id="betList"></div>
+
+    <div class="dep-board">
+      <div class="dep-hd">
+        <span>Treno</span>
+        <span>Tratta</span>
+        <span>Ora</span>
+        <span>Stato</span>
+      </div>
+      <div id="boardBody"></div>
+    </div>
+  </div>
+
+  <div id="pageCollection" class="page">
+    <div class="sec-hd">
+      <div class="sec-title">Collezione</div>
+      <div class="sec-sub">I tuoi treni e macchinisti.</div>
+    </div>
+    <div class="collection-grid" id="collectionGrid"></div>
+  </div>
+
+  <div id="pageProfile" class="page">
+    <div class="sec-hd">
+      <div class="sec-title">Profilo</div>
+      <div class="sec-sub">Statistiche e classifica.</div>
+    </div>
+
+    <div class="profile-hero">
+      <div class="ph-avatar">🚂</div>
+      <div class="ph-name">Operatore Ferroviario</div>
+      <div class="ph-level" id="phLevel">Base</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="sc-lbl">Saldo</div>
+        <div class="sc-val" id="scBal">1.000€</div>
+        <div class="sc-sub">capitale</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-lbl">Rendita</div>
+        <div class="sc-val" id="scInc">28€</div>
+        <div class="sc-sub">ogni 60 sec</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-lbl">Scommesse</div>
+        <div class="sc-val" id="scBets">0</div>
+        <div class="sc-sub">totali</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-lbl">Win Rate</div>
+        <div class="sc-val" id="scRate">0%</div>
+        <div class="sc-sub">precisione</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-lbl">Vittorie</div>
+        <div class="sc-val" id="scWins">0</div>
+        <div class="sc-sub">indovinate</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-lbl">Sconfitte</div>
+        <div class="sc-val" id="scLoss">0</div>
+        <div class="sc-sub">mancate</div>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-bottom:12px;font-size:22px;">Classifica</div>
+    <div class="rank-list" id="rankList"></div>
+  </div>
+
+</div>
+
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+
+<div class="popup" id="popup">
+  <div class="popup-handle"></div>
+  <div class="popup-icon" id="popIcon"></div>
+  <div class="popup-title" id="popTitle">–</div>
+  <div class="popup-sub" id="popSub">–</div>
+
+  <div id="betSec" style="display:none">
+    <button class="pop-btn" onclick="closePopup()">Chiudi</button>
+  </div>
+
+  <div id="upgSec" style="display:none">
+    <button class="pop-btn green" onclick="closePopup()">Chiudi</button>
+  </div>
+
+  <div id="terrSec" style="display:none">
+    <button class="pop-btn gold" onclick="closePopup()">Chiudi</button>
+  </div>
+
+  <div id="cardSec" style="display:none">
+    <div id="cardPopContent"></div>
+    <button class="pop-btn" id="cardBtn" onclick="closePopup()">Chiudi</button>
+  </div>
+
+  <div id="resSec" style="display:none">
+    <button class="pop-btn" onclick="closePopup()">Chiudi</button>
+  </div>
+
+  <div id="infoSec" style="display:none">
+    <button class="pop-btn" onclick="closePopup()">Chiudi</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="income-flash" id="incFlash"></div>
+
+<div class="bottom-nav">
+  <div class="nav-btn" id="navProfile" onclick="showPage('Profile')">
+    <div class="nav-icon">👤</div>
+    <div class="nav-lbl">Profilo</div>
+  </div>
+
+  <div class="nav-btn" id="navMap" onclick="showPage('Map')">
+    <div class="nav-icon">🗺️</div>
+    <div class="nav-lbl">Mappa</div>
+  </div>
+
+  <div class="nav-btn center-btn active" id="navStation" onclick="showPage('Station')">
+    <div class="nav-icon">🏛️</div>
+    <div class="nav-lbl">Stazione</div>
+  </div>
+
+  <div class="nav-btn" id="navBets" onclick="showPage('Bets')">
+    <div class="nav-icon">🎲</div>
+    <div class="nav-lbl">Scommesse</div>
+  </div>
+
+  <div class="nav-btn" id="navCollection" onclick="showPage('Collection')">
+    <div class="nav-icon">🃏</div>
+    <div class="nav-lbl">Collezione</div>
+  </div>
+</div>

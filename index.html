@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TrenoScommesse</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#e6edf3;
+}
+
+/* TOP BAR */
+.topbar{
+background:#0f2f4f;
+color:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+font-weight:bold;
+}
+
+.balance{
+background:#f0b400;
+padding:8px 15px;
+border-radius:10px;
+}
+
+/* PAGINE */
+.page{display:none;padding:20px;}
+.active{display:block}
+
+/* ========================= */
+/* 🌍 MAPPA REALISTICA */
+/* ========================= */
+
+.station-map{
+position:relative;
+height:420px;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+
+/* SKY + GROUND */
+background:
+linear-gradient(to bottom, #8fc3ff 0%, #cfe4ff 30%, #c9ddb5 70%, #bcd29f 100%);
+}
+
+/* STRADA */
+.road{
+position:absolute;
+background:#6b6b6b;
+height:40px;
+width:100%;
+bottom:80px;
+}
+
+/* PIAZZALE */
+.plaza{
+position:absolute;
+background:#cfcfcf;
+width:200px;
+height:120px;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+border-radius:10px;
+}
+
+/* BINARI */
+.track{
+position:absolute;
+height:6px;
+background:#444;
+width:200px;
+top:55%;
+left:40%;
+}
+
+/* ALBERI */
+.tree{
+position:absolute;
+width:20px;
+height:20px;
+background:green;
+border-radius:50%;
+}
+
+/* EDIFICI */
+.building{
+position:absolute;
+background:#555;
+border-radius:8px;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.station{
+width:120px;
+height:80px;
+background:#2f3e50;
+top:40%;
+left:50%;
+transform:translate(-50%,-50%);
+}
+
+.depot{
+width:80px;
+height:60px;
+background:#3c5a6e;
+top:60%;
+left:20%;
+}
+
+.energy{
+width:50px;
+height:80px;
+background:#7a4a2e;
+top:30%;
+right:20%;
+}
+
+/* TRENO */
+.train{
+position:absolute;
+width:60px;
+height:20px;
+background:red;
+border-radius:5px;
+top:55%;
+left:45%;
+}
+
+/* ========================= */
+/* CLASSIFICA */
+/* ========================= */
+
+.rank{
+background:#fff;
+padding:10px;
+margin-bottom:10px;
+border-radius:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+.rank-station{
+width:50px;
+height:40px;
+background:#444;
+border-radius:6px;
+}
+
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
+
+.bottom{
+position:fixed;
+bottom:0;
+width:100%;
+background:#0f2f4f;
+display:flex;
+justify-content:space-around;
+padding:10px;
+color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<div>TrenoScommesse</div>
+<div class="balance">1000€</div>
+</div>
+
+<!-- STAZIONE -->
+<div class="page active" id="station">
+
+<h2>La tua stazione</h2>
+
+<div class="station-map">
+
+<div class="road"></div>
+
+<div class="plaza"></div>
+
+<div class="track"></div>
+
+<div class="train"></div>
+
+<div class="building station"></div>
+<div class="building depot"></div>
+<div class="building energy"></div>
+
+<div class="tree" style="top:80px; left:50px;"></div>
+<div class="tree" style="top:120px; right:60px;"></div>
+
+</div>
+
+</div>
+
+<!-- CLASSIFICA -->
+<div class="page" id="profile">
+
+<h2>Classifica</h2>
+
+<div class="rank">
+<div style="display:flex; gap:10px;">
+<div class="rank-station"></div>
+<div>Stazione Alpha</div>
+</div>
+<div>5000€</div>
+</div>
+
+<div class="rank">
+<div style="display:flex; gap:10px;">
+<div class="rank-station"></div>
+<div>Stazione Beta</div>
+</div>
+<div>4200€</div>
+</div>
+
+</div>
+
+<!-- SCOMMESSE -->
+<div class="page" id="bets">
+<h2>Scommesse</h2>
+<p>Qui resta come prima (già buono)</p>
+</div>
+
+<!-- NAV -->
+<div class="bottom">
+<div onclick="show('profile')">PR</div>
+<div onclick="show('station')">ST</div>
+<div onclick="show('bets')">SC</div>
+</div>
+
+<script>
+function show(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+</script>
+
+</body>
+</html>

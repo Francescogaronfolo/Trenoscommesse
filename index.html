@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TrenoScommesse</title>
+<style>
+:root{
+  --bg:#f5efe6;
+  --navy:#0f2e47;
+  --gold:#e8a820;
+  --gold2:#f5c842;
+  --red:#e03030;
+  --blue:#2979c8;
+  --teal:#1ab8a0;
+  --orange:#e86820;
+  --purple:#7c5cbf;
+  --green:#28a060;
+  --panel:#fff8f0;
+  --border:#e0d4c0;
+  --text:#1a1a1a;
+  --muted:#7a6a5a;
+  --shadow:0 6px 24px rgba(0,0,0,0.10);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+position:sticky;top:0;z-index:200;
+background:var(–navy);
+height:64px;
+display:flex;align-items:center;justify-content:space-between;
+padding:0 20px;
+box-shadow:0 2px 12px rgba(0,0,0,0.22);
+}
+.brand{
+font-size:20px;font-weight:800;
+color:#fff;letter-spacing:-.3px;
+}
+.brand span{color:var(–gold);}
+.balance-pill{
+background:var(–gold);
+color:#111;
+padding:10px 18px;
+border-radius:20px;
+font-size:17px;font-weight:800;
+box-shadow:0 2px 8px rgba(0,0,0,0.18);
+transition:transform .15s;
+}
+.balance-pill.bump{animation:bump .3s ease;}
+@keyframes bump{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* ── PAGES ── */
+.container{max-width:520px;margin:0 auto;padding:20px 16px 110px;}
+.page{display:none}
+.page.active{display:block}
+
+.section-title{font-size:26px;font-weight:800;margin-bottom:4px;}
+.section-sub{font-size:14px;color:var(–muted);margin-bottom:20px;}
+
+/* ── METRO MAP ── */
+.metro-wrap{
+position:relative;
+background:var(–navy);
+border-radius:28px;
+overflow:hidden;
+margin-bottom:16px;
+box-shadow:var(–shadow-lg);
+aspect-ratio:1/0.72;
+}
+.metro-canvas{
+width:100%;height:100%;
+display:block;
+}
+
+/* station legend cards */
+.upgrade-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-bottom:16px;
+}
+.upg-card{
+background:var(–panel);
+border:1.5px solid var(–border);
+border-radius:20px;
+padding:16px 14px;
+box-shadow:var(–shadow);
+cursor:pointer;
+transition:transform .14s,box-shadow .14s;
+position:relative;
+overflow:hidden;
+}
+.upg-card:active{transform:scale(.97);}
+.upg-card::before{
+content:””;
+position:absolute;
+top:0;left:0;right:0;
+height:4px;
+border-radius:20px 20px 0 0;
+}
+.upg-card.c-red::before{background:var(–red);}
+.upg-card.c-blue::before{background:var(–blue);}
+.upg-card.c-teal::before{background:var(–teal);}
+.upg-card.c-gold::before{background:var(–gold);}
+.upg-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(–muted);margin-bottom:8px;}
+.upg-val{font-size:32px;font-weight:800;color:var(–navy);line-height:1;}
+.upg-sub{font-size:12px;color:var(–muted);margin-top:6px;}
+
+/* ── SCOMMESSE ── */
+.train-cards{display:grid;gap:14px;margin-bottom:24px;}
+.t-card{
+border-radius:24px;
+overflow:hidden;
+position:relative;
+min-height:160px;
+cursor:pointer;
+box-shadow:var(–shadow);
+transition:transform .16s,box-shadow .16s;
+}
+.t-card:active{transform:scale(.98);}
+.t-bg{
+position:absolute;inset:0;
+}
+/* gradients per type */
+.t-av .t-bg{background:linear-gradient(135deg,#c0392b 0%,#8e1414 55%,#3d0808 100%);}
+.t-ic .t-bg{background:linear-gradient(135deg,#1a5faa 0%,#0e3a6e 55%,#071f3c 100%);}
+.t-re .t-bg{background:linear-gradient(135deg,#1e7a52 0%,#0e4a30 55%,#051e12 100%);}
+.t-il .t-bg{background:linear-gradient(135deg,#d4820a 0%,#8a4e00 55%,#3a1f00 100%);}
+
+/* track stripes overlay */
+.t-bg::after{
+content:””;
+position:absolute;inset:0;
+background:repeating-linear-gradient(
+-55deg,
+transparent 0px,
+transparent 18px,
+rgba(255,255,255,0.04) 18px,
+rgba(255,255,255,0.04) 20px
+);
+}
+
+/* train silhouette SVG drawn in JS via canvas — here CSS version */
+.t-loco{
+position:absolute;
+right:20px;bottom:20px;
+width:110px;height:50px;
+opacity:.22;
+}
+.t-loco::before{
+content:””;
+position:absolute;
+left:0;bottom:0;
+width:88px;height:36px;
+border-radius:8px 24px 8px 8px;
+background:rgba(255,255,255,.9);
+}
+.t-loco::after{
+content:””;
+position:absolute;
+left:12px;bottom:24px;
+width:52px;height:20px;
+border-radius:6px 14px 0 0;
+background:rgba(255,255,255,.7);
+}
+
+.t-content{
+position:relative;z-index:2;
+padding:20px 20px 18px;
+color:#fff;
+display:flex;flex-direction:column;
+justify-content:flex-end;
+min-height:160px;
+background:linear-gradient(to top,rgba(0,0,0,.55) 0%,rgba(0,0,0,.1) 50%,transparent 100%);
+}
+.t-badge{
+display:inline-flex;align-items:center;
+background:rgba(255,255,255,.18);
+border:1px solid rgba(255,255,255,.25);
+border-radius:12px;
+padding:5px 10px;
+font-size:12px;font-weight:700;
+margin-bottom:10px;
+backdrop-filter:blur(4px);
+width:fit-content;
+}
+.t-name{font-size:22px;font-weight:800;margin-bottom:4px;}
+.t-route{font-size:14px;opacity:.85;}
+.t-chip{
+position:absolute;top:18px;right:18px;z-index:3;
+padding:7px 12px;border-radius:14px;
+font-size:12px;font-weight:800;
+backdrop-filter:blur(6px);
+border:1px solid rgba(255,255,255,.2);
+}
+.chip-red{background:rgba(200,40,40,.7);color:#fff;}
+.chip-yellow{background:rgba(200,160,20,.7);color:#fff;}
+.chip-green{background:rgba(30,160,80,.7);color:#fff;}
+
+/* board */
+.board{
+background:#0a1c2e;
+border-radius:20px;
+padding:16px;
+font-family:“Courier New”,monospace;
+box-shadow:var(–shadow-lg);
+margin-bottom:16px;
+}
+.board-hd,.board-row{
+display:grid;
+grid-template-columns:1.1fr 1.4fr .6fr .65fr;
+gap:8px;
+font-size:13px;
+padding:8px 6px;
+color:#e8c870;
+align-items:center;
+}
+.board-hd{
+font-weight:700;letter-spacing:.05em;font-size:11px;
+text-transform:uppercase;
+border-bottom:1px solid rgba(232,200,112,.15);
+padding-bottom:12px;
+}
+.board-row{border-bottom:1px solid rgba(232,200,112,.07);}
+.board-row:last-child{border:none;}
+.s-ok{color:#4ddb90;}
+.s-mid{color:#f5c842;}
+.s-bad{color:#f06060;}
+
+/* ── PROFILO ── */
+.profile-hero{
+background:var(–navy);
+border-radius:24px;
+padding:24px;
+color:#fff;
+margin-bottom:16px;
+box-shadow:var(–shadow-lg);
+position:relative;
+overflow:hidden;
+}
+.profile-hero::before{
+content:“🚂”;
+position:absolute;
+right:-10px;bottom:-18px;
+font-size:100px;opacity:.08;
+}
+.ph-name{font-size:28px;font-weight:800;margin-bottom:6px;}
+.ph-sub{font-size:14px;opacity:.7;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.stat-card{
+background:var(–panel);border:1.5px solid var(–border);
+border-radius:18px;padding:16px;box-shadow:var(–shadow);
+}
+.sc-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(–muted);margin-bottom:8px;}
+.sc-val{font-size:28px;font-weight:800;color:var(–navy);}
+.sc-sub{font-size:12px;color:var(–muted);margin-top:4px;}
+
+.rank-list{display:grid;gap:10px;}
+.rank-row{
+background:var(–panel);border:1.5px solid var(–border);
+border-radius:16px;padding:14px 16px;
+display:flex;align-items:center;gap:12px;
+box-shadow:var(–shadow);
+}
+.rp{
+width:34px;height:34px;border-radius:50%;
+background:var(–navy);color:#fff;
+display:flex;align-items:center;justify-content:center;
+font-weight:800;font-size:15px;flex-shrink:0;
+}
+.rp.gold{background:#c8960a;}
+.rp.silver{background:#8a9aaa;}
+.rp.bronze{background:#a05020;}
+.rn{flex:1;}
+.rn-name{font-weight:800;font-size:16px;}
+.rn-sub{font-size:12px;color:var(–muted);margin-top:2px;}
+.rs{font-size:20px;font-weight:800;color:var(–navy);}
+
+/* ── POPUP ── */
+.overlay{
+position:fixed;inset:0;
+background:rgba(0,0,0,.5);
+display:none;z-index:300;
+backdrop-filter:blur(3px);
+}
+.popup{
+position:fixed;
+bottom:0;left:0;right:0;
+background:var(–panel);
+border-radius:28px 28px 0 0;
+padding:28px 24px 36px;
+display:none;z-index:310;
+box-shadow:0 -10px 40px rgba(0,0,0,.2);
+max-height:85vh;
+overflow-y:auto;
+transform:translateY(100%);
+transition:transform .3s cubic-bezier(.32,0,.67,0);
+}
+.popup.open{
+display:block;
+transform:translateY(0);
+transition:transform .35s cubic-bezier(.16,1,.3,1);
+}
+.popup-handle{
+width:40px;height:4px;
+background:#ddd;border-radius:2px;
+margin:0 auto 20px;
+}
+.popup-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.popup-sub{font-size:14px;color:var(–muted);margin-bottom:22px;}
+.pop-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(–muted);margin-bottom:10px;}
+.min-display{
+text-align:center;margin-bottom:14px;
+}
+.min-big{font-size:64px;font-weight:800;color:var(–navy);line-height:1;}
+.min-unit{font-size:18px;color:var(–muted);}
+.slider-track{padding:0 4px;margin-bottom:22px;}
+input[type=range]{
+width:100%;height:6px;
+appearance:none;
+background:linear-gradient(to right,var(–navy) 0%,var(–navy) var(–pct,12.5%),#ddd var(–pct,12.5%));
+border-radius:3px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+appearance:none;width:28px;height:28px;
+border-radius:50%;background:var(–gold);
+border:3px solid var(–navy);
+box-shadow:0 2px 8px rgba(0,0,0,.2);
+transition:transform .1s;
+}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15);}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:#aaa;margin-top:6px;}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px;}
+.chip{
+border:2px solid #ddd;background:#fff;
+color:var(–navy);padding:12px 4px;
+border-radius:14px;font-size:15px;font-weight:800;
+cursor:pointer;transition:all .12s;
+}
+.chip.active{background:var(–navy);color:#fff;border-color:var(–navy);}
+.pop-btn{
+width:100%;border:none;
+background:var(–navy);color:#fff;
+padding:16px;border-radius:18px;
+font-size:17px;font-weight:800;
+cursor:pointer;
+transition:transform .12s,background .12s;
+margin-top:4px;
+}
+.pop-btn:active{transform:scale(.98);}
+.pop-btn:disabled{opacity:.4;cursor:not-allowed;}
+.pop-btn.green{background:var(–green);}
+
+.upg-detail{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.ud-box{background:#f0ece4;border-radius:16px;padding:14px;}
+.ud-lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(–muted);margin-bottom:6px;}
+.ud-val{font-size:28px;font-weight:800;color:var(–navy);}
+
+.result-box{
+text-align:center;padding:10px 0 16px;
+}
+.result-icon{font-size:56px;margin-bottom:12px;}
+.result-title{font-size:24px;font-weight:800;margin-bottom:8px;}
+.result-detail{font-size:15px;color:var(–muted);margin-bottom:20px;line-height:1.5;}
+.result-amount{
+font-size:42px;font-weight:800;
+margin-bottom:20px;
+}
+.result-amount.win{color:var(–green);}
+.result-amount.lose{color:var(–red);}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+position:fixed;bottom:0;left:0;right:0;
+background:var(–navy);
+border-radius:24px 24px 0 0;
+padding:14px 12px 20px;
+display:flex;justify-content:space-around;
+box-shadow:0 -4px 20px rgba(0,0,0,.2);
+z-index:200;
+}
+.nav-btn{
+display:flex;flex-direction:column;align-items:center;gap:5px;
+color:rgba(255,255,255,.5);
+cursor:pointer;
+min-width:80px;
+transition:color .15s;
+}
+.nav-btn.active{color:#fff;}
+.nav-icon{
+width:52px;height:52px;
+border-radius:16px;
+display:flex;align-items:center;justify-content:center;
+font-size:13px;font-weight:800;
+background:rgba(255,255,255,.06);
+border:1px solid rgba(255,255,255,.08);
+transition:background .15s,transform .15s;
+}
+.nav-btn.active .nav-icon{
+background:var(–gold);
+color:#111;
+border-color:transparent;
+transform:translateY(-4px);
+box-shadow:0 8px 20px rgba(232,168,32,.4);
+}
+.nav-btn.center-btn .nav-icon{
+width:60px;height:60px;
+border-radius:20px;
+transform:translateY(-8px);
+}
+.nav-btn.center-btn.active .nav-icon{transform:translateY(-12px);}
+.nav-lbl{font-size:12px;font-weight:700;}
+
+/* ── METRO MAP CANVAS STYLES ── */
+#metroCanvas{display:block;width:100%;height:100%;}
+
+/* toast */
+.toast{
+position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+background:var(–navy);color:#fff;
+padding:12px 22px;border-radius:20px;
+font-weight:700;font-size:15px;
+opacity:0;transition:all .3s;
+z-index:400;white-space:nowrap;
+box-shadow:var(–shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* income flash */
+.income-flash{
+position:fixed;top:72px;right:20px;
+background:var(–green);color:#fff;
+padding:8px 14px;border-radius:14px;
+font-weight:800;font-size:14px;
+opacity:0;transform:translateY(0);
+transition:all .4s;z-index:400;
+pointer-events:none;
+}
+.income-flash.show{opacity:1;transform:translateY(-8px);}
+</style>
+
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Treno<span>Scommesse</span></div>
+  <div class="balance-pill" id="balBox">1.000€</div>
+</div>
+
+<div class="container">
+
+  <!-- PAGE: STAZIONE -->
+
+  <div id="pageStation" class="page active">
+    <div class="section-title">La tua stazione</div>
+    <div class="section-sub">Potenzia la rete per migliorare le scommesse.</div>
+
+```
+<div class="metro-wrap">
+  <canvas id="metroCanvas"></canvas>
+</div>
+
+<div class="upgrade-grid">
+  <div class="upg-card c-red" onclick="openUpgrade('train')">
+    <div class="upg-lbl">🚂 Deposito treni</div>
+    <div class="upg-val" id="lvTrain">1</div>
+    <div class="upg-sub">riduce la variabilità</div>
+  </div>
+  <div class="upg-card c-blue" onclick="openUpgrade('station')">
+    <div class="upg-lbl">🛤️ Binari</div>
+    <div class="upg-val" id="lvStation">1</div>
+    <div class="upg-sub">abbassa il ritardo medio</div>
+  </div>
+  <div class="upg-card c-teal" onclick="openUpgrade('control')">
+    <div class="upg-lbl">📡 Controllo</div>
+    <div class="upg-val" id="lvControl">1</div>
+    <div class="upg-sub">aumenta la finestra utile</div>
+  </div>
+  <div class="upg-card c-gold" onclick="openUpgrade('logistics')">
+    <div class="upg-lbl">💰 Logistica</div>
+    <div class="upg-val" id="lvLogistics">1</div>
+    <div class="upg-sub">alza la rendita passiva</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- PAGE: SCOMMESSE -->
+
+  <div id="pageBets" class="page">
+    <div class="section-title">Scommesse</div>
+    <div class="section-sub">Scommetti sui minuti di ritardo.</div>
+
+```
+<div class="train-cards">
+  <div class="t-card t-av" onclick="openBet(0)">
+    <div class="t-bg"></div>
+    <div class="t-loco"></div>
+    <div class="t-chip chip-red">alta variabilità</div>
+    <div class="t-content">
+      <div class="t-badge">🔴 Alta Velocità</div>
+      <div class="t-name">Atria V-01</div>
+      <div class="t-route">Roma → Milano</div>
+    </div>
+  </div>
+  <div class="t-card t-ic" onclick="openBet(1)">
+    <div class="t-bg"></div>
+    <div class="t-loco"></div>
+    <div class="t-chip chip-yellow">media variabilità</div>
+    <div class="t-content">
+      <div class="t-badge">🔵 Intercity</div>
+      <div class="t-name">Radian R-12</div>
+      <div class="t-route">Venezia → Roma</div>
+    </div>
+  </div>
+  <div class="t-card t-re" onclick="openBet(2)">
+    <div class="t-bg"></div>
+    <div class="t-loco"></div>
+    <div class="t-chip chip-green">più stabile</div>
+    <div class="t-content">
+      <div class="t-badge">🟢 Regionale</div>
+      <div class="t-name">Modulo C-4</div>
+      <div class="t-route">Bari → Taranto</div>
+    </div>
+  </div>
+  <div class="t-card t-il" onclick="openBet(3)">
+    <div class="t-bg"></div>
+    <div class="t-loco"></div>
+    <div class="t-chip chip-red">alta variabilità</div>
+    <div class="t-content">
+      <div class="t-badge">🟠 Lunga Direttrice</div>
+      <div class="t-name">Linea B-2</div>
+      <div class="t-route">Palermo → Messina</div>
+    </div>
+  </div>
+</div>
+
+<div class="board">
+  <div class="board-hd">
+    <span>Treno</span><span>Tratta</span><span>Ora</span><span>Stato</span>
+  </div>
+  <div id="boardBody"></div>
+</div>
+```
+
+  </div>
+
+  <!-- PAGE: PROFILO -->
+
+  <div id="pageProfile" class="page">
+    <div class="section-title">Profilo</div>
+    <div class="section-sub">Le tue statistiche e la classifica.</div>
+
+```
+<div class="profile-hero">
+  <div class="ph-name">Operatore Ferroviario</div>
+  <div class="ph-sub">Livello stazione · <span id="phLevel">Base</span></div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="sc-lbl">Saldo</div>
+    <div class="sc-val" id="scBal">1.000€</div>
+    <div class="sc-sub">capitale</div>
+  </div>
+  <div class="stat-card">
+    <div class="sc-lbl">Rendita</div>
+    <div class="sc-val" id="scInc">25€</div>
+    <div class="sc-sub">ogni 60 sec</div>
+  </div>
+  <div class="stat-card">
+    <div class="sc-lbl">Scommesse</div>
+    <div class="sc-val" id="scBets">0</div>
+    <div class="sc-sub">totali</div>
+  </div>
+  <div class="stat-card">
+    <div class="sc-lbl">Win Rate</div>
+    <div class="sc-val" id="scRate">0%</div>
+    <div class="sc-sub">precisione</div>
+  </div>
+  <div class="stat-card">
+    <div class="sc-lbl">Vittorie</div>
+    <div class="sc-val" id="scWins">0</div>
+    <div class="sc-sub">indovinate</div>
+  </div>
+  <div class="stat-card">
+    <div class="sc-lbl">Sconfitte</div>
+    <div class="sc-val" id="scLoss">0</div>
+    <div class="sc-sub">mancate</div>
+  </div>
+</div>
+
+<div class="section-title" style="margin-bottom:12px;">Classifica</div>
+<div class="rank-list" id="rankList"></div>
+```
+
+  </div>
+
+</div>
+
+<!-- OVERLAY + POPUP -->
+
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+<div class="popup" id="popup">
+  <div class="popup-handle"></div>
+  <div class="popup-title" id="popTitle">–</div>
+  <div class="popup-sub" id="popSub">–</div>
+
+  <!-- BET SECTION -->
+
+  <div id="betSec">
+    <div class="pop-label">Ritardo previsto</div>
+    <div class="min-display">
+      <span class="min-big" id="minBig">15</span>
+      <span class="min-unit"> min</span>
+    </div>
+    <div class="slider-track">
+      <input type="range" id="minSlider" min="0" max="120" value="15"/>
+      <div class="slider-labels"><span>0 (miracolo)</span><span>30</span><span>60</span><span>120+😱</span></div>
+    </div>
+    <div class="pop-label">Puntata</div>
+    <div class="chips" id="chipRow">
+      <button class="chip" onclick="selChip(50,this)">50€</button>
+      <button class="chip active" onclick="selChip(200,this)">200€</button>
+      <button class="chip" onclick="selChip(500,this)">500€</button>
+      <button class="chip" onclick="selChip(1000,this)">1k€</button>
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="toleranceInfo">Finestra utile: ±5 min</div>
+    <button class="pop-btn" id="betBtn" onclick="placeBet()">🎲 Piazza scommessa</button>
+  </div>
+
+  <!-- UPGRADE SECTION -->
+
+  <div id="upgSec" style="display:none">
+    <div class="upg-detail">
+      <div class="ud-box"><div class="ud-lbl">Livello attuale</div><div class="ud-val" id="upgLv">1</div></div>
+      <div class="ud-box"><div class="ud-lbl">Costo upgrade</div><div class="ud-val" id="upgCost">100€</div></div>
+    </div>
+    <button class="pop-btn green" id="upgBtn" onclick="doUpgrade()">⬆️ Potenzia struttura</button>
+  </div>
+
+  <!-- RESULT SECTION -->
+
+  <div id="resSec" style="display:none">
+    <div class="result-box">
+      <div class="result-icon" id="resIcon">🎉</div>
+      <div class="result-title" id="resTitle">–</div>
+      <div class="result-detail" id="resDetail">–</div>
+      <div class="result-amount" id="resAmount">–</div>
+      <button class="pop-btn" onclick="closePopup()">Continua</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST + INCOME -->
+
+<div class="toast" id="toast"></div>
+<div class="income-flash" id="incFlash"></div>
+
+<!-- BOTTOM NAV -->
+
+<div class="bottom-nav">
+  <div class="nav-btn" id="navProfile" onclick="showPage('profile')">
+    <div class="nav-icon">PR</div>
+    <div class="nav-lbl">Profilo</div>
+  </div>
+  <div class="nav-btn center-btn active" id="navStation" onclick="showPage('station')">
+    <div class="nav-icon">ST</div>
+    <div class="nav-lbl">Stazione</div>
+  </div>
+  <div class="nav-btn" id="navBets" onclick="showPage('bets')">
+    <div class="nav-icon">SC</div>
+    <div class="nav-lbl">Scommesse</div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────
+//  STATE
+// ─────────────────────────────
+let balance = 1000;
+let selectedBet = 200;
+let selectedTrainIdx = 0;
+let currentUpgradeKey = null;
+const stats = {bets:0, wins:0, losses:0};
+const levels = {train:1, station:1, control:1, logistics:1};
+
+const trains = [
+  {name:"Atria V-01",   route:"Roma → Milano",     type:"Alta Velocità",     base:8,  variance:16},
+  {name:"Radian R-12",  route:"Venezia → Roma",    type:"Intercity",         base:12, variance:18},
+  {name:"Modulo C-4",   route:"Bari → Taranto",    type:"Regionale",         base:7,  variance:12},
+  {name:"Linea B-2",    route:"Palermo → Messina", type:"Lunga Direttrice",  base:24, variance:25}
+];
+
+const boardData = [
+  {name:"Atria V-01",  route:"Roma→MI",    time:"08:12", delay:"+6",      sc:"s-mid"},
+  {name:"Radian R-12", route:"VE→Roma",    time:"09:45", delay:"+13",     sc:"s-mid"},
+  {name:"Modulo C-4",  route:"Bari→TA",    time:"11:05", delay:"Puntuale",sc:"s-ok"},
+  {name:"Linea B-2",   route:"PA→ME",      time:"12:40", delay:"+22",     sc:"s-bad"},
+];
+
+// ─────────────────────────────
+//  HELPERS
+// ─────────────────────────────
+function fmt(n){return n.toLocaleString('it-IT')+'€';}
+function upgradeCost(key){
+  const table={train:[120,280,650,1300,2400,4200],station:[140,320,720,1450,2600,4700],control:[160,360,780,1500,2800,5000],logistics:[100,240,560,1150,2100,3900]};
+  const lv=levels[key];
+  return lv>=7?null:table[key][lv-1];
+}
+function income(){return 20+(levels.logistics*8)+(levels.station*4);}
+function tolerance(){return 5+Math.floor(levels.control/2);}
+function computeDelay(t){
+  const bR=(levels.station-1)*1.4;
+  const vR=(levels.train-1)*1.2;
+  const chaos=Math.max(4,t.variance-vR);
+  let d=t.base-bR+(Math.random()-.42)*chaos;
+  if(Math.random()<Math.max(0.03,0.10-(levels.station*.006)))d+=20+Math.random()*20;
+  if(Math.random()<0.05)d=0;
+  return Math.max(0,Math.round(d));
+}
+function reward(bet,diff){
+  const cb=1+(levels.control*.03);
+  const pb=diff<=2?1.35:1;
+  return Math.round(bet*cb*pb);
+}
+
+// ─────────────────────────────
+//  METRO MAP CANVAS
+// ─────────────────────────────
+const COLORS={red:'#e03030',blue:'#2979c8',teal:'#1ab8a0',yellow:'#e8a820',orange:'#e86820',purple:'#7c5cbf',green:'#28a060'};
+
+function drawMetro(){
+  const canvas=document.getElementById('metroCanvas');
+  const wrap=canvas.parentElement;
+  const W=wrap.clientWidth*window.devicePixelRatio||600;
+  const H=W*.72;
+  canvas.width=W; canvas.height=H;
+  canvas.style.width=wrap.clientWidth+'px';
+  canvas.style.height=(wrap.clientWidth*.72)+'px';
+  const ctx=canvas.getContext('2d');
+  const s=W/600; // scale factor
+
+  // background
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#1a3a5c');
+  bg.addColorStop(1,'#0d1f30');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // subtle grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)';
+  ctx.lineWidth=1;
+  for(let x=0;x<W;x+=30*s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=30*s){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // ─── LINES ───
+  // Line A: Red — horizontal main
+  drawLine(ctx,s,COLORS.red,[
+    [60,180],[160,180],[280,180],[380,180],[500,180],[560,120]
+  ]);
+  // Line B: Blue — diagonal
+  drawLine(ctx,s,COLORS.blue,[
+    [80,320],[180,220],[280,180],[360,260],[460,300],[520,380]
+  ]);
+  // Line C: Teal — lower arc
+  drawLine(ctx,s,COLORS.teal,[
+    [100,400],[200,360],[300,320],[380,340],[460,300]
+  ]);
+  // Line D: Yellow — vertical branch
+  drawLine(ctx,s,COLORS.yellow,[
+    [280,60],[280,180],[280,300],[300,380]
+  ]);
+  // Line E: Orange — right branch
+  drawLine(ctx,s,COLORS.orange,[
+    [380,120],[380,180],[380,260],[400,340]
+  ]);
+
+  // ─── STATIONS ───
+  const stations=[
+    {x:60, y:180, name:'Deposito',  lines:[COLORS.red],                          lv:levels.train},
+    {x:160,y:180, name:'Binari',    lines:[COLORS.red],                          lv:levels.station},
+    {x:280,y:180, name:'Centrale',  lines:[COLORS.red,COLORS.blue,COLORS.yellow],lv:3},
+    {x:280,y:60,  name:'Nord',      lines:[COLORS.yellow],                       lv:1},
+    {x:380,y:180, name:'Controllo', lines:[COLORS.red,COLORS.blue,COLORS.orange],lv:levels.control},
+    {x:460,y:300, name:'Logistica', lines:[COLORS.blue,COLORS.teal],             lv:levels.logistics},
+    {x:560,y:120, name:'Ovest',     lines:[COLORS.red],                          lv:1},
+    {x:520,y:380, name:'Est',       lines:[COLORS.blue],                         lv:1},
+    {x:100,y:400, name:'Sud',       lines:[COLORS.teal],                         lv:1},
+    {x:300,y:380, name:'Giunzione', lines:[COLORS.teal,COLORS.yellow],           lv:1},
+  ];
+
+  stations.forEach(st=>{
+    drawStation(ctx,s,st.x,st.y,st.lines,st.name,st.lv);
+  });
+
+  // ─── ANIMATED TRAINS ───
+  drawTrainOnTrack(ctx,s,COLORS.red,  metroAnim.t1);
+  drawTrainOnTrack(ctx,s,COLORS.blue, metroAnim.t2);
+  drawTrainOnTrack(ctx,s,COLORS.teal, metroAnim.t3);
+}
+
+function drawLine(ctx,s,color,points){
+  ctx.save();
+  // shadow glow
+  ctx.shadowColor=color;
+  ctx.shadowBlur=12;
+  ctx.strokeStyle=color;
+  ctx.lineWidth=7*s;
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.beginPath();
+  points.forEach(([x,y],i)=>{
+    if(i===0)ctx.moveTo(x*s,y*s);
+    else ctx.lineTo(x*s,y*s);
+  });
+  ctx.stroke();
+  // white center
+  ctx.shadowBlur=0;
+  ctx.strokeStyle='rgba(255,255,255,0.18)';
+  ctx.lineWidth=2*s;
+  ctx.beginPath();
+  points.forEach(([x,y],i)=>{
+    if(i===0)ctx.moveTo(x*s,y*s);
+    else ctx.lineTo(x*s,y*s);
+  });
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawStation(ctx,s,x,y,lines,name,lv){
+  const cx=x*s, cy=y*s;
+  const r=lv>=3?16*s:lv>=2?13*s:10*s;
+
+  // outer glow
+  ctx.save();
+  ctx.shadowColor='rgba(255,255,255,0.3)';
+  ctx.shadowBlur=16;
+  ctx.beginPath();
+  ctx.arc(cx,cy,r+3*s,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.12)';
+  ctx.fill();
+  ctx.restore();
+
+  // white ring
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.fillStyle='#fff';
+  ctx.fill();
+
+  // colored segments per line
+  if(lines.length>1){
+    const slice=(Math.PI*2)/lines.length;
+    lines.forEach((c,i)=>{
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,r-3*s,i*slice,(i+1)*slice);
+      ctx.closePath();
+      ctx.fillStyle=c;
+      ctx.fill();
+    });
+    // center white dot
+    ctx.beginPath();
+    ctx.arc(cx,cy,4*s,0,Math.PI*2);
+    ctx.fillStyle='#fff';
+    ctx.fill();
+  } else {
+    ctx.beginPath();
+    ctx.arc(cx,cy,r-3*s,0,Math.PI*2);
+    ctx.fillStyle=lines[0];
+    ctx.fill();
+  }
+
+  // label
+  ctx.fillStyle='rgba(255,255,255,0.85)';
+  ctx.font=`bold ${10*s}px -apple-system,sans-serif`;
+  ctx.textAlign='center';
+  ctx.textBaseline='top';
+  ctx.fillText(name, cx, cy+r+5*s);
+}
+
+function drawTrainOnTrack(ctx,s,color,progress){
+  // interpolate position along a path
+  const paths={
+    [COLORS.red]: [[60,180],[160,180],[280,180],[380,180],[500,180],[560,120]],
+    [COLORS.blue]:[[80,320],[180,220],[280,180],[360,260],[460,300],[520,380]],
+    [COLORS.teal]:[[100,400],[200,360],[300,320],[380,340],[460,300]]
+  };
+  const path=paths[color];
+  if(!path)return;
+
+  // compute total length
+  let totalLen=0;
+  const segs=[];
+  for(let i=1;i<path.length;i++){
+    const dx=path[i][0]-path[i-1][0];
+    const dy=path[i][1]-path[i-1][1];
+    const len=Math.sqrt(dx*dx+dy*dy);
+    segs.push({x0:path[i-1][0],y0:path[i-1][1],x1:path[i][0],y1:path[i][1],len});
+    totalLen+=len;
+  }
+
+  const targetDist=progress*totalLen;
+  let dist=0;
+  let tx=path[0][0],ty=path[0][1],angle=0;
+  for(const seg of segs){
+    if(dist+seg.len>=targetDist){
+      const t=(targetDist-dist)/seg.len;
+      tx=seg.x0+(seg.x1-seg.x0)*t;
+      ty=seg.y0+(seg.y1-seg.y0)*t;
+      angle=Math.atan2(seg.y1-seg.y0,seg.x1-seg.x0);
+      break;
+    }
+    dist+=seg.len;
+  }
+
+  ctx.save();
+  ctx.translate(tx*s,ty*s);
+  ctx.rotate(angle);
+
+  // train body
+  const tw=28*s, th=13*s;
+  ctx.shadowColor=color;
+  ctx.shadowBlur=10;
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.roundRect(-tw/2,-th/2,tw,th,4*s);
+  ctx.fill();
+
+  // window strip
+  ctx.fillStyle='rgba(255,255,255,0.5)';
+  ctx.fillRect(-tw/2+4*s,-4*s,tw-8*s,8*s);
+
+  // nose
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.moveTo(tw/2,-th/2+4*s);
+  ctx.lineTo(tw/2+6*s,0);
+  ctx.lineTo(tw/2,th/2-4*s);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+// Animation state
+const metroAnim={t1:0,t2:0.3,t3:0.6};
+let lastTime=0;
+function animateMetro(ts){
+  const dt=(ts-lastTime)/1000;
+  lastTime=ts;
+  metroAnim.t1=(metroAnim.t1+dt*0.08)%1;
+  metroAnim.t2=(metroAnim.t2+dt*0.06)%1;
+  metroAnim.t3=(metroAnim.t3+dt*0.07)%1;
+  drawMetro();
+  requestAnimationFrame(animateMetro);
+}
+requestAnimationFrame(ts=>{lastTime=ts;animateMetro(ts);});
+window.addEventListener('resize',drawMetro);
+
+// ─────────────────────────────
+//  BOARD
+// ─────────────────────────────
+function buildBoard(){
+  const body=document.getElementById('boardBody');
+  body.innerHTML=boardData.map(r=>`
+    <div class="board-row">
+      <span>${r.name}</span>
+      <span>${r.route}</span>
+      <span>${r.time}</span>
+      <span class="${r.sc}">${r.delay}</span>
+    </div>`).join('');
+}
+
+// ─────────────────────────────
+//  POPUP HELPERS
+// ─────────────────────────────
+function openPopup(){
+  const ov=document.getElementById('overlay');
+  const pp=document.getElementById('popup');
+  ov.style.display='block';
+  pp.style.display='block';
+  requestAnimationFrame(()=>pp.classList.add('open'));
+}
+function closePopup(){
+  const ov=document.getElementById('overlay');
+  const pp=document.getElementById('popup');
+  pp.classList.remove('open');
+  setTimeout(()=>{pp.style.display='none';ov.style.display='none';},300);
+}
+
+function showSection(id){
+  ['betSec','upgSec','resSec'].forEach(s=>document.getElementById(s).style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+// ─────────────────────────────
+//  BET FLOW
+// ─────────────────────────────
+function openBet(idx){
+  selectedTrainIdx=idx;
+  const t=trains[idx];
+  document.getElementById('popTitle').textContent=t.name;
+  document.getElementById('popSub').textContent=t.route+' · '+t.type;
+  document.getElementById('minSlider').value=15;
+  document.getElementById('minBig').textContent=15;
+  updateSliderTrack(15);
+  selChip(200,document.querySelectorAll('.chip')[1]);
+  document.getElementById('toleranceInfo').textContent=`Finestra utile: ±${tolerance()} min`;
+  document.getElementById('betBtn').disabled=false;
+  showSection('betSec');
+  openPopup();
+}
+
+const slider=document.getElementById('minSlider');
+slider.addEventListener('input',()=>{
+  const v=slider.value;
+  document.getElementById('minBig').textContent=v;
+  updateSliderTrack(v);
+});
+function updateSliderTrack(v){
+  slider.style.setProperty('--pct',(v/120*100)+'%');
+}
+
+function selChip(val,el){
+  selectedBet=val;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  if(el)el.classList.add('active');
+}
+
+function placeBet(){
+  if(selectedBet>balance){showToast('Saldo insufficiente! 😅');return;}
+  const prediction=parseInt(slider.value);
+  const t=trains[selectedTrainIdx];
+  const actual=computeDelay(t);
+  const diff=Math.abs(prediction-actual);
+  const tol=tolerance();
+  stats.bets++;
+
+  let won=diff<=tol;
+  const amt=won?reward(selectedBet,diff):selectedBet;
+  if(won){balance+=amt;stats.wins++;}
+  else{balance-=amt;if(balance<0)balance=0;stats.losses++;}
+
+  // show result
+  showSection('resSec');
+  document.getElementById('resIcon').textContent=won?'🎉':'😤';
+  document.getElementById('resTitle').textContent=won?'Hai vinto!':'Hai perso';
+  document.getElementById('resDetail').textContent=
+    `Ritardo reale: ${actual} min · Tu hai detto: ${prediction} min\nDifferenza: ${diff} min (finestra: ±${tol} min)`;
+  document.getElementById('resAmount').textContent=(won?'+':'-')+fmt(amt);
+  document.getElementById('resAmount').className='result-amount '+(won?'win':'lose');
+
+  updateUI();
+  bumpBalance();
+}
+
+// ─────────────────────────────
+//  UPGRADE FLOW
+// ─────────────────────────────
+const upgradeNames={train:'Deposito treni',station:'Binari',control:'Centro controllo',logistics:'Logistica'};
+
+function openUpgrade(key){
+  currentUpgradeKey=key;
+  document.getElementById('popTitle').textContent=upgradeNames[key];
+  document.getElementById('popSub').textContent=getUpgDesc(key);
+  document.getElementById('upgLv').textContent=levels[key];
+  const cost=upgradeCost(key);
+  const btn=document.getElementById('upgBtn');
+  if(!cost){
+    document.getElementById('upgCost').textContent='MAX';
+    btn.disabled=true;btn.textContent='Livello massimo';
+  } else {
+    document.getElementById('upgCost').textContent=fmt(cost);
+    btn.disabled=false;btn.textContent='⬆️ Potenzia struttura';
+  }
+  showSection('upgSec');
+  openPopup();
+}
+
+function getUpgDesc(key){
+  if(key==='train')return 'Riduce la variabilità del ritardo simulato.';
+  if(key==='station')return 'Abbassa il ritardo medio di tutti i treni.';
+  if(key==='control')return 'Allarga la finestra utile per vincere.';
+  if(key==='logistics')return 'Aumenta la rendita passiva ogni 60 secondi.';
+  return '';
+}
+
+function doUpgrade(){
+  const cost=upgradeCost(currentUpgradeKey);
+  if(!cost)return;
+  if(balance<cost){showToast('Saldo insufficiente! 💸');return;}
+  balance-=cost;
+  levels[currentUpgradeKey]++;
+  updateUI();
+  openUpgrade(currentUpgradeKey);
+}
+
+// ─────────────────────────────
+//  PAGE NAV
+// ─────────────────────────────
+function showPage(name){
+  ['station','bets','profile'].forEach(p=>{
+    document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.remove('active');
+    document.getElementById('nav'+p.charAt(0).toUpperCase()+p.slice(1)).classList.remove('active');
+  });
+  document.getElementById('page'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  document.getElementById('nav'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  if(name==='profile')updateRanking();
+}
+
+// ─────────────────────────────
+//  UI UPDATE
+// ─────────────────────────────
+function updateUI(){
+  const b=fmt(balance);
+  document.getElementById('balBox').textContent=b;
+  document.getElementById('scBal').textContent=b;
+  const inc=income();
+  document.getElementById('scInc').textContent=fmt(inc);
+  document.getElementById('scBets').textContent=stats.bets;
+  document.getElementById('scWins').textContent=stats.wins;
+  document.getElementById('scLoss').textContent=stats.losses;
+  const rate=stats.bets===0?0:Math.round(stats.wins/stats.bets*100);
+  document.getElementById('scRate').textContent=rate+'%';
+  document.getElementById('lvTrain').textContent=levels.train;
+  document.getElementById('lvStation').textContent=levels.station;
+  document.getElementById('lvControl').textContent=levels.control;
+  document.getElementById('lvLogistics').textContent=levels.logistics;
+  const total=Object.values(levels).reduce((a,b)=>a+b,0);
+  const lvName=total<=4?'Base':total<=8?'Intermedio':total<=12?'Avanzato':'Elite';
+  document.getElementById('phLevel').textContent=lvName;
+  document.getElementById('toleranceInfo').textContent=`Finestra utile: ±${tolerance()} min`;
+}
+
+function updateRanking(){
+  const myScore=balance+Object.values(levels).reduce((a,b)=>a+b,0)*120;
+  const rows=[
+    {name:'Porta Centrale',desc:'stazione metropolitana',score:5200,rank:'gold'},
+    {name:'Nodo Nord',desc:'rete ad alta precisione',score:4300,rank:'silver'},
+    {name:'Terminale Tirrenico',desc:'stabile e luminosa',score:3600,rank:'bronze'},
+    {name:'La tua stazione',desc:'snodo in crescita 🚂',score:myScore,rank:''},
+    {name:'Raccordo Est',desc:'rete secondaria',score:2100,rank:''},
+    {name:'Scalo Vecchio',desc:'impianto arretrato',score:1450,rank:''},
+  ].sort((a,b)=>b.score-a.score);
+
+  document.getElementById('rankList').innerHTML=rows.map((r,i)=>`
+    <div class="rank-row">
+      <div class="rp ${r.rank}">${i+1}</div>
+      <div class="rn"><div class="rn-name">${r.name}</div><div class="rn-sub">${r.desc}</div></div>
+      <div class="rs">${fmt(r.score)}</div>
+    </div>`).join('');
+}
+
+function bumpBalance(){
+  const el=document.getElementById('balBox');
+  el.classList.remove('bump');
+  requestAnimationFrame(()=>el.classList.add('bump'));
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// passive income
+setInterval(()=>{
+  const inc=income();
+  balance+=inc;
+  updateUI();
+  const f=document.getElementById('incFlash');
+  f.textContent='+'+fmt(inc)+' 💰';
+  f.classList.add('show');
+  setTimeout(()=>f.classList.remove('show'),1800);
+},60000);
+
+// ─────────────────────────────
+//  INIT
+// ─────────────────────────────
+buildBoard();
+updateUI();
+</script>
+
+</body>
+</html>

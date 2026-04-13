@@ -1,549 +1,797 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
-<title>Appalti Nazionali</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TrenoScommesse</title>
 <style>
 :root{
-  --bg:#e4e0d8;
+  --bg:#f0ebe0;
   --navy:#0c2336;
+  --navy2:#173a55;
   --gold:#e8a820;
-  --green:#1e7a4a;
-  --green2:#25a060;
-  --red:#c0392b;
-  --purple:#6D214F;
-  --panel:#ede9e1;
-  --border:#c4beb4;
-  --text:#1a1a1a;
-  --muted:#6a6058;
-  --shadow:0 4px 14px rgba(0,0,0,0.10);
-  --shadow-lg:0 10px 30px rgba(0,0,0,0.16);
+  --red:#e03030;
+  --blue:#2979c8;
+  --teal:#1ab8a0;
+  --orange:#e86820;
+  --green:#28a060;
+  --purple:#7c5cbf;
+  --panel:#fffaf2;
+  --border:#ddd0b8;
+  --text:#181818;
+  --muted:#7a6a5a;
+  --shadow:0 6px 24px rgba(0,0,0,0.10);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.16);
+
+/* infrastrutture colori dedicati — mai usati nelle linee */
+–c-deposito:#c0392b;
+–c-binari:#1565c0;
+–c-controllo:#6a1fb5;
+–c-logistica:#b8600a;
+–c-energia:#117a50;
+–c-merci:#7b4a10;
+–c-info:#4a7a99;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family:-apple-system,BlinkMacSystemFont,“Helvetica Neue”,sans-serif;
+background:var(–bg);color:var(–text);
+overflow-x:hidden;min-height:100vh;
+}
+
+/* TOPBAR */
+.topbar{
+position:sticky;top:0;z-index:200;
+background:var(–navy);height:64px;
+display:flex;align-items:center;justify-content:space-between;
+padding:0 20px;box-shadow:0 2px 12px rgba(0,0,0,0.22);
+}
+.brand{font-size:20px;font-weight:800;color:#fff;}
+.brand span{color:var(–gold);}
+.balance-pill{
+background:var(–gold);color:#111;
+padding:10px 18px;border-radius:20px;
+font-size:17px;font-weight:800;
+box-shadow:0 2px 8px rgba(0,0,0,0.18);
+}
+.balance-pill.bump{animation:bump .3s ease;}
+@keyframes bump{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+
+/* PAGES */
+.container{max-width:540px;margin:0 auto;padding:20px 16px 110px;}
+.page{display:none}.page.active{display:block}
+.section-title{font-size:26px;font-weight:800;margin-bottom:4px;}
+.section-sub{font-size:14px;color:var(–muted);margin-bottom:20px;}
+
+/* METRO MAP — technical drawing style */
+.metro-wrap{
+position:relative;
+background:#0d1b2e;
+border-radius:16px;overflow:hidden;
+margin-bottom:20px;
+box-shadow:var(–shadow-lg);
+aspect-ratio:1/0.78;
+border:1px solid rgba(0,180,255,0.15);
+}
+#metroCanvas{display:block;width:100%;height:100%;cursor:pointer;}
+
+/* map legend pill */
+.map-hint{
+text-align:center;font-size:12px;color:var(–muted);
+margin-bottom:20px;letter-spacing:.02em;
+}
+
+/* SCOMMESSE */
+.train-cards{display:grid;gap:14px;margin-bottom:24px;}
+.t-card{
+border-radius:24px;overflow:hidden;position:relative;
+min-height:155px;cursor:pointer;box-shadow:var(–shadow);
+transition:transform .16s;
+}
+.t-card:active{transform:scale(.98);}
+.t-bg{position:absolute;inset:0;}
+.t-av .t-bg{background:linear-gradient(135deg,#c0392b,#3d0808);}
+.t-ic .t-bg{background:linear-gradient(135deg,#1a5faa,#071f3c);}
+.t-re .t-bg{background:linear-gradient(135deg,#1e7a52,#051e12);}
+.t-il .t-bg{background:linear-gradient(135deg,#d4820a,#3a1f00);}
+.t-bg::after{
+content:””;position:absolute;inset:0;
+background:repeating-linear-gradient(-55deg,transparent 0,transparent 18px,rgba(255,255,255,.04) 18px,rgba(255,255,255,.04) 20px);
+}
+.t-loco{position:absolute;right:18px;bottom:18px;width:100px;height:46px;opacity:.2;}
+.t-loco::before{content:””;position:absolute;left:0;bottom:0;width:80px;height:34px;border-radius:8px 22px 8px 8px;background:rgba(255,255,255,.9);}
+.t-loco::after{content:””;position:absolute;left:10px;bottom:22px;width:48px;height:18px;border-radius:6px 12px 0 0;background:rgba(255,255,255,.7);}
+.t-chip{position:absolute;top:16px;right:16px;z-index:3;padding:6px 11px;border-radius:12px;font-size:11px;font-weight:800;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);}
+.chip-red{background:rgba(200,40,40,.7);color:#fff;}
+.chip-yellow{background:rgba(200,155,20,.7);color:#fff;}
+.chip-green{background:rgba(30,155,75,.7);color:#fff;}
+.t-content{position:relative;z-index:2;padding:18px 18px 16px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;min-height:155px;background:linear-gradient(to top,rgba(0,0,0,.55) 0%,rgba(0,0,0,.08) 55%,transparent 100%);}
+.t-badge{display:inline-flex;align-items:center;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:11px;padding:4px 9px;font-size:12px;font-weight:700;margin-bottom:9px;width:fit-content;}
+.t-name{font-size:21px;font-weight:800;margin-bottom:3px;}
+.t-route{font-size:13px;opacity:.85;}
+
+/* BOARD */
+.board{background:#0a1c2e;border-radius:20px;padding:16px;font-family:“Courier New”,monospace;box-shadow:var(–shadow-lg);margin-bottom:16px;}
+.board-hd,.board-row{display:grid;grid-template-columns:1.1fr 1.4fr .6fr .65fr;gap:8px;font-size:13px;padding:8px 6px;color:#e8c870;align-items:center;}
+.board-hd{font-weight:700;letter-spacing:.05em;font-size:11px;text-transform:uppercase;border-bottom:1px solid rgba(232,200,112,.15);padding-bottom:12px;}
+.board-row{border-bottom:1px solid rgba(232,200,112,.07);}
+.board-row:last-child{border:none;}
+.s-ok{color:#4ddb90}.s-mid{color:#f5c842}.s-bad{color:#f06060}
+
+/* PROFILO */
+.profile-hero{background:var(–navy);border-radius:24px;padding:24px;color:#fff;margin-bottom:16px;box-shadow:var(–shadow-lg);position:relative;overflow:hidden;}
+.profile-hero::before{content:“ST”;position:absolute;right:10px;bottom:-10px;font-size:88px;font-weight:900;opacity:.06;}
+.ph-name{font-size:28px;font-weight:800;margin-bottom:6px;}
+.ph-sub{font-size:14px;opacity:.7;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.stat-card{background:var(–panel);border:1.5px solid var(–border);border-radius:18px;padding:16px;box-shadow:var(–shadow);}
+.sc-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(–muted);margin-bottom:8px;}
+.sc-val{font-size:28px;font-weight:800;color:var(–navy);}
+.sc-sub{font-size:12px;color:var(–muted);margin-top:4px;}
+.rank-list{display:grid;gap:10px;}
+.rank-row{background:var(–panel);border:1.5px solid var(–border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(–shadow);}
+.rp{width:34px;height:34px;border-radius:50%;background:var(–navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;}
+.rp.gold{background:#c8960a}.rp.silver{background:#8a9aaa}.rp.bronze{background:#a05020}
+.rn{flex:1}.rn-name{font-weight:800;font-size:16px;}.rn-sub{font-size:12px;color:var(–muted);margin-top:2px;}
+.rs{font-size:20px;font-weight:800;color:var(–navy);}
+
+/* POPUP */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);display:none;z-index:300;backdrop-filter:blur(3px);}
+.popup{
+position:fixed;bottom:0;left:0;right:0;
+background:var(–panel);border-radius:28px 28px 0 0;
+padding:26px 22px 36px;display:none;z-index:310;
+box-shadow:0 -10px 40px rgba(0,0,0,.2);
+max-height:86vh;overflow-y:auto;
+transform:translateY(100%);
+transition:transform .3s cubic-bezier(.32,0,.67,0);
+}
+.popup.open{display:block;transform:translateY(0);transition:transform .35s cubic-bezier(.16,1,.3,1);}
+.popup-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px;}
+.popup-icon{font-size:38px;margin-bottom:10px;text-align:center;}
+.popup-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.popup-sub{font-size:14px;color:var(–muted);margin-bottom:20px;line-height:1.5;}
+.pop-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(–muted);margin-bottom:10px;}
+.min-display{text-align:center;margin-bottom:12px;}
+.min-big{font-size:62px;font-weight:800;color:var(–navy);line-height:1;}
+.min-unit{font-size:17px;color:var(–muted);}
+.slider-track{padding:0 4px;margin-bottom:20px;}
+input[type=range]{width:100%;height:6px;appearance:none;background:linear-gradient(to right,var(–navy) 0%,var(–navy) var(–pct,12.5%),#ddd var(–pct,12.5%));border-radius:3px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:28px;height:28px;border-radius:50%;background:var(–gold);border:3px solid var(–navy);box-shadow:0 2px 8px rgba(0,0,0,.2);transition:transform .1s;}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15);}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:#aaa;margin-top:6px;}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.chip{border:2px solid #ddd;background:#fff;color:var(–navy);padding:12px 4px;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer;transition:all .12s;}
+.chip.active{background:var(–navy);color:#fff;border-color:var(–navy);}
+.pop-btn{width:100%;border:none;background:var(–navy);color:#fff;padding:16px;border-radius:18px;font-size:17px;font-weight:800;cursor:pointer;transition:transform .12s;margin-top:4px;}
+.pop-btn:active{transform:scale(.98);}
+.pop-btn:disabled{opacity:.4;cursor:not-allowed;}
+.pop-btn.green{background:var(–green);}
+.upg-detail{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.ud-box{background:#f0ece4;border-radius:16px;padding:14px;}
+.ud-lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(–muted);margin-bottom:6px;}
+.ud-val{font-size:28px;font-weight:800;color:var(–navy);}
+.result-box{text-align:center;padding:8px 0 14px;}
+.result-icon{font-size:54px;margin-bottom:10px;}
+.result-title{font-size:24px;font-weight:800;margin-bottom:8px;}
+.result-detail{font-size:14px;color:var(–muted);margin-bottom:18px;line-height:1.55;white-space:pre-line;}
+.result-amount{font-size:40px;font-weight:800;margin-bottom:18px;}
+.result-amount.win{color:var(–green)}.result-amount.lose{color:var(–red)}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(–navy);border-radius:24px 24px 0 0;padding:13px 12px 20px;display:flex;justify-content:space-around;box-shadow:0 -4px 20px rgba(0,0,0,.2);z-index:200;}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:5px;color:rgba(255,255,255,.5);cursor:pointer;min-width:80px;transition:color .15s;}
+.nav-btn.active{color:#fff;}
+.nav-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);transition:background .15s,transform .15s;}
+.nav-btn.active .nav-icon{background:var(–gold);color:#111;border-color:transparent;transform:translateY(-4px);box-shadow:0 8px 20px rgba(232,168,32,.4);}
+.nav-btn.center-btn .nav-icon{width:60px;height:60px;border-radius:20px;transform:translateY(-8px);}
+.nav-btn.center-btn.active .nav-icon{transform:translateY(-12px);}
+.nav-lbl{font-size:12px;font-weight:700;}
+
+/* TOAST / FLASH */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(–navy);color:#fff;padding:12px 22px;border-radius:20px;font-weight:700;font-size:15px;opacity:0;transition:all .3s;z-index:400;white-space:nowrap;box-shadow:var(–shadow-lg);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.income-flash{position:fixed;top:72px;right:20px;background:var(–green);color:#fff;padding:8px 14px;border-radius:14px;font-weight:800;font-size:14px;opacity:0;transform:translateY(0);transition:all .4s;z-index:400;pointer-events:none;}
+.income-flash.show{opacity:1;transform:translateY(-8px);}
+/* ── MAP LEGEND — railway technical style ── */
+.map-legend{
+background:#e8e4dc;
+border:1.5px solid #b8b2a8;
+border-radius:8px;
+padding:12px 14px;
+margin-bottom:20px;
+font-family:-apple-system,BlinkMacSystemFont,“Helvetica Neue”,sans-serif;
+}
+.legend-title{
+font-size:9px;
+font-weight:800;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:#5a5450;
+border-bottom:1px solid #c0bab0;
+padding-bottom:7px;
+margin-bottom:10px;
+}
+.legend-body{
+display:flex;
+gap:16px;
+}
+.legend-section{flex:1;}
+.legend-section-title{
+font-size:8px;
+font-weight:700;
+letter-spacing:.1em;
+text-transform:uppercase;
+color:#8a8480;
+margin-bottom:7px;
+}
+.legend-line{
+display:flex;
+align-items:center;
+gap:8px;
+margin-bottom:5px;
+}
+.leg-line-swatch{
+display:inline-block;
+width:22px;
+height:4px;
+border-radius:0;
+flex-shrink:0;
+}
+.leg-line-label{
+font-size:10px;
+font-weight:500;
+color:#2a2520;
+letter-spacing:.01em;
+}
+.legend-divider{
+width:1px;
+background:#c0bab0;
+margin:0 2px;
+align-self:stretch;
+}
+/* Shape symbols in legend */
+.leg-shape{
+display:inline-block;
+flex-shrink:0;
+border:1.8px solid #1c1c1c;
+background:#e8e4dc;
+}
+.leg-square{
+width:11px;height:11px;
+}
+.leg-circle{
+width:11px;height:11px;
+border-radius:50%;
+}
+.leg-diamond{
+width:9px;height:9px;
+transform:rotate(45deg);
+margin:0 2px;
+}
+.leg-hex{
+width:12px;height:10px;
+clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);
+background:#1c1c1c;
+border:none;
+}
+
+/* ── APPALTI MODULE CSS ── */
+:root{
+–bg:#e4e0d8;
+–navy:#0c2336;
+–gold:#e8a820;
+–green:#1e7a4a;
+–green2:#25a060;
+–red:#c0392b;
+–purple:#6D214F;
+–panel:#ede9e1;
+–border:#c4beb4;
+–text:#1a1a1a;
+–muted:#6a6058;
+–shadow:0 4px 14px rgba(0,0,0,0.10);
+–shadow-lg:0 10px 30px rgba(0,0,0,0.16);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
+font-family:-apple-system,BlinkMacSystemFont,“Helvetica Neue”,sans-serif;
+background:var(–bg);color:var(–text);
+min-height:100vh;overflow-x:hidden;
 }
 
 /* HEADER */
 .header{
-  background:var(--navy);
-  height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 16px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.28);
-  position:sticky;
-  top:0;
-  z-index:200;
+background:var(–navy);height:56px;
+display:flex;align-items:center;justify-content:space-between;
+padding:0 16px;
+box-shadow:0 2px 10px rgba(0,0,0,0.28);
+position:sticky;top:0;z-index:200;
 }
 .header-title{font-size:15px;font-weight:800;color:#fff;letter-spacing:.02em;}
-.header-title span{color:var(--gold);}
-.header-bal{
-  background:var(--gold);
-  color:#111;
-  padding:6px 13px;
-  border-radius:14px;
-  font-size:14px;
-  font-weight:800;
-}
-.btn-back{
-  color:rgba(255,255,255,0.7);
-  font-size:12px;
-  font-weight:600;
-  background:rgba(255,255,255,0.1);
-  border:1px solid rgba(255,255,255,0.15);
-  border-radius:8px;
-  padding:5px 10px;
-  cursor:pointer;
-}
+.header-title span{color:var(–gold);}
+.header-bal{background:var(–gold);color:#111;padding:6px 13px;border-radius:14px;font-size:14px;font-weight:800;}
+.btn-back{color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 10px;cursor:pointer;}
 
 /* MODE TABS */
 .mode-tabs{
-  display:flex;
-  gap:0;
-  background:var(--navy);
-  border-bottom:2px solid rgba(255,255,255,0.08);
+display:flex;gap:0;
+background:var(–navy);
+border-bottom:2px solid rgba(255,255,255,0.08);
 }
 .mode-tab{
-  flex:1;
-  padding:10px 8px;
-  text-align:center;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.45);
-  cursor:pointer;
-  border-bottom:2px solid transparent;
-  transition:all .15s;
+flex:1;padding:10px 8px;
+text-align:center;
+font-size:11px;font-weight:700;
+letter-spacing:.04em;text-transform:uppercase;
+color:rgba(255,255,255,0.45);
+cursor:pointer;border-bottom:2px solid transparent;
+transition:all .15s;
 }
-.mode-tab.active{
-  color:#fff;
-  border-bottom-color:var(--gold);
-}
+.mode-tab.active{color:#fff;border-bottom-color:var(–gold);}
 
 /* MAP SECTION */
 .map-outer{
-  background:#0a1628;
-  padding:0;
+background:#0a1628;
+padding:0;
 }
 .map-scroll-wrap{
-  overflow:hidden;
-  border-top:1px solid rgba(0,180,255,0.15);
-  border-bottom:1px solid rgba(0,180,255,0.15);
-  position:relative;
-  height:320px;
-  cursor:grab;
-  user-select:none;
-  background:#0a1628;
+overflow:hidden;
+border-radius:0;
+border:none;
+border-top:1px solid rgba(0,180,255,0.15);
+border-bottom:1px solid rgba(0,180,255,0.15);
+position:relative;
+height:320px;
+cursor:grab;
+user-select:none;
+background:#0a1628;
 }
 .map-scroll-wrap:active{cursor:grabbing;}
 .map-inner{
-  position:absolute;
-  top:0;
-  left:0;
-  width:540px;
-  height:680px;
-  transform-origin:0 0;
+position:absolute;
+top:0;left:0;
+width:540px;height:680px;
+transform-origin:0 0;
 }
+#italyCanvas{display:block;width:540px;height:680px;}
 
 /* STATS */
 .stats-row{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  padding:12px 12px 0;
+display:grid;grid-template-columns:repeat(4,1fr);
+gap:8px;padding:12px 12px 0;
 }
 .stat-box{
-  background:var(--panel);
-  border:1.5px solid var(--border);
-  border-radius:7px;
-  padding:9px 8px;
-  text-align:center;
+background:var(–panel);border:1.5px solid var(–border);
+border-radius:7px;padding:9px 8px;text-align:center;
 }
-.stat-lbl{
-  font-size:8px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.07em;
-  color:var(--muted);
-  margin-bottom:4px;
-}
-.stat-val{
-  font-size:16px;
-  font-weight:800;
-  color:var(--navy);
-}
-.stat-sub{
-  font-size:9px;
-  color:var(--muted);
-  margin-top:1px;
-}
+.stat-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(–muted);margin-bottom:4px;}
+.stat-val{font-size:16px;font-weight:800;color:var(–navy);}
+.stat-sub{font-size:9px;color:var(–muted);margin-top:1px;}
 
 /* CONTENT */
 .content{padding:10px 12px 100px;}
-.section-lbl{
-  font-size:9px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.09em;
-  color:var(--muted);
-  margin:12px 0 8px 2px;
-}
+.section-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(–muted);margin:12px 0 8px 2px;}
 
 /* REGION LIST */
 .region-list{display:grid;gap:7px;}
 .reg-card{
-  background:var(--panel);
-  border:1.5px solid var(--border);
-  border-radius:7px;
-  padding:10px 11px;
-  cursor:pointer;
-  transition:border-color .12s;
+background:var(–panel);border:1.5px solid var(–border);
+border-radius:7px;padding:10px 11px;
+cursor:pointer;transition:border-color .12s;
 }
 .reg-card.has-quota{border-color:rgba(30,122,74,0.4);}
 .reg-top{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
-.reg-dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  flex-shrink:0;
-  border:1.5px solid rgba(0,0,0,0.2);
-}
+.reg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(0,0,0,0.2);}
 .reg-name{font-size:13px;font-weight:800;flex:1;}
-.reg-cap{font-size:10px;color:var(--muted);}
-.reg-pct{
-  font-size:17px;
-  font-weight:800;
-  color:var(--navy);
-  min-width:40px;
-  text-align:right;
-}
-.reg-pct.full{color:var(--green);}
-.bar-wrap{
-  background:#d4d0c8;
-  border-radius:2px;
-  height:4px;
-  margin-bottom:6px;
-  overflow:hidden;
-}
-.bar-fill{
-  height:100%;
-  border-radius:2px;
-  transition:width .4s;
-}
-.reg-bottom{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.reg-income{
-  font-size:10px;
-  color:var(--green2);
-  font-weight:700;
-  background:rgba(30,122,74,0.1);
-  padding:2px 6px;
-  border-radius:3px;
-}
-.reg-price{
-  font-size:10px;
-  color:var(--muted);
-  font-weight:600;
-}
+.reg-cap{font-size:10px;color:var(–muted);}
+.reg-pct{font-size:17px;font-weight:800;color:var(–navy);min-width:40px;text-align:right;}
+.reg-pct.full{color:var(–green);}
+.bar-wrap{background:#d4d0c8;border-radius:2px;height:4px;margin-bottom:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:2px;transition:width .4s;}
+.reg-bottom{display:flex;justify-content:space-between;align-items:center;}
+.reg-income{font-size:10px;color:var(–green2);font-weight:700;background:rgba(30,122,74,0.1);padding:2px 6px;border-radius:3px;}
+.reg-price{font-size:10px;color:var(–muted);font-weight:600;}
 
 /* MARKET TAB */
 .market-list{display:grid;gap:7px;}
 .market-card{
-  background:var(--panel);
-  border:1.5px solid var(--border);
-  border-radius:7px;
-  padding:10px 11px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  cursor:pointer;
+background:var(–panel);border:1.5px solid var(–border);
+border-radius:7px;padding:10px 11px;
+display:flex;align-items:center;gap:10px;
+cursor:pointer;
 }
 .market-info{flex:1;}
 .market-name{font-size:13px;font-weight:800;}
-.market-detail{font-size:10px;color:var(--muted);margin-top:2px;}
+.market-detail{font-size:10px;color:var(–muted);margin-top:2px;}
 .market-right{text-align:right;}
-.market-price{font-size:14px;font-weight:800;color:var(--navy);}
+.market-price{font-size:14px;font-weight:800;color:var(–navy);}
 .market-change{font-size:10px;font-weight:700;margin-top:2px;}
-.market-change.up{color:var(--green2);}
-.market-change.down{color:var(--red);}
+.market-change.up{color:var(–green2);}
+.market-change.down{color:var(–red);}
 .market-qty{
-  font-size:10px;
-  color:var(--muted);
-  background:#ddd9d0;
-  border-radius:3px;
-  padding:2px 6px;
-  font-weight:600;
-  margin-top:3px;
+font-size:10px;color:var(–muted);
+background:#ddd9d0;border-radius:3px;
+padding:2px 6px;font-weight:600;margin-top:3px;
 }
 
 /* ASTE TAB */
 .asta-list{display:grid;gap:7px;}
 .asta-card{
-  background:var(--panel);
-  border:1.5px solid var(--border);
-  border-radius:7px;
-  padding:10px 11px;
+background:var(–panel);border:1.5px solid var(–border);
+border-radius:7px;padding:10px 11px;
 }
 .asta-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .asta-badge{
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.05em;
-  text-transform:uppercase;
-  padding:2px 7px;
-  border-radius:3px;
-  color:#fff;
+font-size:9px;font-weight:800;letter-spacing:.05em;
+text-transform:uppercase;padding:2px 7px;border-radius:3px;
+color:#fff;
 }
 .asta-badge.live{background:#c0392b;}
 .asta-badge.soon{background:#e8a820;color:#111;}
 .asta-name{font-size:13px;font-weight:800;flex:1;}
-.asta-timer{font-size:11px;font-weight:700;color:var(--muted);}
+.asta-timer{font-size:11px;font-weight:700;color:var(–muted);}
 .asta-detail{display:flex;justify-content:space-between;align-items:flex-end;}
-.asta-info{font-size:10px;color:var(--muted);line-height:1.5;}
+.asta-info{font-size:10px;color:var(–muted);line-height:1.5;}
 .asta-bid-wrap{text-align:right;}
-.asta-current{font-size:11px;color:var(--muted);margin-bottom:2px;}
-.asta-amount{font-size:16px;font-weight:800;color:var(--navy);}
+.asta-current{font-size:11px;color:var(–muted);margin-bottom:2px;}
+.asta-amount{font-size:16px;font-weight:800;color:var(–navy);}
 .btn-bid{
-  margin-top:6px;
-  background:var(--navy);
-  color:#fff;
-  border:none;
-  border-radius:6px;
-  padding:7px 14px;
-  font-size:12px;
-  font-weight:800;
-  cursor:pointer;
+margin-top:6px;
+background:var(–navy);color:#fff;
+border:none;border-radius:6px;
+padding:7px 14px;font-size:12px;font-weight:800;
+cursor:pointer;
 }
 .btn-bid:active{transform:scale(.97);}
 
 /* POPUP */
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.55);
-  display:none;
-  z-index:300;
-  backdrop-filter:blur(2px);
-}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;z-index:300;backdrop-filter:blur(2px);}
 .popup{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:var(--panel);
-  border-radius:16px 16px 0 0;
-  padding:20px 18px 30px;
-  display:none;
-  z-index:310;
-  box-shadow:0 -8px 30px rgba(0,0,0,0.2);
-  transform:translateY(100%);
-  transition:transform .3s cubic-bezier(.16,1,.3,1);
-  max-height:88vh;
-  overflow-y:auto;
+position:fixed;bottom:0;left:0;right:0;
+background:var(–panel);
+border-radius:16px 16px 0 0;
+padding:20px 18px 30px;
+display:none;z-index:310;
+box-shadow:0 -8px 30px rgba(0,0,0,0.2);
+transform:translateY(100%);
+transition:transform .3s cubic-bezier(.16,1,.3,1);
+max-height:88vh;overflow-y:auto;
 }
-.popup.open{
-  display:block;
-  transform:translateY(0);
-}
-.pop-handle{
-  width:34px;
-  height:3px;
-  background:#ccc;
-  border-radius:2px;
-  margin:0 auto 16px;
-}
+.popup.open{display:block;transform:translateY(0);}
+.pop-handle{width:34px;height:3px;background:#ccc;border-radius:2px;margin:0 auto 16px;}
 .pop-header{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
-.pop-dot{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  flex-shrink:0;
-}
+.pop-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
 .pop-name{font-size:19px;font-weight:800;}
-.pop-region{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.pop-region{font-size:12px;color:var(–muted);margin-bottom:16px;}
 
 /* Quota tabs inside popup */
 .pop-mode-tabs{display:flex;gap:6px;margin-bottom:14px;}
 .pop-mode-tab{
-  flex:1;
-  padding:7px 4px;
-  text-align:center;
-  font-size:11px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-  background:#ddd9d0;
-  border:1.5px solid var(--border);
-  border-radius:6px;
-  cursor:pointer;
-  color:var(--muted);
-  transition:all .12s;
+flex:1;padding:7px 4px;text-align:center;
+font-size:11px;font-weight:700;text-transform:uppercase;
+letter-spacing:.04em;
+background:#ddd9d0;border:1.5px solid var(–border);
+border-radius:6px;cursor:pointer;color:var(–muted);
+transition:all .12s;
 }
-.pop-mode-tab.active{
-  background:var(--navy);
-  color:#fff;
-  border-color:var(--navy);
-}
+.pop-mode-tab.active{background:var(–navy);color:#fff;border-color:var(–navy);}
 
 /* Tiers */
 .tiers-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;}
 .tier-btn{
-  background:#e4e0d8;
-  border:2px solid var(--border);
-  border-radius:7px;
-  padding:10px 8px;
-  cursor:pointer;
-  text-align:center;
-  transition:all .12s;
+background:#e4e0d8;border:2px solid var(–border);
+border-radius:7px;padding:10px 8px;
+cursor:pointer;text-align:center;transition:all .12s;
 }
-.tier-btn.affordable{border-color:var(--green);}
+.tier-btn.affordable{border-color:var(–green);}
 .tier-btn.owned-tier{opacity:.45;cursor:not-allowed;}
-.tier-btn.sel{border-color:var(--gold);background:#f5ede0;}
-.tier-pct{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:2px;}
-.tier-cost{font-size:11px;color:var(--muted);font-weight:600;}
-.tier-inc{font-size:10px;color:var(--green2);font-weight:700;margin-top:2px;}
+.tier-btn.sel{border-color:var(–gold);background:#f5ede0;}
+.tier-pct{font-size:17px;font-weight:800;color:var(–navy);margin-bottom:2px;}
+.tier-cost{font-size:11px;color:var(–muted);font-weight:600;}
+.tier-inc{font-size:10px;color:var(–green2);font-weight:700;margin-top:2px;}
 
 /* Market buy inside popup */
 .market-buy-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .market-qty-input{
-  flex:1;
-  border:1.5px solid var(--border);
-  border-radius:6px;
-  padding:9px 10px;
-  font-size:15px;
-  font-weight:700;
-  background:#fff;
-  color:var(--navy);
-  text-align:center;
+flex:1;border:1.5px solid var(–border);border-radius:6px;
+padding:9px 10px;font-size:15px;font-weight:700;
+background:#fff;color:var(–navy);text-align:center;
 }
 .market-qty-btn{
-  width:36px;
-  height:36px;
-  border-radius:6px;
-  background:var(--navy);
-  color:#fff;
-  border:none;
-  font-size:18px;
-  font-weight:800;
-  cursor:pointer;
+width:36px;height:36px;border-radius:6px;
+background:var(–navy);color:#fff;
+border:none;font-size:18px;font-weight:800;cursor:pointer;
 }
 
 /* Asta offer */
 .offer-input-wrap{margin-bottom:14px;}
-.offer-lbl{
-  font-size:10px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  color:var(--muted);
-  margin-bottom:6px;
-}
+.offer-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(–muted);margin-bottom:6px;}
 .offer-input{
-  width:100%;
-  border:1.5px solid var(--border);
-  border-radius:6px;
-  padding:10px 12px;
-  font-size:16px;
-  font-weight:800;
-  background:#fff;
-  color:var(--navy);
+width:100%;border:1.5px solid var(–border);border-radius:6px;
+padding:10px 12px;font-size:16px;font-weight:800;
+background:#fff;color:var(–navy);
 }
-.offer-hint{font-size:10px;color:var(--muted);margin-top:4px;}
+.offer-hint{font-size:10px;color:var(–muted);margin-top:4px;}
 
 .pop-confirm{
-  width:100%;
-  border:none;
-  background:var(--navy);
-  color:#fff;
-  padding:13px;
-  border-radius:9px;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
+width:100%;border:none;
+background:var(–navy);color:#fff;
+padding:13px;border-radius:9px;
+font-size:15px;font-weight:800;cursor:pointer;
 }
 .pop-confirm:disabled{opacity:.38;cursor:not-allowed;}
-.pop-note{
-  font-size:11px;
-  color:var(--muted);
-  text-align:center;
-  margin-top:8px;
-  line-height:1.4;
-}
+.pop-note{font-size:11px;color:var(–muted);text-align:center;margin-top:8px;line-height:1.4;}
 
 /* TOAST */
 .toast{
-  position:fixed;
-  top:66px;
-  left:50%;
-  transform:translateX(-50%) translateY(-14px);
-  background:var(--navy);
-  color:#fff;
-  padding:9px 16px;
-  border-radius:14px;
-  font-size:12px;
-  font-weight:700;
-  opacity:0;
-  transition:all .25s;
-  z-index:400;
-  white-space:nowrap;
+position:fixed;top:66px;left:50%;
+transform:translateX(-50%) translateY(-14px);
+background:var(–navy);color:#fff;
+padding:9px 16px;border-radius:14px;
+font-size:12px;font-weight:700;
+opacity:0;transition:all .25s;z-index:400;white-space:nowrap;
 }
-.toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* AP BUTTON — topbar */
+.ap-btn{
+width:42px;height:42px;border-radius:13px;
+background:rgba(255,255,255,0.1);
+border:1.5px solid rgba(255,255,255,0.2);
+color:#fff;font-size:17px;
+cursor:pointer;display:flex;align-items:center;justify-content:center;
+transition:all .15s;flex-shrink:0;
+}
+.ap-btn:active{background:rgba(255,255,255,0.2);transform:scale(.92);}
+
+/* Appalti fullscreen overlay */
+.appalti-overlay{
+position:fixed;inset:0;
+background:#080f1e;
+z-index:500;
+display:none;
+flex-direction:column;
+overflow:hidden;
+}
+.appalti-overlay.open{display:flex;}
+.appalti-inner{
+flex:1;overflow-y:auto;
+-webkit-overflow-scrolling:touch;
 }
 </style>
-</head>
+
 <body>
 
-<div class="header">
-  <button class="btn-back" onclick="if(window.opener)window.close();else history.back();">← Chiudi</button>
-  <div class="header-title">Appalti <span>Nazionali</span></div>
-  <div class="header-bal" id="balDisp">–</div>
+<div class="topbar">
+  <div class="brand">Treno<span>Scommesse</span></div>
+  <div style="display:flex;align-items:center;gap:9px;">
+    <button class="ap-btn" onclick="openAppalti()" title="Appalti Nazionali">◈</button>
+    <div class="balance-pill" id="balBox">1.000€</div>
+  </div>
 </div>
 
-<div class="mode-tabs">
-  <div class="mode-tab active" id="tab-quote" onclick="switchTab('quote')">📋 Quote</div>
-  <div class="mode-tab" id="tab-mercato" onclick="switchTab('mercato')">📈 Mercato</div>
-  <div class="mode-tab" id="tab-aste" onclick="switchTab('aste')">🔨 Aste</div>
+<div class="container">
+
+  <!-- STAZIONE -->
+
+  <div id="pageStation" class="page active">
+    <div class="section-title">La tua stazione</div>
+    <div class="section-sub">Tocca le infrastrutture per potenziarle o scoprirle.</div>
+    <div class="metro-wrap">
+      <canvas id="metroCanvas"></canvas>
+    </div>
+    <div class="map-legend">
+      <div class="legend-title">LEGENDA</div>
+      <div class="legend-body">
+        <div class="legend-section">
+          <div class="legend-section-title">LINEE FERROVIARIE</div>
+          <div class="legend-line"><span class="leg-line-swatch" style="background:#d63031"></span><span class="leg-line-label">Linea A — Alta Velocità</span></div>
+          <div class="legend-line"><span class="leg-line-swatch" style="background:#0652DD"></span><span class="leg-line-label">Linea B — Intercity</span></div>
+          <div class="legend-line"><span class="leg-line-swatch" style="background:#1289A7"></span><span class="leg-line-label">Linea C — Regionale</span></div>
+          <div class="legend-line"><span class="leg-line-swatch" style="background:#F79F1F"></span><span class="leg-line-label">Linea D — Direttrice N/S</span></div>
+          <div class="legend-line"><span class="leg-line-swatch" style="background:#6D214F"></span><span class="leg-line-label">Linea E — Raccordo Est</span></div>
+        </div>
+        <div class="legend-divider"></div>
+        <div class="legend-section">
+          <div class="legend-section-title">NODI E INFRASTRUTTURE</div>
+          <div class="legend-line"><span class="leg-shape leg-square"></span><span class="leg-line-label">Impianto potenziabile</span></div>
+          <div class="legend-line"><span class="leg-shape leg-circle"></span><span class="leg-line-label">Stazione / Nodo</span></div>
+          <div class="legend-line"><span class="leg-shape leg-diamond"></span><span class="leg-line-label">Centrale energetica</span></div>
+          <div class="legend-line"><span class="leg-shape leg-hex"></span><span class="leg-line-label">Terminale merci</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCOMMESSE -->
+
+  <div id="pageBets" class="page">
+    <div class="section-title">Scommesse</div>
+    <div class="section-sub">Scommetti sui minuti di ritardo.</div>
+    <div class="train-cards">
+      <div class="t-card t-av" onclick="openBet(0)">
+        <div class="t-bg"></div><div class="t-loco"></div>
+        <div class="t-chip chip-red">alta variabilità</div>
+        <div class="t-content"><div class="t-badge">Alta Velocità</div><div class="t-name">Atria V-01</div><div class="t-route">Roma → Milano</div></div>
+      </div>
+      <div class="t-card t-ic" onclick="openBet(1)">
+        <div class="t-bg"></div><div class="t-loco"></div>
+        <div class="t-chip chip-yellow">media variabilità</div>
+        <div class="t-content"><div class="t-badge">Intercity</div><div class="t-name">Radian R-12</div><div class="t-route">Venezia → Roma</div></div>
+      </div>
+      <div class="t-card t-re" onclick="openBet(2)">
+        <div class="t-bg"></div><div class="t-loco"></div>
+        <div class="t-chip chip-green">più stabile</div>
+        <div class="t-content"><div class="t-badge">Regionale</div><div class="t-name">Modulo C-4</div><div class="t-route">Bari → Taranto</div></div>
+      </div>
+      <div class="t-card t-il" onclick="openBet(3)">
+        <div class="t-bg"></div><div class="t-loco"></div>
+        <div class="t-chip chip-red">alta variabilità</div>
+        <div class="t-content"><div class="t-badge">Lunga Direttrice</div><div class="t-name">Linea B-2</div><div class="t-route">Palermo → Messina</div></div>
+      </div>
+    </div>
+    <div class="board">
+      <div class="board-hd"><span>Treno</span><span>Tratta</span><span>Ora</span><span>Stato</span></div>
+      <div id="boardBody"></div>
+    </div>
+  </div>
+
+  <!-- PROFILO -->
+
+  <div id="pageProfile" class="page">
+    <div class="section-title">Profilo</div>
+    <div class="section-sub">Le tue statistiche e la classifica.</div>
+    <div class="profile-hero">
+      <div class="ph-name">Operatore Ferroviario</div>
+      <div class="ph-sub">Livello · <span id="phLevel">Base</span></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="sc-lbl">Saldo</div><div class="sc-val" id="scBal">1.000€</div><div class="sc-sub">capitale</div></div>
+      <div class="stat-card"><div class="sc-lbl">Rendita</div><div class="sc-val" id="scInc">28€</div><div class="sc-sub">ogni 60 sec</div></div>
+      <div class="stat-card"><div class="sc-lbl">Scommesse</div><div class="sc-val" id="scBets">0</div><div class="sc-sub">totali</div></div>
+      <div class="stat-card"><div class="sc-lbl">Win Rate</div><div class="sc-val" id="scRate">0%</div><div class="sc-sub">precisione</div></div>
+      <div class="stat-card"><div class="sc-lbl">Vittorie</div><div class="sc-val" id="scWins">0</div><div class="sc-sub">indovinate</div></div>
+      <div class="stat-card"><div class="sc-lbl">Sconfitte</div><div class="sc-val" id="scLoss">0</div><div class="sc-sub">mancate</div></div>
+    </div>
+    <div class="section-title" style="margin-bottom:12px;">Classifica</div>
+    <div class="rank-list" id="rankList"></div>
+  </div>
 </div>
 
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+<div class="popup" id="popup">
+  <div class="popup-handle"></div>
+  <div class="popup-icon" id="popIcon"></div>
+  <div class="popup-title" id="popTitle">–</div>
+  <div class="popup-sub" id="popSub">–</div>
+
+  <div id="betSec">
+    <div class="pop-label">Ritardo previsto</div>
+    <div class="min-display"><span class="min-big" id="minBig">15</span><span class="min-unit"> min</span></div>
+    <div class="slider-track">
+      <input type="range" id="minSlider" min="0" max="120" value="15"/>
+      <div class="slider-labels"><span>0</span><span>30</span><span>60</span><span>120+</span></div>
+    </div>
+    <div class="pop-label">Puntata</div>
+    <div class="chips">
+      <button class="chip" onclick="selChip(50,this)">50€</button>
+      <button class="chip active" onclick="selChip(200,this)">200€</button>
+      <button class="chip" onclick="selChip(500,this)">500€</button>
+      <button class="chip" onclick="selChip(1000,this)">1k€</button>
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="toleranceInfo">Finestra utile: ±5 min</div>
+    <button class="pop-btn" id="betBtn" onclick="placeBet()">◈ Piazza scommessa</button>
+  </div>
+
+  <div id="upgSec" style="display:none">
+    <div class="upg-detail">
+      <div class="ud-box"><div class="ud-lbl">Livello</div><div class="ud-val" id="upgLv">1</div></div>
+      <div class="ud-box"><div class="ud-lbl">Costo</div><div class="ud-val" id="upgCost">120€</div></div>
+    </div>
+    <button class="pop-btn green" id="upgBtn" onclick="doUpgrade()">▲ Potenzia</button>
+  </div>
+
+  <div id="resSec" style="display:none">
+    <div class="result-box">
+      <div class="result-icon" id="resIcon">▲</div>
+      <div class="result-title" id="resTitle">–</div>
+      <div class="result-detail" id="resDetail">–</div>
+      <div class="result-amount" id="resAmount">–</div>
+      <button class="pop-btn" onclick="closePopup()">Continua</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="income-flash" id="incFlash"></div>
+
+<div class="bottom-nav">
+  <div class="nav-btn" id="navProfile" onclick="showPage('profile')">
+    <div class="nav-icon">PR</div><div class="nav-lbl">Profilo</div>
+  </div>
+  <div class="nav-btn center-btn active" id="navStation" onclick="showPage('station')">
+    <div class="nav-icon">ST</div><div class="nav-lbl">Stazione</div>
+  </div>
+  <div class="nav-btn" id="navBets" onclick="showPage('bets')">
+    <div class="nav-icon">SC</div><div class="nav-lbl">Scommesse</div>
+  </div>
+</div>
+
+<!-- ── APPALTI NAZIONALI OVERLAY ── -->
+
+<div class="appalti-overlay" id="appaltiOverlay">
+
+  <!-- Appalti header -->
+
+  <div class="header" style="flex-shrink:0;">
+    <button class="btn-back" onclick="closeAppalti()">← Stazione</button>
+    <div class="header-title">Appalti <span>Nazionali</span></div>
+    <div class="header-bal" id="apBalDisp">–</div>
+  </div>
+
+  <!-- Mode tabs -->
+
+  <div class="mode-tabs" style="flex-shrink:0;">
+    <div class="mode-tab active" id="aptab-quote"   onclick="apSwitchTab('quote')">≡ QUOTE</div>
+    <div class="mode-tab"        id="aptab-mercato" onclick="apSwitchTab('mercato')">↑ MERCATO</div>
+    <div class="mode-tab"        id="aptab-aste"    onclick="apSwitchTab('aste')">◇ ASTE</div>
+  </div>
+
+  <!-- Scrollable content -->
+
+  <div class="appalti-inner">
+
+```
+<!-- MAP -->
 <div class="map-outer">
-  <div class="map-scroll-wrap" id="mapWrap">
-    <div class="map-inner" id="mapInner">
-
+  <div class="map-scroll-wrap" id="apMapWrap">
+    <div class="map-inner" id="apMapInner">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="540" height="680"
            style="display:block;position:absolute;top:0;left:0;">
         <defs>
-          <pattern id="scangrid" x="0" y="0" width="54" height="68" patternUnits="userSpaceOnUse">
+          <pattern id="apgrid" x="0" y="0" width="54" height="68" patternUnits="userSpaceOnUse">
             <path d="M54,0 L0,0 0,68" fill="none" stroke="rgba(0,150,255,0.07)" stroke-width="0.5"/>
           </pattern>
         </defs>
-
         <rect width="540" height="680" fill="#080f1e"/>
-        <rect width="540" height="680" fill="url(#scangrid)"/>
-
+        <rect width="540" height="680" fill="url(#apgrid)"/>
         <g stroke="rgba(0,180,255,0.35)" stroke-width="1.5" fill="none">
-          <polyline points="8,8 8,22 22,22"/>
-          <polyline points="532,8 532,22 518,22"/>
-          <polyline points="8,672 8,658 22,658"/>
-          <polyline points="532,672 532,658 518,658"/>
+          <polyline points="8,8 8,22 22,22"/><polyline points="532,8 532,22 518,22"/>
+          <polyline points="8,672 8,658 22,658"/><polyline points="532,672 532,658 518,658"/>
         </g>
-
         <text x="32" y="19" font-size="7.5" font-family="-apple-system,sans-serif" font-weight="800"
           fill="rgba(0,180,255,0.45)" letter-spacing="2.5">RETE FERROVIARIA NAZIONALE · IT</text>
-
+        <!-- Rail -->
         <rect x="0" y="645" width="540" height="8" fill="rgba(0,150,255,0.05)"/>
         <line x1="0" y1="648" x2="540" y2="648" stroke="rgba(0,180,255,0.25)" stroke-width="1.2"/>
         <line x1="0" y1="654" x2="540" y2="654" stroke="rgba(0,180,255,0.25)" stroke-width="1.2"/>
-
         <g stroke="rgba(0,150,255,0.14)" stroke-width="2.5">
-          <line x1="15" y1="644" x2="15" y2="658"/>
-          <line x1="45" y1="644" x2="45" y2="658"/>
-          <line x1="75" y1="644" x2="75" y2="658"/>
-          <line x1="105" y1="644" x2="105" y2="658"/>
-          <line x1="135" y1="644" x2="135" y2="658"/>
-          <line x1="165" y1="644" x2="165" y2="658"/>
-          <line x1="195" y1="644" x2="195" y2="658"/>
-          <line x1="225" y1="644" x2="225" y2="658"/>
-          <line x1="255" y1="644" x2="255" y2="658"/>
-          <line x1="285" y1="644" x2="285" y2="658"/>
-          <line x1="315" y1="644" x2="315" y2="658"/>
-          <line x1="345" y1="644" x2="345" y2="658"/>
-          <line x1="375" y1="644" x2="375" y2="658"/>
-          <line x1="405" y1="644" x2="405" y2="658"/>
-          <line x1="435" y1="644" x2="435" y2="658"/>
-          <line x1="465" y1="644" x2="465" y2="658"/>
-          <line x1="495" y1="644" x2="495" y2="658"/>
-          <line x1="525" y1="644" x2="525" y2="658"/>
+          <line x1="15" y1="644" x2="15" y2="658"/><line x1="45" y1="644" x2="45" y2="658"/>
+          <line x1="75" y1="644" x2="75" y2="658"/><line x1="105" y1="644" x2="105" y2="658"/>
+          <line x1="135" y1="644" x2="135" y2="658"/><line x1="165" y1="644" x2="165" y2="658"/>
+          <line x1="195" y1="644" x2="195" y2="658"/><line x1="225" y1="644" x2="225" y2="658"/>
+          <line x1="255" y1="644" x2="255" y2="658"/><line x1="285" y1="644" x2="285" y2="658"/>
+          <line x1="315" y1="644" x2="315" y2="658"/><line x1="345" y1="644" x2="345" y2="658"/>
+          <line x1="375" y1="644" x2="375" y2="658"/><line x1="405" y1="644" x2="405" y2="658"/>
+          <line x1="435" y1="644" x2="435" y2="658"/><line x1="465" y1="644" x2="465" y2="658"/>
+          <line x1="495" y1="644" x2="495" y2="658"/><line x1="525" y1="644" x2="525" y2="658"/>
         </g>
-
-        <g id="trainGroup" transform="translate(-440,0)">
+        <!-- Animated train -->
+        <g id="apTrainGroup" transform="translate(-440,0)">
           <rect x="352" y="629" width="88" height="22" rx="3" fill="rgba(0,0,0,0.35)"/>
           <rect x="350" y="626" width="88" height="20" rx="3" fill="#1a3a5c"/>
           <polygon points="438,626 452,635 438,646" fill="#1e4878"/>
           <rect x="350" y="629" width="88" height="3" fill="#00b4ff" opacity="0.8"/>
           <rect x="386" y="628" width="20" height="9" rx="1.5" fill="rgba(0,220,255,0.2)"/>
-          <rect x="386" y="628" width="20" height="9" rx="1.5" stroke="rgba(0,180,255,0.5)" stroke-width="0.8" fill="none"/>
           <rect x="355" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.18)"/>
           <rect x="370" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.18)"/>
           <circle cx="448" cy="637" r="3.5" fill="rgba(255,245,180,0.95)"/>
-          <circle cx="448" cy="637" r="7" fill="rgba(255,245,180,0.1)"/>
+          <circle cx="448" cy="637" r="7"   fill="rgba(255,245,180,0.1)"/>
           <circle cx="362" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,160,255,0.55)" stroke-width="1.4"/>
           <circle cx="378" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,160,255,0.55)" stroke-width="1.4"/>
           <circle cx="420" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,160,255,0.55)" stroke-width="1.4"/>
           <circle cx="436" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,160,255,0.55)" stroke-width="1.4"/>
-
           <rect x="262" y="629" width="84" height="22" rx="2" fill="rgba(0,0,0,0.3)"/>
           <rect x="260" y="627" width="84" height="19" rx="2" fill="#112238"/>
           <rect x="260" y="630" width="84" height="2.5" fill="#0090cc" opacity="0.65"/>
@@ -551,781 +799,1163 @@ body{
           <rect x="279" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
           <rect x="294" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
           <rect x="309" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="324" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
           <circle cx="270" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
           <circle cx="338" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-
           <rect x="172" y="629" width="84" height="22" rx="2" fill="rgba(0,0,0,0.3)"/>
           <rect x="170" y="627" width="84" height="19" rx="2" fill="#112238"/>
           <rect x="170" y="630" width="84" height="2.5" fill="#0090cc" opacity="0.65"/>
           <rect x="174" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
           <rect x="189" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
           <rect x="204" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="219" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="234" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
           <circle cx="180" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
           <circle cx="248" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-
           <rect x="82" y="629" width="84" height="22" rx="2" fill="rgba(0,0,0,0.3)"/>
           <rect x="80" y="627" width="84" height="19" rx="2" fill="#112238"/>
           <rect x="80" y="630" width="84" height="2.5" fill="#0090cc" opacity="0.65"/>
           <rect x="84" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
           <rect x="99" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
           <rect x="114" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="129" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="144" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <circle cx="90" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
+          <circle cx="90"  cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
           <circle cx="158" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-
-          <rect x="-8" y="629" width="84" height="22" rx="2" fill="rgba(0,0,0,0.3)"/>
-          <rect x="-10" y="627" width="84" height="19" rx="2" fill="#112238"/>
-          <rect x="-10" y="630" width="84" height="2.5" fill="#0090cc" opacity="0.65"/>
-          <rect x="-6" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="9" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="24" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="39" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <rect x="54" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-          <circle cx="0" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-          <circle cx="68" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
         </g>
       </svg>
-
-      <svg id="cityDotsSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="540" height="680"
+      <svg id="apCityDotsSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="540" height="680"
            style="display:block;position:absolute;top:0;left:0;">
-        <g id="cityDotsContainer"></g>
+        <g id="apCityDotsContainer"></g>
       </svg>
-
     </div>
   </div>
 </div>
 
+<!-- Stats -->
 <div class="stats-row">
-  <div class="stat-box"><div class="stat-lbl">Regioni</div><div class="stat-val" id="st1">0</div><div class="stat-sub">su 20</div></div>
-  <div class="stat-box"><div class="stat-lbl">Rendita</div><div class="stat-val" id="st2">0€</div><div class="stat-sub">/min</div></div>
-  <div class="stat-box"><div class="stat-lbl">% Media</div><div class="stat-val" id="st3">0%</div><div class="stat-sub">portafoglio</div></div>
-  <div class="stat-box"><div class="stat-lbl">Valore</div><div class="stat-val" id="st4">0€</div><div class="stat-sub">investito</div></div>
+  <div class="stat-box"><div class="stat-lbl">Regioni</div><div class="stat-val" id="apSt1">0</div><div class="stat-sub">su 20</div></div>
+  <div class="stat-box"><div class="stat-lbl">Rendita</div><div class="stat-val" id="apSt2">0€</div><div class="stat-sub">/min</div></div>
+  <div class="stat-box"><div class="stat-lbl">% Media</div><div class="stat-val" id="apSt3">0%</div><div class="stat-sub">portafoglio</div></div>
+  <div class="stat-box"><div class="stat-lbl">Investito</div><div class="stat-val" id="apSt4">0€</div><div class="stat-sub">totale</div></div>
 </div>
 
+<!-- Tab content -->
 <div class="content">
-  <div id="tabContentQuote">
-    <div class="section-lbl">Regioni italiane — tocca per acquistare quote</div>
-    <div class="region-list" id="regionList"></div>
-  </div>
-
-  <div id="tabContentMercato" style="display:none">
-    <div class="section-lbl">Mercato secondario — compra/vendi quote esistenti</div>
-    <div class="market-list" id="marketList"></div>
-  </div>
-
-  <div id="tabContentAste" style="display:none">
-    <div class="section-lbl">Aste attive — fai un'offerta prima della scadenza</div>
-    <div class="asta-list" id="astaList"></div>
-  </div>
+  <div id="apTabQuote"><div class="section-lbl">Regioni italiane — tocca per acquistare quote</div><div class="region-list" id="apRegionList"></div></div>
+  <div id="apTabMercato" style="display:none"><div class="section-lbl">Mercato secondario</div><div class="market-list" id="apMarketList"></div></div>
+  <div id="apTabAste"   style="display:none"><div class="section-lbl">Aste attive</div><div class="asta-list" id="apAstaList"></div></div>
 </div>
+```
 
-<div class="overlay" id="overlay" onclick="closePopup()"></div>
-<div class="popup" id="popup">
-  <div class="pop-handle"></div>
-  <div class="pop-header">
-    <div class="pop-dot" id="popDot"></div>
-    <div class="pop-name" id="popName">–</div>
-  </div>
-  <div class="pop-region" id="popRegion">–</div>
-
-  <div class="pop-mode-tabs">
-    <div class="pop-mode-tab active" id="pmt-quota" onclick="switchPopMode('quota')">Quota</div>
-    <div class="pop-mode-tab" id="pmt-mercato" onclick="switchPopMode('mercato')">Mercato</div>
-    <div class="pop-mode-tab" id="pmt-asta" onclick="switchPopMode('asta')">Asta</div>
   </div>
 
-  <div id="popQuotaMode">
-    <div class="tiers-grid" id="tiersGrid"></div>
-    <button class="pop-confirm" id="btnQuota" onclick="confirmQuota()" disabled>Acquista quota</button>
-    <div class="pop-note" id="noteQuota">Seleziona una percentuale da acquistare</div>
-  </div>
+  <!-- Appalti popup -->
 
-  <div id="popMercatoMode" style="display:none">
-    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;" id="mercatoDesc">–</div>
-    <div class="market-buy-row">
-      <button class="market-qty-btn" onclick="adjustQty(-1)">−</button>
-      <input class="market-qty-input" id="qtyInput" type="number" min="1" max="50" value="5" oninput="updateMercatoTotal()" />
-      <button class="market-qty-btn" onclick="adjustQty(1)">+</button>
+  <div class="overlay" id="apOverlay" onclick="apClosePopup()"></div>
+  <div class="popup" id="apPopup">
+    <div class="pop-handle"></div>
+    <div class="pop-header"><div class="pop-dot" id="apPopDot"></div><div class="pop-name" id="apPopName">–</div></div>
+    <div class="pop-region" id="apPopRegion">–</div>
+    <div class="pop-mode-tabs">
+      <div class="pop-mode-tab active" id="appmt-quota"   onclick="apSwitchPopMode('quota')">Quota</div>
+      <div class="pop-mode-tab"        id="appmt-mercato" onclick="apSwitchPopMode('mercato')">Mercato</div>
+      <div class="pop-mode-tab"        id="appmt-asta"    onclick="apSwitchPopMode('asta')">Asta</div>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">
-      Totale: <strong id="mercatoTotal">–</strong> · Prezzo/quota: <span id="mercatoUnit">–</span>
+    <div id="apPopQuota">
+      <div class="tiers-grid" id="apTiersGrid"></div>
+      <button class="pop-confirm" id="apBtnQuota" onclick="apConfirmQuota()" disabled>Acquista quota</button>
+      <div class="pop-note" id="apNoteQuota">Seleziona una percentuale</div>
     </div>
-    <button class="pop-confirm" id="btnMercato" onclick="confirmMercato()">Compra dal mercato</button>
-    <div class="pop-note" id="noteMercato">Ogni quota = 1% della regione</div>
-  </div>
-
-  <div id="popAstaMode" style="display:none">
-    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;" id="astaDesc">–</div>
-    <div class="offer-input-wrap">
-      <div class="offer-lbl">La tua offerta</div>
-      <input class="offer-input" id="offerInput" type="number" placeholder="0" oninput="updateOfferBtn()" />
-      <div class="offer-hint" id="offerHint">–</div>
+    <div id="apPopMercato" style="display:none">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;" id="apMercatoDesc">–</div>
+      <div class="market-buy-row">
+        <button class="market-qty-btn" onclick="apAdjustQty(-1)">−</button>
+        <input class="market-qty-input" id="apQtyInput" type="number" min="1" max="50" value="5" oninput="apUpdateMercatoTotal()"/>
+        <button class="market-qty-btn" onclick="apAdjustQty(1)">+</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Totale: <strong id="apMercatoTotal">–</strong></div>
+      <button class="pop-confirm" id="apBtnMercato" onclick="apConfirmMercato()">Compra dal mercato</button>
     </div>
-    <button class="pop-confirm" id="btnAsta" onclick="confirmAsta()" disabled>Fai offerta</button>
-    <div class="pop-note" id="noteAsta">L'offerta minima è il 10% sopra quella attuale</div>
+    <div id="apPopAsta" style="display:none">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;" id="apAstaDesc">–</div>
+      <div class="offer-input-wrap">
+        <div class="offer-lbl">La tua offerta</div>
+        <input class="offer-input" id="apOfferInput" type="number" placeholder="0" oninput="apUpdateOfferBtn()"/>
+        <div class="offer-hint" id="apOfferHint">–</div>
+      </div>
+      <button class="pop-confirm" id="apBtnAsta" onclick="apConfirmAsta()" disabled>Fai offerta</button>
+    </div>
   </div>
+  <div class="toast" id="apToast"></div>
 </div>
-
-<div class="toast" id="toast"></div>
-
 <script>
-let balance = window.opener?.getAppaltiBalance?.() ?? 50000;
-const owned = {};
-let invested = 0;
-let selectedRegion = null;
-let selectedTier = null;
-let selectedTierCost = 0;
-let currentPopMode = 'quota';
-let currentTab = 'quote';
+// ── STATE ──
+let balance=1000, selectedBet=200, selectedTrainIdx=0, currentUpgradeKey=null;
+const stats={bets:0,wins:0,losses:0};
+const levels={train:1,station:1,control:1,logistics:1};
 
-function fmt(n){
-  return Math.round(n).toLocaleString('it-IT') + '€';
-}
-
-function syncBalance(v){
-  balance = v;
-  document.getElementById('balDisp').textContent = fmt(balance);
-  if(window.opener?.setAppaltiBalance) window.opener.setAppaltiBalance(v);
-}
-
-const regions = [
-  {id:'vda', name:"Valle d'Aosta", cap:'Aosta', lon:7.32, lat:45.74, base:12000, inc:4, pop:0.1, color:'#7f8c8d'},
-  {id:'pie', name:'Piemonte', cap:'Torino', lon:7.68, lat:45.07, base:45000, inc:12, pop:4.3, color:'#8e44ad'},
-  {id:'lom', name:'Lombardia', cap:'Milano', lon:9.19, lat:45.46, base:95000, inc:22, pop:10.0, color:'#1e7a4a'},
-  {id:'taa', name:'Trentino A.A.', cap:'Trento', lon:11.12, lat:46.07, base:28000, inc:8, pop:1.1, color:'#2980b9'},
-  {id:'ven', name:'Veneto', cap:'Venezia', lon:12.34, lat:45.44, base:55000, inc:14, pop:4.9, color:'#16a085'},
-  {id:'fvg', name:'Friuli V.G.', cap:'Trieste', lon:13.78, lat:45.65, base:22000, inc:7, pop:1.2, color:'#3498db'},
-  {id:'lig', name:'Liguria', cap:'Genova', lon:8.93, lat:44.41, base:32000, inc:9, pop:1.5, color:'#27ae60'},
-  {id:'emr', name:'Emilia R.', cap:'Bologna', lon:11.34, lat:44.49, base:50000, inc:13, pop:4.5, color:'#c0392b'},
-  {id:'tos', name:'Toscana', cap:'Firenze', lon:11.25, lat:43.78, base:48000, inc:12, pop:3.7, color:'#d35400'},
-  {id:'mar', name:'Marche', cap:'Ancona', lon:13.52, lat:43.62, base:22000, inc:7, pop:1.5, color:'#f39c12'},
-  {id:'umb', name:'Umbria', cap:'Perugia', lon:12.39, lat:43.11, base:18000, inc:6, pop:0.9, color:'#9b59b6'},
-  {id:'laz', name:'Lazio', cap:'Roma', lon:12.48, lat:41.89, base:88000, inc:20, pop:5.9, color:'#34495e'},
-  {id:'abr', name:'Abruzzo', cap:"L'Aquila", lon:13.40, lat:42.35, base:20000, inc:7, pop:1.3, color:'#2ecc71'},
-  {id:'mol', name:'Molise', cap:'Campobasso', lon:14.65, lat:41.56, base:10000, inc:4, pop:0.3, color:'#95a5a6'},
-  {id:'cam', name:'Campania', cap:'Napoli', lon:14.27, lat:40.84, base:75000, inc:17, pop:5.8, color:'#e74c3c'},
-  {id:'pug', name:'Puglia', cap:'Bari', lon:16.87, lat:41.12, base:52000, inc:13, pop:4.0, color:'#f1c40f'},
-  {id:'bas', name:'Basilicata', cap:'Potenza', lon:15.80, lat:40.64, base:12000, inc:4, pop:0.6, color:'#7f8c8d'},
-  {id:'cal', name:'Calabria', cap:'Catanzaro', lon:16.60, lat:38.91, base:28000, inc:8, pop:2.0, color:'#8e44ad'},
-  {id:'sic', name:'Sicilia', cap:'Palermo', lon:13.36, lat:38.11, base:55000, inc:14, pop:5.0, color:'#e67e22'},
-  {id:'sar', name:'Sardegna', cap:'Cagliari', lon:9.11, lat:39.22, base:30000, inc:9, pop:1.6, color:'#16a085'}
+const trains=[
+{name:“Atria V-01”, route:“Roma → Milano”,     type:“Alta Velocità”,    base:8,  variance:16},
+{name:“Radian R-12”,route:“Venezia → Roma”,    type:“Intercity”,        base:12, variance:18},
+{name:“Modulo C-4”, route:“Bari → Taranto”,    type:“Regionale”,        base:7,  variance:12},
+{name:“Linea B-2”,  route:“Palermo → Messina”, type:“Lunga Direttrice”, base:24, variance:25}
+];
+const boardData=[
+{name:“Atria V-01”, route:“Roma→MI”, time:“08:12”,delay:”+6”,sc:“s-mid”},
+{name:“Radian R-12”,route:“VE→Roma”, time:“09:45”,delay:”+13”,sc:“s-mid”},
+{name:“Modulo C-4”, route:“Bari→TA”, time:“11:05”,delay:“Punt.”,sc:“s-ok”},
+{name:“Linea B-2”,  route:“PA→ME”,   time:“12:40”,delay:”+22”,sc:“s-bad”}
 ];
 
-const TIERS = [
-  {pct:10, mult:0.12, label:'10%'},
-  {pct:25, mult:0.32, label:'25%'},
-  {pct:51, mult:0.72, label:'51%'},
-  {pct:100, mult:1.55, label:'100%'}
+// ── MAP INFRASTRUCTURE — no emoji, clean technical symbols ──
+const infraDefs=[
+// UPGRADEABLE — square
+{id:‘deposito’, x:60,  y:170, shape:‘square’,  color:’#e03a3a’, symbol:‘▣’, label:‘DEPOSITO’,  upgradeKey:‘train’,    desc:‘Riduce la variabilità del ritardo simulato.’},
+{id:‘binari’,   x:220, y:120, shape:‘square’,  color:’#2979c8’, symbol:‘▦’, label:‘BINARI’,    upgradeKey:‘station’,  desc:‘Abbassa il ritardo medio di tutti i treni.’},
+{id:‘controllo’,x:400, y:200, shape:‘square’,  color:’#7c3aed’, symbol:‘◈’, label:‘CONTROLLO’, upgradeKey:‘control’,  desc:‘Allarga la finestra utile per vincere.’},
+{id:‘logistica’,x:460, y:270, shape:‘square’,  color:’#b8600a’, symbol:‘◉’, label:‘LOGISTICA’, upgradeKey:‘logistics’,desc:‘Aumenta la rendita passiva ogni 60 secondi.’},
+// INFORMATIVE — circle
+{id:‘centrale’, x:280, y:200, shape:‘circle’,  color:’#1ab8a0’, symbol:‘◎’, label:‘CENTRALE’,  upgradeKey:null, desc:‘Nodo principale. Smista tutti i treni in transito.’},
+{id:‘nord’,     x:280, y:55,  shape:‘circle’,  color:’#5a8fb0’, symbol:‘○’, label:‘NORD’,      upgradeKey:null, desc:‘Capolinea nord. Linee regionali superiori.’},
+{id:‘est’,      x:520, y:340, shape:‘circle’,  color:’#5a8fb0’, symbol:‘○’, label:‘EST’,       upgradeKey:null, desc:‘Terminale est. Treni a lunga percorrenza.’},
+{id:‘sud’,      x:100, y:370, shape:‘circle’,  color:’#5a8fb0’, symbol:‘○’, label:‘SUD’,       upgradeKey:null, desc:‘Capolinea sud. Ferrovie meridionali.’},
+// ENERGY — diamond
+{id:‘energia’,  x:300, y:370, shape:‘diamond’, color:’#1e8a5a’, symbol:‘◆’, label:‘ENERGIA’,   upgradeKey:null, desc:‘Centrale energetica. Alimenta la rete.’},
+// FREIGHT — hexagon
+{id:‘merci’,    x:460, y:120, shape:‘hexagon’, color:’#8a6010’, symbol:‘⬡’, label:‘T.MERCI’,   upgradeKey:null, desc:‘Terminale merci. Container e spedizioni.’},
 ];
 
-function tierCost(reg, t){
-  return Math.round(reg.base * t.mult);
-}
-function ownedPct(id){
-  return owned[id] || 0;
+const linePaths=[
+{color:’#e03a3a’, pts:[[60,170],[60,120],[220,120],[370,120],[500,120],[500,170],[555,170]]},
+{color:’#2979c8’, pts:[[60,310],[160,310],[160,200],[280,200],[400,200],[400,310],[520,310],[520,340]]},
+{color:’#1ab8a0’, pts:[[100,370],[100,310],[200,310],[200,270],[380,270],[460,270],[460,310],[520,310]]},
+{color:’#e8b820’, pts:[[280,55],[280,120],[280,200],[280,310],[300,330],[300,370]]},
+{color:’#9b4dca’, pts:[[370,120],[460,120],[460,200],[460,270],[460,340]]},
+];
+
+const metroAnim={t1:0,t2:0.3,t3:0.6};
+let lastTime=0;
+function getCanvas(){return document.getElementById(‘metroCanvas’);}
+
+function drawMetro(){
+const canvas=getCanvas();
+const wrap=canvas.parentElement;
+const logW=wrap.clientWidth;
+const logH=logW*0.78;
+const dpr=window.devicePixelRatio||1;
+canvas.width=logW*dpr; canvas.height=logH*dpr;
+canvas.style.width=logW+‘px’; canvas.style.height=logH+‘px’;
+const ctx=canvas.getContext(‘2d’);
+ctx.setTransform(dpr,0,0,dpr,0,0);
+const W=logW, H=logH, s=W/600;
+
+// ── BG: deep navy — CAD/engineering dark theme ──
+ctx.fillStyle=’#0d1b2e’; ctx.fillRect(0,0,W,H);
+
+// Fine grid — engineering graph paper feel
+ctx.strokeStyle=‘rgba(0,150,255,0.06)’; ctx.lineWidth=0.5;
+for(let x=0;x<W;x+=20*s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+for(let y=0;y<H;y+=20*s){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+// Major grid — every 5 cells
+ctx.strokeStyle=‘rgba(0,150,255,0.10)’; ctx.lineWidth=0.8;
+for(let x=0;x<W;x+=100*s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+for(let y=0;y<H;y+=100*s){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+// HUD corner brackets
+const bk=12*s;
+ctx.strokeStyle=‘rgba(0,180,255,0.3)’; ctx.lineWidth=1.5*s;
+[[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,dx,dy])=>{
+ctx.beginPath();
+ctx.moveTo(x+dx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+dy*bk);
+ctx.stroke();
+});
+
+// Line label top-left
+ctx.fillStyle=‘rgba(0,180,255,0.35)’;
+ctx.font=`600 ${7*s}px -apple-system,sans-serif`;
+ctx.textAlign=‘left’; ctx.textBaseline=‘top’;
+ctx.fillText(‘RETE FERROVIARIA · SISTEMA DI CONTROLLO’, 16*s, 8*s);
+
+// ── LINES — flat, bold, 90° angles ──
+linePaths.forEach(lp=>{
+// Shadow pass
+ctx.strokeStyle=‘rgba(0,0,0,0.4)’;
+ctx.lineWidth=13*s; ctx.lineCap=‘round’; ctx.lineJoin=‘round’;
+ctx.beginPath();
+lp.pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x*s,(y+3)*s):ctx.lineTo(x*s,(y+3)*s));
+ctx.stroke();
+// Main color
+ctx.strokeStyle=lp.color; ctx.lineWidth=10*s;
+ctx.beginPath();
+lp.pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x*s,y*s):ctx.lineTo(x*s,y*s));
+ctx.stroke();
+// Thin inner highlight — 1px lighter stripe
+ctx.strokeStyle=‘rgba(255,255,255,0.12)’; ctx.lineWidth=2*s;
+ctx.beginPath();
+lp.pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x*s,(y-1.5)*s):ctx.lineTo(x*s,(y-1.5)*s));
+ctx.stroke();
+});
+
+// ── INFRASTRUCTURE ──
+infraDefs.forEach(inf=>drawInfra(ctx,s,inf));
+
+// ── TRAINS ──
+drawTrain(ctx,s,linePaths[0].color,metroAnim.t1,linePaths[0].pts);
+drawTrain(ctx,s,linePaths[1].color,metroAnim.t2,linePaths[1].pts);
+drawTrain(ctx,s,linePaths[2].color,metroAnim.t3,linePaths[2].pts);
 }
 
-function regionIncome(reg){
-  const pct = ownedPct(reg.id);
-  if(pct === 0) return 0;
-  if(pct < 50) return Math.round(reg.inc * (pct / 100) * 0.3);
-  return Math.round(reg.inc * (pct / 100));
+function drawInfra(ctx,s,inf){
+const cx=inf.x*s, cy=inf.y*s;
+const isUpg=inf.upgradeKey!==null;
+const sz=(isUpg?13:9)*s;
+const lv=isUpg?levels[inf.upgradeKey]:null;
+
+ctx.save();
+
+// Flat shadow offset
+ctx.fillStyle=‘rgba(0,0,0,0.45)’;
+drawShapePath(ctx,inf.shape,cx+2.5*s,cy+3*s,sz);
+ctx.fill();
+
+// Base fill — dark navy, not the line color
+drawShapePath(ctx,inf.shape,cx,cy,sz);
+ctx.fillStyle=’#0d1b2e’; ctx.fill();
+
+// Colored border — the line color as stroke
+ctx.strokeStyle=inf.color;
+ctx.lineWidth=(isUpg?2.2:1.6)*s;
+drawShapePath(ctx,inf.shape,cx,cy,sz);
+ctx.stroke();
+
+// Inner fill indicator
+if(isUpg){
+// Small inner colored square = active/upgradeable
+drawShapePath(ctx,inf.shape,cx,cy,sz*0.45);
+ctx.fillStyle=inf.color;
+ctx.globalAlpha=0.5+(lv*0.1);
+ctx.fill();
+ctx.globalAlpha=1;
+} else {
+// Small dot in center for info nodes
+ctx.beginPath(); ctx.arc(cx,cy,sz*0.28,0,Math.PI*2);
+ctx.fillStyle=inf.color; ctx.globalAlpha=0.6; ctx.fill();
+ctx.globalAlpha=1;
 }
 
-function projectedIncome(reg, pct){
-  if(pct === 0) return 0;
-  if(pct < 50) return Math.round(reg.inc * (pct / 100) * 0.3);
-  return Math.round(reg.inc * (pct / 100));
+// Level badge — top-right corner, clean rectangle
+if(isUpg && lv>1){
+const bx=cx+sz*0.5, by=cy-sz*1.1;
+const bw=14*s, bh=9*s;
+ctx.fillStyle=’#0d1b2e’; ctx.fillRect(bx,by,bw,bh);
+ctx.strokeStyle=inf.color; ctx.lineWidth=0.8*s; ctx.strokeRect(bx,by,bw,bh);
+ctx.fillStyle=inf.color;
+ctx.font=`700 ${7*s}px -apple-system,sans-serif`;
+ctx.textAlign=‘center’; ctx.textBaseline=‘middle’;
+ctx.fillText(‘L’+lv, bx+bw/2, by+bh/2);
 }
 
-function totalIncome(){
-  return regions.reduce((s, r) => s + regionIncome(r), 0);
+// Label — uppercase, small, monospace-ish
+const lblY=cy+sz*1.65+1*s;
+ctx.font=`700 ${7.5*s}px -apple-system,sans-serif`;
+ctx.textAlign=‘center’; ctx.textBaseline=‘top’;
+// Dark bg behind label
+const tw=ctx.measureText(inf.label).width;
+ctx.fillStyle=‘rgba(13,27,46,0.85)’;
+ctx.fillRect(cx-tw/2-3*s, lblY-1*s, tw+6*s, 9.5*s);
+ctx.fillStyle=isUpg?inf.color:‘rgba(160,200,220,0.75)’;
+ctx.fillText(inf.label, cx, lblY);
+
+ctx.restore();
 }
 
-const marketData = regions.map(r => ({
-  id: r.id,
-  pricePerPct: Math.round(r.base * 0.014 * (0.85 + Math.random() * 0.3)),
-  available: Math.floor(Math.random() * 40) + 5,
-  trend: Math.random() > 0.5 ? 1 : -1,
-  change: (Math.random() * 8 + 1).toFixed(1)
+function drawShapePath(ctx,shape,cx,cy,sz){
+ctx.beginPath();
+if(shape===‘square’){
+ctx.rect(cx-sz,cy-sz,sz*2,sz*2);
+} else if(shape===‘circle’){
+ctx.arc(cx,cy,sz,0,Math.PI*2);
+} else if(shape===‘diamond’){
+ctx.moveTo(cx,cy-sz*1.35);
+ctx.lineTo(cx+sz*1.1,cy);
+ctx.lineTo(cx,cy+sz*1.35);
+ctx.lineTo(cx-sz*1.1,cy);
+ctx.closePath();
+} else if(shape===‘hexagon’){
+for(let i=0;i<6;i++){
+const a=Math.PI/180*(60*i-30);
+if(i===0)ctx.moveTo(cx+sz*Math.cos(a),cy+sz*Math.sin(a));
+else ctx.lineTo(cx+sz*Math.cos(a),cy+sz*Math.sin(a));
+}
+ctx.closePath();
+}
+}
+
+function roundRectFill(ctx,x,y,w,h,r,color){
+ctx.beginPath();
+ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r);
+ctx.closePath(); ctx.fillStyle=color; ctx.fill();
+}
+function roundRectStroke(ctx,x,y,w,h,r){
+ctx.beginPath();
+ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r);
+ctx.closePath(); ctx.stroke();
+}
+
+function drawTrain(ctx,s,color,progress,path){
+let totalLen=0; const segs=[];
+for(let i=1;i<path.length;i++){
+const dx=path[i][0]-path[i-1][0], dy=path[i][1]-path[i-1][1];
+const len=Math.sqrt(dx*dx+dy*dy);
+segs.push({x0:path[i-1][0],y0:path[i-1][1],x1:path[i][0],y1:path[i][1],len});
+totalLen+=len;
+}
+const target=progress*totalLen;
+let dist=0, tx=path[0][0], ty=path[0][1], angle=0;
+for(const seg of segs){
+if(dist+seg.len>=target){
+const t=(target-dist)/seg.len;
+tx=seg.x0+(seg.x1-seg.x0)*t; ty=seg.y0+(seg.y1-seg.y0)*t;
+angle=Math.atan2(seg.y1-seg.y0,seg.x1-seg.x0); break;
+}
+dist+=seg.len;
+}
+ctx.save();
+ctx.translate(tx*s,ty*s); ctx.rotate(angle);
+const tw=30*s, th=13*s;
+
+// Shadow
+roundRectFill(ctx,-tw/2+2*s,-th/2+2*s,tw,th,2*s,‘rgba(0,0,0,0.5)’);
+// Body — dark navy
+roundRectFill(ctx,-tw/2,-th/2,tw,th,2*s,’#0d1b2e’);
+// Color stripe — line color as accent
+ctx.fillStyle=color;
+ctx.fillRect(-tw/2,th/2-4*s,tw,4*s);
+// Top stripe thin
+ctx.fillStyle=color; ctx.globalAlpha=0.4;
+ctx.fillRect(-tw/2,-th/2,tw,2*s);
+ctx.globalAlpha=1;
+// Windows — 3 dark tinted panels
+ctx.fillStyle=‘rgba(0,180,255,0.12)’;
+[-9,-1,7].forEach(ox=>{ ctx.fillRect(ox*s-2*s,-3.5*s,5*s,5.5*s); });
+ctx.strokeStyle=‘rgba(0,180,255,0.3)’; ctx.lineWidth=0.6*s;
+[-9,-1,7].forEach(ox=>{ ctx.strokeRect(ox*s-2*s,-3.5*s,5*s,5.5*s); });
+// Nose
+ctx.beginPath();
+ctx.moveTo(tw/2,-th/2+2*s); ctx.lineTo(tw/2+8*s,0); ctx.lineTo(tw/2,th/2-2*s);
+ctx.fillStyle=’#0d1b2e’; ctx.fill();
+ctx.strokeStyle=color; ctx.lineWidth=0.8*s; ctx.stroke();
+// Border
+ctx.strokeStyle=color; ctx.lineWidth=0.8*s;
+roundRectStroke(ctx,-tw/2,-th/2,tw,th,2*s);
+
+ctx.restore();
+}
+
+// ── CANVAS CLICK DETECTION ──
+function getCanvas(){return document.getElementById(‘metroCanvas’);}
+
+function handleCanvasClick(e){
+const canvas=getCanvas();
+const rect=canvas.getBoundingClientRect();
+const scaleX=canvas.width/(rect.width*(window.devicePixelRatio||1));
+const logW=rect.width;
+const s=logW/600;
+
+let clickX, clickY;
+if(e.touches){
+clickX=(e.touches[0].clientX-rect.left);
+clickY=(e.touches[0].clientY-rect.top);
+} else {
+clickX=e.clientX-rect.left;
+clickY=e.clientY-rect.top;
+}
+
+// find hit infra
+for(const inf of infraDefs){
+const cx=inf.x*s, cy=inf.y*s;
+const size=(inf.upgradeKey?22:16)*s;
+const hitR=size*1.6;
+const dx=clickX-cx, dy=clickY-cy;
+if(Math.sqrt(dx*dx+dy*dy)<hitR){
+triggerInfraPopup(inf);
+return;
+}
+}
+}
+
+getCanvas().addEventListener(‘click’,handleCanvasClick);
+getCanvas().addEventListener(‘touchstart’,handleCanvasClick,{passive:true});
+
+function triggerInfraPopup(inf){
+document.getElementById(‘popIcon’).textContent=inf.icon;
+document.getElementById(‘popTitle’).textContent=inf.label;
+
+if(inf.upgradeKey){
+// potenziabile
+document.getElementById(‘popSub’).textContent=inf.desc;
+currentUpgradeKey=inf.upgradeKey;
+document.getElementById(‘upgLv’).textContent=levels[inf.upgradeKey];
+const cost=upgradeCost(inf.upgradeKey);
+const btn=document.getElementById(‘upgBtn’);
+if(!cost){
+document.getElementById(‘upgCost’).textContent=‘MAX’;
+btn.disabled=true; btn.textContent=‘Livello massimo’;
+} else {
+document.getElementById(‘upgCost’).textContent=fmt(cost);
+btn.disabled=false; btn.textContent=‘▲ Potenzia’;
+}
+showSection(‘upgSec’);
+} else {
+// informativo
+document.getElementById(‘popSub’).textContent=inf.desc;
+showSection(‘infoSec’);
+// create infoSec if needed
+const sec=document.getElementById(‘infoSec’);
+if(sec) sec.style.display=‘block’;
+}
+openPopup();
+}
+
+// ── ANIMATION LOOP ──
+function animateMetro(ts){
+const dt=(ts-lastTime)/1000; lastTime=ts;
+metroAnim.t1=(metroAnim.t1+dt*0.08)%1;
+metroAnim.t2=(metroAnim.t2+dt*0.06)%1;
+metroAnim.t3=(metroAnim.t3+dt*0.07)%1;
+drawMetro();
+requestAnimationFrame(animateMetro);
+}
+requestAnimationFrame(ts=>{lastTime=ts;animateMetro(ts);});
+window.addEventListener(‘resize’,drawMetro);
+
+// ── HELPERS ──
+function fmt(n){return n.toLocaleString(‘it-IT’)+‘€’;}
+function upgradeCost(key){
+const t={train:[120,280,650,1300,2400,4200],station:[140,320,720,1450,2600,4700],control:[160,360,780,1500,2800,5000],logistics:[100,240,560,1150,2100,3900]};
+const lv=levels[key]; return lv>=7?null:t[key][lv-1];
+}
+function income(){return 20+(levels.logistics*8)+(levels.station*4);}
+function tolerance(){return 5+Math.floor(levels.control/2);}
+function computeDelay(t){
+const bR=(levels.station-1)*1.4, vR=(levels.train-1)*1.2;
+const chaos=Math.max(4,t.variance-vR);
+let d=t.base-bR+(Math.random()-.42)*chaos;
+if(Math.random()<Math.max(0.03,0.10-(levels.station*.006)))d+=20+Math.random()*20;
+if(Math.random()<0.05)d=0;
+return Math.max(0,Math.round(d));
+}
+function reward(bet,diff){return Math.round(bet*(1+levels.control*.03)*(diff<=2?1.35:1));}
+
+// ── POPUP ──
+function openPopup(){
+document.getElementById(‘overlay’).style.display=‘block’;
+const pp=document.getElementById(‘popup’);
+pp.style.display=‘block’;
+requestAnimationFrame(()=>pp.classList.add(‘open’));
+}
+function closePopup(){
+const pp=document.getElementById(‘popup’);
+pp.classList.remove(‘open’);
+setTimeout(()=>{pp.style.display=‘none’;document.getElementById(‘overlay’).style.display=‘none’;},300);
+}
+function showSection(id){
+[‘betSec’,‘upgSec’,‘resSec’,‘infoSec’].forEach(s=>{
+const el=document.getElementById(s);
+if(el)el.style.display=‘none’;
+});
+const target=document.getElementById(id);
+if(target)target.style.display=‘block’;
+}
+
+// ── BET ──
+function openBet(idx){
+selectedTrainIdx=idx;
+const t=trains[idx];
+document.getElementById(‘popIcon’).textContent=‘◈’;
+document.getElementById(‘popTitle’).textContent=t.name;
+document.getElementById(‘popSub’).textContent=t.route+’ · ‘+t.type;
+document.getElementById(‘minSlider’).value=15;
+document.getElementById(‘minBig’).textContent=15;
+updateSliderTrack(15);
+selChip(200,document.querySelectorAll(’.chip’)[1]);
+document.getElementById(‘toleranceInfo’).textContent=`Finestra utile: ±${tolerance()} min`;
+document.getElementById(‘betBtn’).disabled=false;
+showSection(‘betSec’);
+openPopup();
+}
+
+const slider=document.getElementById(‘minSlider’);
+slider.addEventListener(‘input’,()=>{
+document.getElementById(‘minBig’).textContent=slider.value;
+updateSliderTrack(slider.value);
+});
+function updateSliderTrack(v){slider.style.setProperty(’–pct’,(v/120*100)+’%’);}
+function selChip(val,el){
+selectedBet=val;
+document.querySelectorAll(’.chip’).forEach(c=>c.classList.remove(‘active’));
+if(el)el.classList.add(‘active’);
+}
+function placeBet(){
+if(selectedBet>balance){showToast(‘Saldo insufficiente !’);return;}
+const pred=parseInt(slider.value);
+const t=trains[selectedTrainIdx];
+const actual=computeDelay(t);
+const diff=Math.abs(pred-actual);
+const tol=tolerance();
+stats.bets++;
+const won=diff<=tol;
+const amt=won?reward(selectedBet,diff):selectedBet;
+if(won){balance+=amt;stats.wins++;}
+else{balance-=amt;if(balance<0)balance=0;stats.losses++;}
+showSection(‘resSec’);
+document.getElementById(‘resIcon’).textContent=won?‘▲’:‘▼’;
+document.getElementById(‘resTitle’).textContent=won?‘Hai vinto!’:‘Hai perso’;
+document.getElementById(‘resDetail’).textContent=`Ritardo reale: ${actual} min · Tu: ${pred} min\nDifferenza: ${diff} min (finestra: ±${tol} min)`;
+document.getElementById(‘resAmount’).textContent=(won?’+’:’-’)+fmt(amt);
+document.getElementById(‘resAmount’).className=’result-amount ’+(won?‘win’:‘lose’);
+updateUI(); bumpBalance();
+}
+
+// ── UPGRADE ──
+function doUpgrade(){
+const cost=upgradeCost(currentUpgradeKey);
+if(!cost)return;
+if(balance<cost){showToast(‘Saldo insufficiente ×’);return;}
+balance-=cost;
+levels[currentUpgradeKey]++;
+updateUI();
+// refresh popup
+const inf=infraDefs.find(i=>i.upgradeKey===currentUpgradeKey);
+if(inf)triggerInfraPopup(inf);
+else closePopup();
+}
+
+// ── NAV ──
+function showPage(name){
+[‘station’,‘bets’,‘profile’].forEach(p=>{
+document.getElementById(‘page’+p[0].toUpperCase()+p.slice(1)).classList.remove(‘active’);
+document.getElementById(‘nav’+p[0].toUpperCase()+p.slice(1)).classList.remove(‘active’);
+});
+document.getElementById(‘page’+name[0].toUpperCase()+name.slice(1)).classList.add(‘active’);
+document.getElementById(‘nav’+name[0].toUpperCase()+name.slice(1)).classList.add(‘active’);
+if(name===‘profile’)updateRanking();
+}
+
+// ── UI UPDATE ──
+function updateUI(){
+document.getElementById(‘balBox’).textContent=fmt(balance);
+document.getElementById(‘scBal’).textContent=fmt(balance);
+document.getElementById(‘scInc’).textContent=fmt(income());
+document.getElementById(‘scBets’).textContent=stats.bets;
+document.getElementById(‘scWins’).textContent=stats.wins;
+document.getElementById(‘scLoss’).textContent=stats.losses;
+const rate=stats.bets===0?0:Math.round(stats.wins/stats.bets*100);
+document.getElementById(‘scRate’).textContent=rate+’%’;
+const total=Object.values(levels).reduce((a,b)=>a+b,0);
+document.getElementById(‘phLevel’).textContent=total<=4?‘Base’:total<=8?‘Intermedio’:total<=12?‘Avanzato’:‘Elite’;
+document.getElementById(‘toleranceInfo’).textContent=`Finestra utile: ±${tolerance()} min`;
+}
+function updateRanking(){
+const myScore=balance+Object.values(levels).reduce((a,b)=>a+b,0)*120;
+const rows=[
+{name:‘Porta Centrale’,desc:‘stazione metropolitana’,score:5200,rank:‘gold’},
+{name:‘Nodo Nord’,desc:‘rete ad alta precisione’,score:4300,rank:‘silver’},
+{name:‘Terminale Tirrenico’,desc:‘stabile e luminosa’,score:3600,rank:‘bronze’},
+{name:‘La tua stazione’,desc:‘snodo in crescita 🚂’,score:myScore,rank:’’},
+{name:‘Raccordo Est’,desc:‘rete secondaria’,score:2100,rank:’’},
+{name:‘Scalo Vecchio’,desc:‘impianto arretrato’,score:1450,rank:’’},
+].sort((a,b)=>b.score-a.score);
+document.getElementById(‘rankList’).innerHTML=rows.map((r,i)=>` <div class="rank-row"> <div class="rp ${r.rank}">${i+1}</div> <div class="rn"><div class="rn-name">${r.name}</div><div class="rn-sub">${r.desc}</div></div> <div class="rs">${fmt(r.score)}</div> </div>`).join(’’);
+}
+function bumpBalance(){
+const el=document.getElementById(‘balBox’);
+el.classList.remove(‘bump’);
+requestAnimationFrame(()=>el.classList.add(‘bump’));
+}
+function showToast(msg){
+const t=document.getElementById(‘toast’);
+t.textContent=msg; t.classList.add(‘show’);
+setTimeout(()=>t.classList.remove(‘show’),2200);
+}
+setInterval(()=>{
+const inc=income(); balance+=inc; updateUI();
+const f=document.getElementById(‘incFlash’);
+f.textContent=’+’+fmt(inc)+’ +’; f.classList.add(‘show’);
+setTimeout(()=>f.classList.remove(‘show’),1800);
+},60000);
+
+// INIT
+function buildBoard(){
+document.getElementById(‘boardBody’).innerHTML=boardData.map(r=>` <div class="board-row"><span>${r.name}</span><span>${r.route}</span><span>${r.time}</span><span class="${r.sc}">${r.delay}</span></div>`).join(’’);
+}
+
+// add infoSec to popup
+(function(){
+const sec=document.createElement(‘div’);
+sec.id=‘infoSec’; sec.style.display=‘none’;
+sec.innerHTML=’<button class="pop-btn" onclick="closePopup()">Chiudi</button>’;
+document.getElementById(‘popup’).appendChild(sec);
+})();
+
+buildBoard(); updateUI();
+
+// ── APPALTI MODULE ──
+function openAppalti(){
+document.getElementById(‘appaltiOverlay’).classList.add(‘open’);
+apSyncBalance(balance);
+apBuildRegionList();
+apUpdateStats();
+apUpdateCityDots();
+if(!apTrainAnimStarted){ apTrainAnimStarted=true; requestAnimationFrame(apAnimateTrain); }
+// pan to top
+apPanX=0; apPanY=0; apApplyPan();
+}
+function closeAppalti(){
+document.getElementById(‘appaltiOverlay’).classList.remove(‘open’);
+// sync balance back
+balance = apBalance;
+updateUI();
+}
+let apTrainAnimStarted=false;
+
+// ── APPALTI JS ──
+let apBalance = 50000; // will be synced from main balance
+// apBalance declared above
+const apOwned = {}; // regionId -> pct (0-100)
+let apInvested = 0;
+let apSelectedRegion = null;
+let apSelectedTier = null;
+let apSelectedTierCost = 0;
+let apCurrentPopMode = ‘quota’;
+let apCurrentTab = ‘quote’;
+
+function apFmt(n){ return Math.round(n).toLocaleString(‘it-IT’)+‘€’; }
+
+function apSyncBalance(v){
+apBalance=v;
+document.getElementById(‘apBalDisp’).textContent=apFmt(apBalance);
+if(undefined?.setAppaltiBalance) undefined.setAppaltiBalance(v);
+}
+
+// ── 20 REGIONS ──
+const regions=[
+// lon, lat = real geographic coordinates of each capoluogo
+{id:‘vda’, name:“Valle d’Aosta”, cap:‘Aosta’,      lon:7.32,  lat:45.74, base:12000, inc:4,  pop:0.1},
+{id:‘pie’, name:‘Piemonte’,      cap:‘Torino’,      lon:7.68,  lat:45.07, base:45000, inc:12, pop:4.3},
+{id:‘lom’, name:‘Lombardia’,     cap:‘Milano’,      lon:9.19,  lat:45.46, base:95000, inc:22, pop:10.0},
+{id:‘taa’, name:‘Trentino A.A.’, cap:‘Trento’,      lon:11.12, lat:46.07, base:28000, inc:8,  pop:1.1},
+{id:‘ven’, name:‘Veneto’,        cap:‘Venezia’,     lon:12.34, lat:45.44, base:55000, inc:14, pop:4.9},
+{id:‘fvg’, name:‘Friuli V.G.’,   cap:‘Trieste’,     lon:13.78, lat:45.65, base:22000, inc:7,  pop:1.2},
+{id:‘lig’, name:‘Liguria’,       cap:‘Genova’,      lon:8.93,  lat:44.41, base:32000, inc:9,  pop:1.5},
+{id:‘emr’, name:‘Emilia R.’,     cap:‘Bologna’,     lon:11.34, lat:44.49, base:50000, inc:13, pop:4.5},
+{id:‘tos’, name:‘Toscana’,       cap:‘Firenze’,     lon:11.25, lat:43.78, base:48000, inc:12, pop:3.7},
+{id:‘mar’, name:‘Marche’,        cap:‘Ancona’,      lon:13.52, lat:43.62, base:22000, inc:7,  pop:1.5},
+{id:‘umb’, name:‘Umbria’,        cap:‘Perugia’,     lon:12.39, lat:43.11, base:18000, inc:6,  pop:0.9},
+{id:‘laz’, name:‘Lazio’,         cap:‘Roma’,        lon:12.48, lat:41.89, base:88000, inc:20, pop:5.9},
+{id:‘abr’, name:‘Abruzzo’,       cap:“L’Aquila”,    lon:13.40, lat:42.35, base:20000, inc:7,  pop:1.3},
+{id:‘mol’, name:‘Molise’,        cap:‘Campobasso’,  lon:14.65, lat:41.56, base:10000, inc:4,  pop:0.3},
+{id:‘cam’, name:‘Campania’,      cap:‘Napoli’,      lon:14.27, lat:40.84, base:75000, inc:17, pop:5.8},
+{id:‘pug’, name:‘Puglia’,        cap:‘Bari’,        lon:16.87, lat:41.12, base:52000, inc:13, pop:4.0},
+{id:‘bas’, name:‘Basilicata’,    cap:‘Potenza’,     lon:15.80, lat:40.64, base:12000, inc:4,  pop:0.6},
+{id:‘cal’, name:‘Calabria’,      cap:‘Catanzaro’,   lon:16.60, lat:38.91, base:28000, inc:8,  pop:2.0},
+{id:‘sic’, name:‘Sicilia’,       cap:‘Palermo’,     lon:13.36, lat:38.11, base:55000, inc:14, pop:5.0},
+{id:‘sar’, name:‘Sardegna’,      cap:‘Cagliari’,    lon:9.11,  lat:39.22, base:30000, inc:9,  pop:1.6},
+];
+
+const TIERS=[
+{pct:10,  mult:0.12, label:‘10%’},
+{pct:25,  mult:0.32, label:‘25%’},
+{pct:51,  mult:0.72, label:‘51%’},
+{pct:100, mult:1.55, label:‘100%’},
+];
+
+function tierCost(reg, t){ return Math.round(reg.base * t.mult); }
+function apOwnedPct(id){ return apOwned[id]||0; }
+
+// Income logic: below 50% = trickle, above 50% = real income
+function apRegionIncome(reg){
+const pct=apOwnedPct(reg.id);
+if(pct===0) return 0;
+if(pct<50) return Math.round(reg.inc * (pct/100) * 0.3); // only 30% below 50
+return Math.round(reg.inc * (pct/100) * 1.0);            // full above 50
+}
+
+function apTotalIncome(){ return regions.reduce((s,r)=>s+apRegionIncome(r),0); }
+
+// ── MARKET DATA (simulated fluctuating prices) ──
+const apMarketData = regions.map(r=>({
+id: r.id,
+pricePerPct: Math.round(r.base * 0.014 * (0.85 + Math.random()*0.3)),
+available: Math.floor(Math.random()*40)+5,
+trend: Math.random()>0.5?1:-1,
+change: (Math.random()*8+1).toFixed(1),
 }));
 
-let auctions = [
-  {id:'auc1', regId:'lom', pct:15, currentBid:12000, minNext:13200, ends:'18:45', live:true, myBid:0},
-  {id:'auc2', regId:'laz', pct:10, currentBid:8500, minNext:9350, ends:'20:10', live:true, myBid:0},
-  {id:'auc3', regId:'sic', pct:20, currentBid:9200, minNext:10120, ends:'Domani', live:false, myBid:0},
-  {id:'auc4', regId:'ven', pct:25, currentBid:15000, minNext:16500, ends:'Domani', live:false, myBid:0}
+// ── AUCTIONS ──
+let apAuctions=[
+{id:‘auc1’, regId:‘lom’, pct:15, currentBid:12000, minNext:13200, ends:‘18:45’, live:true, myBid:0},
+{id:‘auc2’, regId:‘laz’, pct:10, currentBid:8500,  minNext:9350,  ends:‘20:10’, live:true, myBid:0},
+{id:‘auc3’, regId:‘sic’, pct:20, currentBid:9200,  minNext:10120, ends:‘Domani’, live:false, myBid:0},
+{id:‘auc4’, regId:‘ven’, pct:25, currentBid:15000, minNext:16500, ends:‘Domani’, live:false, myBid:0},
 ];
 
-/* Pan mappa */
-let panX = 0, panY = 0, startX = 0, startY = 0, dragging = false;
-const mapWrap = document.getElementById('mapWrap');
-const mapInner = document.getElementById('mapInner');
+// ── MAP PAN ──
+let apPanX=0, apPanY=0, apStartX=0, apStartY=0, apDragging=false;
+const SCALE=1.0;
+const apMapWrap=document.getElementById(‘apMapWrap’);
+const apMapInner=document.getElementById(‘apMapInner’);
 
-function clampPan(x, y){
-  const maxX = 0, minX = mapWrap.clientWidth - 540;
-  const maxY = 0, minY = mapWrap.clientHeight - 680;
-  return [Math.max(minX, Math.min(maxX, x)), Math.max(minY, Math.min(maxY, y))];
+function apClampPan(x,y){
+const maxX=0, minX=apMapWrap.clientWidth - 540;
+const maxY=0, minY=apMapWrap.clientHeight - 680;
+return [Math.max(minX,Math.min(maxX,x)), Math.max(minY,Math.min(maxY,y))];
 }
-function applyPan(){
-  mapInner.style.transform = `translate(${panX}px,${panY}px)`;
+function apApplyPan(){
+apMapInner.style.transform=`translate(${apPanX}px,${apPanY}px) scale(${SCALE})`;
 }
 
-mapWrap.addEventListener('mousedown', e => {
-  dragging = true;
-  startX = e.clientX - panX;
-  startY = e.clientY - panY;
-  e.preventDefault();
+apMapWrap.addEventListener(‘mousedown’, e=>{apDragging=true;apStartX=e.clientX-apPanX;apStartY=e.clientY-apPanY;e.preventDefault();});
+document.addEventListener(‘mousemove’, e=>{if(!apDragging)return;[apPanX,apPanY]=apClampPan(e.clientX-apStartX,e.clientY-apStartY);apApplyPan();});
+document.addEventListener(‘mouseup’, ()=>apDragging=false);
+
+let touchStartX=0,touchStartY=0,touchPanX=0,touchPanY=0,touchMoved=false;
+apMapWrap.addEventListener(‘touchstart’, e=>{
+if(e.touches.length!==1)return;
+touchStartX=e.touches[0].clientX; touchStartY=e.touches[0].clientY;
+touchPanX=apPanX; touchPanY=apPanY; touchMoved=false;
+},{passive:true});
+apMapWrap.addEventListener(‘touchmove’, e=>{
+if(e.touches.length!==1)return;
+const dx=e.touches[0].clientX-touchStartX, dy=e.touches[0].clientY-touchStartY;
+if(Math.abs(dx)>4||Math.abs(dy)>4) touchMoved=true;
+[apPanX,apPanY]=apClampPan(touchPanX+dx, touchPanY+dy);
+apApplyPan(); e.preventDefault();
+},{passive:false});
+apMapWrap.addEventListener(‘touchend’, e=>{
+if(!touchMoved&&e.changedTouches.length===1){
+const t=e.changedTouches[0];
+const rect=apMapWrap.getBoundingClientRect();
+const mx=t.clientX-rect.left-apPanX;
+const my=t.clientY-rect.top-apPanY;
+apHitTestMap(mx,my);
+}
 });
-document.addEventListener('mousemove', e => {
-  if(!dragging) return;
-  [panX, panY] = clampPan(e.clientX - startX, e.clientY - startY);
-  applyPan();
-});
-document.addEventListener('mouseup', () => dragging = false);
-
-let touchStartX = 0, touchStartY = 0, touchPanX = 0, touchPanY = 0, touchMoved = false;
-mapWrap.addEventListener('touchstart', e => {
-  if(e.touches.length !== 1) return;
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-  touchPanX = panX;
-  touchPanY = panY;
-  touchMoved = false;
-}, {passive:true});
-
-mapWrap.addEventListener('touchmove', e => {
-  if(e.touches.length !== 1) return;
-  const dx = e.touches[0].clientX - touchStartX;
-  const dy = e.touches[0].clientY - touchStartY;
-  if(Math.abs(dx) > 4 || Math.abs(dy) > 4) touchMoved = true;
-  [panX, panY] = clampPan(touchPanX + dx, touchPanY + dy);
-  applyPan();
-  e.preventDefault();
-}, {passive:false});
-
-mapWrap.addEventListener('touchend', e => {
-  if(!touchMoved && e.changedTouches.length === 1){
-    const t = e.changedTouches[0];
-    const rect = mapWrap.getBoundingClientRect();
-    const mx = t.clientX - rect.left - panX;
-    const my = t.clientY - rect.top - panY;
-    hitTestMap(mx, my);
-  }
+apMapWrap.addEventListener(‘click’, e=>{
+if(apDragging)return;
+const rect=apMapWrap.getBoundingClientRect();
+apHitTestMap(e.clientX-rect.left-apPanX, e.clientY-rect.top-apPanY);
 });
 
-mapWrap.addEventListener('click', e => {
-  if(dragging) return;
-  const rect = mapWrap.getBoundingClientRect();
-  hitTestMap(e.clientX - rect.left - panX, e.clientY - rect.top - panY);
+function apHitTestMap(mx,my){
+function gx(lon){ return (lon-6.6)/(18.5-6.6)*540; }
+function gy(lat){ return (47.1-lat)/(47.1-36.6)*680; }
+for(const reg of regions){
+const cx=gx(reg.lon), cy=gy(reg.lat);
+const r=Math.max(16, reg.pop>4?18:reg.pop>1.5?14:11);
+const dx=mx-cx, dy=my-cy;
+if(dx*dx+dy*dy<r*r){ apOpenRegionPopup(reg); return; }
+}
+}
+
+// ── DRAW MAP — Google Maps political style ──
+// ── DRAW MAP — Wikipedia style: beige land, light blue sea, dark dot cities ──
+function apDrawItaly(){
+// SVG-based: just update the city dots overlay
+apUpdateCityDots();
+}
+
+function apUpdateCityDots(){
+const container = document.getElementById(‘apCityDotsContainer’);
+if(!container) return;
+container.innerHTML=’’;
+// Map bounds: lon 6.6-18.5, lat 36.6-47.1
+const W=540, H=680;
+function gx(lon){ return (lon-6.6)/(18.5-6.6)*W; }
+function gy(lat){ return (47.1-lat)/(47.1-36.6)*H; }
+
+// ── CONNECTION LINES — drawn first, below dots ──
+const conns=[
+[‘vda’,‘pie’],[‘pie’,‘lom’],[‘pie’,‘lig’],[‘lom’,‘taa’],[‘lom’,‘ven’],[‘lom’,‘emr’],[‘lom’,‘lig’],
+[‘taa’,‘ven’],[‘ven’,‘fvg’],[‘ven’,‘emr’],[‘lig’,‘emr’],[‘lig’,‘tos’],
+[‘emr’,‘tos’],[‘emr’,‘mar’],[‘tos’,‘umb’],[‘tos’,‘laz’],[‘mar’,‘umb’],[‘mar’,‘abr’],
+[‘umb’,‘laz’],[‘laz’,‘cam’],[‘laz’,‘abr’],[‘laz’,‘mol’],[‘abr’,‘mol’],[‘abr’,‘cam’],
+[‘mol’,‘cam’],[‘mol’,‘pug’],[‘mol’,‘bas’],[‘cam’,‘pug’],[‘cam’,‘bas’],[‘cam’,‘cal’],
+[‘pug’,‘bas’],[‘pug’,‘cal’],[‘bas’,‘cal’],[‘cal’,‘sic’],[‘sar’,‘cam’],
+];
+conns.forEach(([a,b])=>{
+const ra=regions.find(r=>r.id===a), rb=regions.find(r=>r.id===b);
+if(!ra||!rb) return;
+const line=document.createElementNS(‘http://www.w3.org/2000/svg’,‘line’);
+line.setAttribute(‘x1’,gx(ra.lon)); line.setAttribute(‘y1’,gy(ra.lat));
+line.setAttribute(‘x2’,gx(rb.lon)); line.setAttribute(‘y2’,gy(rb.lat));
+line.setAttribute(‘stroke’,‘rgba(0,180,255,0.3)’);
+line.setAttribute(‘stroke-width’,‘1.0’);
+line.setAttribute(‘stroke-dasharray’,‘3,5’);
+line.setAttribute(‘stroke-linecap’,‘round’);
+container.appendChild(line);
 });
 
-function gx(lon){ return (lon - 6.6) / (18.5 - 6.6) * 540; }
-function gy(lat){ return (47.1 - lat) / (47.1 - 36.6) * 680; }
+regions.forEach(reg=>{
+const pct=apOwnedPct(reg.id);
+const cx=gx(reg.lon), cy=gy(reg.lat);
+const r=reg.pop>4?9:reg.pop>1.5?7:5.5;
+const isSelected=apSelectedRegion?.id===reg.id;
 
-function hitTestMap(mx, my){
-  for(const reg of regions){
-    const cx = gx(reg.lon), cy = gy(reg.lat);
-    const r = Math.max(16, reg.pop > 4 ? 18 : reg.pop > 1.5 ? 14 : 11);
-    const dx = mx - cx, dy = my - cy;
-    if(dx * dx + dy * dy < r * r){
-      openRegionPopup(reg);
-      return;
-    }
-  }
+```
+// Shadow
+const shadow=document.createElementNS('http://www.w3.org/2000/svg','circle');
+shadow.setAttribute('cx',cx+1.5); shadow.setAttribute('cy',cy+2);
+shadow.setAttribute('r',r); shadow.setAttribute('fill','rgba(0,0,0,0.2)');
+container.appendChild(shadow);
+
+// White ring
+const ring=document.createElementNS('http://www.w3.org/2000/svg','circle');
+ring.setAttribute('cx',cx); ring.setAttribute('cy',cy);
+ring.setAttribute('r',r); ring.setAttribute('fill','#fff');
+ring.setAttribute('stroke',isSelected?'#e8a820':'rgba(0,0,0,0.5)');
+ring.setAttribute('stroke-width',isSelected?2.5:1.0);
+container.appendChild(ring);
+
+// Ownership fill
+if(pct>=100){
+  const fill=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  fill.setAttribute('cx',cx); fill.setAttribute('cy',cy);
+  fill.setAttribute('r',r-1.5); fill.setAttribute('fill','#1e7a4a');
+  container.appendChild(fill);
+} else if(pct>0){
+  // Pie slice
+  const angle=-Math.PI/2+Math.PI*2*(pct/100);
+  const x2=cx+(r-1.5)*Math.cos(angle);
+  const y2=cy+(r-1.5)*Math.sin(angle);
+  const large=pct>50?1:0;
+  const pie=document.createElementNS('http://www.w3.org/2000/svg','path');
+  pie.setAttribute('d',`M${cx},${cy} L${cx},${cy-(r-1.5)} A${r-1.5},${r-1.5} 0 ${large},1 ${x2},${y2} Z`);
+  pie.setAttribute('fill',pct>=51?'#1e7a4a':'#d4890a');
+  container.appendChild(pie);
+} else {
+  const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('cx',cx); dot.setAttribute('cy',cy);
+  dot.setAttribute('r',r-1.5); dot.setAttribute('fill','rgba(0,180,255,0.85)');
+  container.appendChild(dot);
 }
 
-function drawItaly(){
-  updateCityDots();
+// Label with halo
+const halo=document.createElementNS('http://www.w3.org/2000/svg','text');
+halo.setAttribute('x',cx+r+3); halo.setAttribute('y',cy+1);
+halo.setAttribute('font-size','7.5'); halo.setAttribute('font-family','-apple-system,sans-serif');
+halo.setAttribute('font-weight','600'); halo.setAttribute('fill','none');
+halo.setAttribute('stroke','rgba(8,15,30,0.85)'); halo.setAttribute('stroke-width','2.5');
+halo.setAttribute('paint-order','stroke'); halo.setAttribute('dominant-baseline','middle');
+halo.textContent=reg.cap;
+container.appendChild(halo);
+
+const label=document.createElementNS('http://www.w3.org/2000/svg','text');
+label.setAttribute('x',cx+r+3); label.setAttribute('y',cy+1);
+label.setAttribute('font-size','7.5'); label.setAttribute('font-family','-apple-system,sans-serif');
+label.setAttribute('font-weight','600'); label.setAttribute('fill','#1a2a3a');
+label.setAttribute('dominant-baseline','middle');
+label.textContent=reg.cap;
+container.appendChild(label);
+
+// Click target
+const hit=document.createElementNS('http://www.w3.org/2000/svg','circle');
+hit.setAttribute('cx',cx); hit.setAttribute('cy',cy);
+hit.setAttribute('r',r+6); hit.setAttribute('fill','transparent');
+hit.style.cursor='pointer';
+hit.addEventListener('click',()=>apOpenRegionPopup(reg));
+container.appendChild(hit);
+```
+
+});
+
+// Sea labels
+[[‘Mar Tirreno’,gx(11.0),gy(40.2)],
+[‘Mar Adriatico’,gx(15.2),gy(43.0)],
+[‘Mar Mediterraneo’,gx(12.5),gy(36.9)]
+].forEach(([txt,x,y])=>{
+const t=document.createElementNS(‘http://www.w3.org/2000/svg’,‘text’);
+t.setAttribute(‘x’,x); t.setAttribute(‘y’,y);
+t.setAttribute(‘font-size’,‘9’); t.setAttribute(‘font-style’,‘italic’);
+t.setAttribute(‘font-family’,’-apple-system,sans-serif’);
+t.setAttribute(‘fill’,‘rgba(40,120,180,0.6)’);
+t.setAttribute(‘text-anchor’,‘middle’);
+t.textContent=txt;
+container.appendChild(t);
+});
+}
+// ── TAB SWITCHING ──
+function apSwitchTab(t){
+apCurrentTab=t;
+[‘quote’,‘mercato’,‘aste’].forEach(n=>{
+const tab=document.getElementById(‘aptab-’+n);
+if(tab) tab.classList.toggle(‘active’,n===t);
+const content=document.getElementById(‘apTab’+n.charAt(0).toUpperCase()+n.slice(1));
+if(content) content.style.display=n===t?’’:‘none’;
+});
+if(t===‘mercato’) apBuildMarketList();
+if(t===‘aste’) apBuildAstaList();
 }
 
-function updateCityDots(){
-  const container = document.getElementById('cityDotsContainer');
-  if(!container) return;
-  container.innerHTML = '';
-
-  const conns = [
-    ['vda','pie'],['pie','lom'],['pie','lig'],['lom','taa'],['lom','ven'],['lom','emr'],['lom','lig'],
-    ['taa','ven'],['ven','fvg'],['ven','emr'],['lig','emr'],['lig','tos'],
-    ['emr','tos'],['emr','mar'],['tos','umb'],['tos','laz'],['mar','umb'],['mar','abr'],
-    ['umb','laz'],['laz','cam'],['laz','abr'],['laz','mol'],['abr','mol'],['abr','cam'],
-    ['mol','cam'],['mol','pug'],['mol','bas'],['cam','pug'],['cam','bas'],['cam','cal'],
-    ['pug','bas'],['pug','cal'],['bas','cal'],['cal','sic'],['sar','cam']
-  ];
-
-  conns.forEach(([a,b])=>{
-    const ra = regions.find(r=>r.id===a);
-    const rb = regions.find(r=>r.id===b);
-    if(!ra || !rb) return;
-    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1', gx(ra.lon));
-    line.setAttribute('y1', gy(ra.lat));
-    line.setAttribute('x2', gx(rb.lon));
-    line.setAttribute('y2', gy(rb.lat));
-    line.setAttribute('stroke', 'rgba(0,180,255,0.3)');
-    line.setAttribute('stroke-width', '1.0');
-    line.setAttribute('stroke-dasharray', '3,5');
-    line.setAttribute('stroke-linecap', 'round');
-    container.appendChild(line);
-  });
-
-  regions.forEach(reg=>{
-    const pct = ownedPct(reg.id);
-    const cx = gx(reg.lon), cy = gy(reg.lat);
-    const r = reg.pop > 4 ? 9 : reg.pop > 1.5 ? 7 : 5.5;
-    const isSelected = selectedRegion?.id === reg.id;
-
-    const shadow = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    shadow.setAttribute('cx', cx + 1.5);
-    shadow.setAttribute('cy', cy + 2);
-    shadow.setAttribute('r', r);
-    shadow.setAttribute('fill', 'rgba(0,0,0,0.2)');
-    container.appendChild(shadow);
-
-    const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    ring.setAttribute('cx', cx);
-    ring.setAttribute('cy', cy);
-    ring.setAttribute('r', r);
-    ring.setAttribute('fill', '#fff');
-    ring.setAttribute('stroke', isSelected ? '#e8a820' : 'rgba(0,0,0,0.5)');
-    ring.setAttribute('stroke-width', isSelected ? 2.5 : 1.0);
-    container.appendChild(ring);
-
-    if(pct >= 100){
-      const fill = document.createElementNS('http://www.w3.org/2000/svg','circle');
-      fill.setAttribute('cx', cx);
-      fill.setAttribute('cy', cy);
-      fill.setAttribute('r', r - 1.5);
-      fill.setAttribute('fill', '#1e7a4a');
-      container.appendChild(fill);
-    } else if(pct > 0){
-      const angle = -Math.PI / 2 + Math.PI * 2 * (pct / 100);
-      const x2 = cx + (r - 1.5) * Math.cos(angle);
-      const y2 = cy + (r - 1.5) * Math.sin(angle);
-      const large = pct > 50 ? 1 : 0;
-      const pie = document.createElementNS('http://www.w3.org/2000/svg','path');
-      pie.setAttribute('d', `M${cx},${cy} L${cx},${cy-(r-1.5)} A${r-1.5},${r-1.5} 0 ${large},1 ${x2},${y2} Z`);
-      pie.setAttribute('fill', pct >= 51 ? '#1e7a4a' : '#d4890a');
-      container.appendChild(pie);
-    } else {
-      const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
-      dot.setAttribute('cx', cx);
-      dot.setAttribute('cy', cy);
-      dot.setAttribute('r', r - 1.5);
-      dot.setAttribute('fill', 'rgba(0,180,255,0.85)');
-      container.appendChild(dot);
-    }
-
-    const halo = document.createElementNS('http://www.w3.org/2000/svg','text');
-    halo.setAttribute('x', cx + r + 3);
-    halo.setAttribute('y', cy + 1);
-    halo.setAttribute('font-size', '7.5');
-    halo.setAttribute('font-family', '-apple-system,sans-serif');
-    halo.setAttribute('font-weight', '600');
-    halo.setAttribute('fill', 'none');
-    halo.setAttribute('stroke', 'rgba(8,15,30,0.85)');
-    halo.setAttribute('stroke-width', '2.5');
-    halo.setAttribute('paint-order', 'stroke');
-    halo.setAttribute('dominant-baseline', 'middle');
-    halo.textContent = reg.cap;
-    container.appendChild(halo);
-
-    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-    label.setAttribute('x', cx + r + 3);
-    label.setAttribute('y', cy + 1);
-    label.setAttribute('font-size', '7.5');
-    label.setAttribute('font-family', '-apple-system,sans-serif');
-    label.setAttribute('font-weight', '600');
-    label.setAttribute('fill', '#1a2a3a');
-    label.setAttribute('dominant-baseline', 'middle');
-    label.textContent = reg.cap;
-    container.appendChild(label);
-
-    const hit = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    hit.setAttribute('cx', cx);
-    hit.setAttribute('cy', cy);
-    hit.setAttribute('r', r + 6);
-    hit.setAttribute('fill', 'transparent');
-    hit.style.cursor = 'pointer';
-    hit.addEventListener('click', ()=>openRegionPopup(reg));
-    container.appendChild(hit);
-  });
-
-  [
-    ['Mar Tirreno', gx(11.0), gy(40.2)],
-    ['Mar Adriatico', gx(15.2), gy(43.0)],
-    ['Mar Mediterraneo', gx(12.5), gy(36.9)]
-  ].forEach(([txt,x,y])=>{
-    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x', x);
-    t.setAttribute('y', y);
-    t.setAttribute('font-size', '9');
-    t.setAttribute('font-style', 'italic');
-    t.setAttribute('font-family', '-apple-system,sans-serif');
-    t.setAttribute('fill', 'rgba(40,120,180,0.6)');
-    t.setAttribute('text-anchor', 'middle');
-    t.textContent = txt;
-    container.appendChild(t);
-  });
+// ── REGION LIST ──
+function apBuildRegionList(){
+const list=document.getElementById(‘apRegionList’);
+list.innerHTML=’’;
+const sorted=[…regions].sort((a,b)=>apOwnedPct(b.id)-apOwnedPct(a.id)||b.pop-a.pop);
+sorted.forEach(reg=>{
+const pct=apOwnedPct(reg.id);
+const inc=apRegionIncome(reg);
+const nextTier=TIERS.find(t=>t.pct>pct);
+const div=document.createElement(‘div’);
+div.className=‘reg-card’+(pct>0?’ has-quota’:’’);
+div.onclick=()=>apOpenRegionPopup(reg);
+div.innerHTML=` <div class="reg-top"> <div class="reg-dot" style="background:${pct>0?(pct>=51?'#1e7a4a':'#e8a820'):'#b8b4ac'}"></div> <div style="flex:1"> <div class="reg-name">${reg.name}</div> <div class="reg-cap">${reg.cap} · ${reg.pop.toFixed(1)}M ab.</div> </div> <div class="reg-pct${pct===100?' full':''}">${pct}%</div> </div> <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${pct>=51?'#1e7a4a':'#e8a820'}"></div></div> <div class="reg-bottom"> <div class="reg-income">${inc>0?'+'+inc+'€/min (${pct<50&&pct>0?"trickle":"":""}':'–'}</div> <div class="reg-price">${nextTier?'Next: '+apFmt(tierCost(reg,nextTier)):' Completa ▸'}</div> </div>`;
+// fix template literal inside setAttribute
+div.querySelector(’.reg-income’).textContent = inc>0 ? `+${inc}€/min${pct>0&&pct<50?' ↓':''}` : ‘–’;
+list.appendChild(div);
+});
 }
 
-function switchTab(t){
-  currentTab = t;
-  ['quote','mercato','aste'].forEach(n=>{
-    document.getElementById('tab-' + n).classList.toggle('active', n === t);
-  });
-  document.getElementById('tabContentQuote').style.display = t === 'quote' ? '' : 'none';
-  document.getElementById('tabContentMercato').style.display = t === 'mercato' ? '' : 'none';
-  document.getElementById('tabContentAste').style.display = t === 'aste' ? '' : 'none';
-
-  if(t === 'mercato') buildMarketList();
-  if(t === 'aste') buildAstaList();
+// ── MARKET LIST ──
+function apBuildMarketList(){
+const list=document.getElementById(‘apMarketList’);
+list.innerHTML=’’;
+regions.forEach(reg=>{
+const m=apMarketData.find(d=>d.id===reg.id);
+const up=m.trend>0;
+const div=document.createElement(‘div’);
+div.className=‘market-card’;
+div.onclick=()=>{ apOpenRegionPopup(reg); setTimeout(()=>apSwitchPopMode(‘mercato’),50); };
+div.innerHTML=` <div class="reg-dot" style="background:${reg.color}"></div> <div class="market-info"> <div class="market-name">${reg.name}</div> <div class="market-detail">${reg.cap} · Disponibili: ${m.available}%</div> </div> <div class="market-right"> <div class="market-price">${apFmt(m.pricePerPct)}<span style="font-size:10px;font-weight:500">/1%</span></div> <div class="market-change ${up?'up':'down'}">${up?'▲':'▼'} ${m.change}%</div> <div class="market-qty">Vol: ${m.available} quote</div> </div>`;
+list.appendChild(div);
+});
 }
 
-function buildRegionList(){
-  const list = document.getElementById('regionList');
-  list.innerHTML = '';
-  const sorted = [...regions].sort((a,b)=>ownedPct(b.id)-ownedPct(a.id)||b.pop-a.pop);
-
-  sorted.forEach(reg=>{
-    const pct = ownedPct(reg.id);
-    const inc = regionIncome(reg);
-    const nextTier = TIERS.find(t=>t.pct > pct);
-
-    const div = document.createElement('div');
-    div.className = 'reg-card' + (pct > 0 ? ' has-quota' : '');
-    div.onclick = ()=>openRegionPopup(reg);
-
-    div.innerHTML = `
-      <div class="reg-top">
-        <div class="reg-dot" style="background:${pct>0?(pct>=51?'#1e7a4a':'#e8a820'):'#b8b4ac'}"></div>
-        <div style="flex:1">
-          <div class="reg-name">${reg.name}</div>
-          <div class="reg-cap">${reg.cap} · ${reg.pop.toFixed(1)}M ab.</div>
-        </div>
-        <div class="reg-pct${pct===100?' full':''}">${pct}%</div>
-      </div>
-      <div class="bar-wrap">
-        <div class="bar-fill" style="width:${pct}%;background:${pct>=51?'#1e7a4a':'#e8a820'}"></div>
-      </div>
-      <div class="reg-bottom">
-        <div class="reg-income">${inc>0 ? `+${inc}€/min${pct>0&&pct<50?' ↓':''}` : '–'}</div>
-        <div class="reg-price">${nextTier ? 'Next: ' + fmt(tierCost(reg, nextTier)) : 'Completa ✓'}</div>
-      </div>`;
-    list.appendChild(div);
-  });
+// ── ASTA LIST ──
+function apBuildAstaList(){
+const list=document.getElementById(‘apAstaList’);
+list.innerHTML=’’;
+apAuctions.forEach(auc=>{
+const reg=regions.find(r=>r.id===auc.regId);
+const div=document.createElement(‘div’);
+div.className=‘asta-card’;
+div.innerHTML=` <div class="asta-top"> <span class="asta-badge ${auc.live?'live':'soon'}">${auc.live?'LIVE':'IN ARRIVO'}</span> <div class="asta-name">${reg.name} — ${auc.pct}%</div> <div class="asta-timer">⏱ ${auc.ends}</div> </div> <div class="asta-detail"> <div class="asta-info"> Capoluogo: ${reg.cap}<br> Quota in gara: <strong>${auc.pct}%</strong><br> Min. offerta: <strong>${apFmt(auc.minNext)}</strong> </div> <div class="asta-bid-wrap"> <div class="asta-current">Offerta attuale</div> <div class="asta-amount">${apFmt(auc.currentBid)}</div> <button class="btn-bid" onclick="apOpenAucPopup('${auc.id}')">Fai offerta</button> </div> </div>`;
+list.appendChild(div);
+});
 }
 
-function buildMarketList(){
-  const list = document.getElementById('marketList');
-  list.innerHTML = '';
-
-  regions.forEach(reg=>{
-    const m = marketData.find(d=>d.id===reg.id);
-    const up = m.trend > 0;
-    const div = document.createElement('div');
-    div.className = 'market-card';
-    div.onclick = ()=>{
-      openRegionPopup(reg);
-      setTimeout(()=>switchPopMode('mercato'), 50);
-    };
-    div.innerHTML = `
-      <div class="reg-dot" style="background:${reg.color}"></div>
-      <div class="market-info">
-        <div class="market-name">${reg.name}</div>
-        <div class="market-detail">${reg.cap} · Disponibili: ${m.available}%</div>
-      </div>
-      <div class="market-right">
-        <div class="market-price">${fmt(m.pricePerPct)}<span style="font-size:10px;font-weight:500">/1%</span></div>
-        <div class="market-change ${up?'up':'down'}">${up?'▲':'▼'} ${m.change}%</div>
-        <div class="market-qty">Vol: ${m.available} quote</div>
-      </div>`;
-    list.appendChild(div);
-  });
+// ── POPUP ──
+function apOpenRegionPopup(reg){
+apSelectedRegion=reg;
+apSelectedTier=null; apSelectedTierCost=0;
+document.getElementById(‘apPopDot’).style.background=reg.color;
+document.getElementById(‘apPopName’).textContent=reg.name;
+document.getElementById(‘apPopRegion’).textContent=`${reg.cap} · ${reg.pop.toFixed(1)}M ab. · Base appalto: ${apFmt(reg.base)}`;
+switchPopMode(‘quota’);
+apBuildTiers(reg);
+apShowPopup();
+apDrawItaly();
 }
 
-function buildAstaList(){
-  const list = document.getElementById('astaList');
-  list.innerHTML = '';
-
-  auctions.forEach(auc=>{
-    const reg = regions.find(r=>r.id===auc.regId);
-    const div = document.createElement('div');
-    div.className = 'asta-card';
-    div.innerHTML = `
-      <div class="asta-top">
-        <span class="asta-badge ${auc.live?'live':'soon'}">${auc.live?'LIVE':'IN ARRIVO'}</span>
-        <div class="asta-name">${reg.name} — ${auc.pct}%</div>
-        <div class="asta-timer">⏱ ${auc.ends}</div>
-      </div>
-      <div class="asta-detail">
-        <div class="asta-info">
-          Capoluogo: ${reg.cap}<br>
-          Quota in gara: <strong>${auc.pct}%</strong><br>
-          Min. offerta: <strong>${fmt(auc.minNext)}</strong>
-        </div>
-        <div class="asta-bid-wrap">
-          <div class="asta-current">Offerta attuale</div>
-          <div class="asta-amount">${fmt(auc.currentBid)}</div>
-          <button class="btn-bid" onclick="event.stopPropagation(); openAucPopup('${auc.id}')">Fai offerta</button>
-        </div>
-      </div>`;
-    list.appendChild(div);
-  });
+function apOpenAucPopup(aucId){
+const auc=apAuctions.find(a=>a.id===aucId);
+const reg=regions.find(r=>r.id===auc.regId);
+apSelectedRegion=reg;
+document.getElementById(‘apPopDot’).style.background=reg.color;
+document.getElementById(‘apPopName’).textContent=reg.name;
+document.getElementById(‘apPopRegion’).textContent=`${reg.cap} · Asta: ${auc.pct}%`;
+apSwitchPopMode(‘asta’);
+// pre-fill asta
+document.getElementById(‘apAstaDesc’).textContent=`Quota in gara: ${auc.pct}% · Offerta attuale: ${apFmt(auc.currentBid)}`;
+document.getElementById(‘apOfferInput’).value=’’;
+document.getElementById(‘apOfferHint’).textContent=`Offerta minima: ${apFmt(auc.minNext)}`;
+document.getElementById(‘apBtnAsta’).disabled=true;
+// removed.textContent=`Offerta corrente: ${apFmt(auc.currentBid)} · Scadenza: ${auc.ends}`;
+apShowPopup();
 }
 
-function openRegionPopup(reg){
-  selectedRegion = reg;
-  selectedTier = null;
-  selectedTierCost = 0;
-  document.getElementById('popDot').style.background = reg.color;
-  document.getElementById('popName').textContent = reg.name;
-  document.getElementById('popRegion').textContent = `${reg.cap} · ${reg.pop.toFixed(1)}M ab. · Base appalto: ${fmt(reg.base)}`;
-  switchPopMode('quota');
-  buildTiers(reg);
-  showPopup();
-  drawItaly();
+function apBuildTiers(reg){
+const grid=document.getElementById(‘apTiersGrid’);
+grid.innerHTML=’’;
+const curPct=apOwnedPct(reg.id);
+TIERS.forEach(t=>{
+const cost=tierCost(reg,t);
+const alreadyOwned=curPct>=t.pct;
+const canAfford=apBalance>=cost;
+const inc=apRegionIncome({…reg, _pct:t.pct});
+const btn=document.createElement(‘div’);
+btn.className=‘tier-btn’+(alreadyOwned?’ apOwned-tier’:canAfford?’ affordable’:’’);
+btn.innerHTML=`<div class="tier-pct">${t.label}</div><div class="tier-cost">${apFmt(cost)}</div><div class="tier-inc">+${Math.round(reg.inc*(t.pct/100)*(t.pct>=51?1:0.3))}€/min</div>`;
+if(!alreadyOwned) btn.onclick=()=>apSelectTierBtn(t,cost,btn);
+grid.appendChild(btn);
+});
+document.getElementById(‘apBtnQuota’).disabled=true;
+document.getElementById(‘apNoteQuota’).textContent=curPct>0?`Quota attuale: ${curPct}% · Rendita: ${apRegionIncome(reg)}€/min`:‘Nessuna quota’;
 }
 
-function openAucPopup(aucId){
-  const auc = auctions.find(a=>a.id===aucId);
-  const reg = regions.find(r=>r.id===auc.regId);
-  selectedRegion = reg;
-  document.getElementById('popDot').style.background = reg.color;
-  document.getElementById('popName').textContent = reg.name;
-  document.getElementById('popRegion').textContent = `${reg.cap} · Asta: ${auc.pct}%`;
-  switchPopMode('asta');
-  document.getElementById('astaDesc').textContent = `Quota in gara: ${auc.pct}% · Offerta attuale: ${fmt(auc.currentBid)}`;
-  document.getElementById('offerInput').value = '';
-  document.getElementById('offerHint').textContent = `Offerta minima: ${fmt(auc.minNext)}`;
-  document.getElementById('btnAsta').disabled = true;
-  document.getElementById('noteAsta').textContent = `Offerta corrente: ${fmt(auc.currentBid)} · Scadenza: ${auc.ends}`;
-  showPopup();
+function apSelectTierBtn(t,cost,btn){
+apSelectedTier=t; apSelectedTierCost=cost;
+document.querySelectorAll(’.tier-btn’).forEach(b=>b.classList.remove(‘sel’));
+btn.classList.add(‘sel’);
+document.getElementById(‘apBtnQuota’).disabled=false;
+document.getElementById(‘apNoteQuota’).textContent=`Acquisto: ${t.label} · Costo: ${apFmt(cost)}`;
 }
 
-function buildTiers(reg){
-  const grid = document.getElementById('tiersGrid');
-  grid.innerHTML = '';
-  const curPct = ownedPct(reg.id);
-
-  TIERS.forEach(t=>{
-    const cost = tierCost(reg, t);
-    const alreadyOwned = curPct >= t.pct;
-    const canAfford = balance >= cost;
-    const btn = document.createElement('div');
-    btn.className = 'tier-btn' + (alreadyOwned ? ' owned-tier' : canAfford ? ' affordable' : '');
-    btn.innerHTML = `
-      <div class="tier-pct">${t.label}</div>
-      <div class="tier-cost">${fmt(cost)}</div>
-      <div class="tier-inc">+${projectedIncome(reg, t.pct)}€/min</div>`;
-    if(!alreadyOwned){
-      btn.onclick = ()=>selectTierBtn(t, cost, btn);
-    }
-    grid.appendChild(btn);
-  });
-
-  document.getElementById('btnQuota').disabled = true;
-  document.getElementById('noteQuota').textContent =
-    curPct > 0 ? `Quota attuale: ${curPct}% · Rendita: ${regionIncome(reg)}€/min` : 'Nessuna quota';
+function apSwitchPopMode(mode){
+apCurrentPopMode=mode;
+[‘quota’,‘mercato’,‘asta’].forEach(m=>{
+const tab=document.getElementById(‘appmt-’+m);
+if(tab) tab.classList.toggle(‘active’,m===mode);
+});
+document.getElementById(‘apPopQuota’).style.display=mode===‘quota’?’’:‘none’;
+document.getElementById(‘apPopMercato’).style.display=mode===‘mercato’?’’:‘none’;
+document.getElementById(‘apPopAsta’).style.display=mode===‘asta’?’’:‘none’;
+if(mode===‘mercato’&&apSelectedRegion) apBuildMercatoPopup(apSelectedRegion);
+if(mode===‘asta’&&apSelectedRegion) apBuildAstaPopup(apSelectedRegion);
 }
 
-function selectTierBtn(t, cost, btn){
-  selectedTier = t;
-  selectedTierCost = cost;
-  document.querySelectorAll('.tier-btn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
-  document.getElementById('btnQuota').disabled = false;
-  document.getElementById('noteQuota').textContent = `Acquisto: ${t.label} · Costo: ${fmt(cost)}`;
+function apBuildMercatoPopup(reg){
+const m=apMarketData.find(d=>d.id===reg.id);
+if(!m) return;
+document.getElementById(‘apMercatoDesc’).textContent=`Mercato secondario · Prezzo: ${apFmt(m.pricePerPct)}/quota · ${m.available} quote disponibili`;
+document.getElementById(‘apQtyInput’).max=m.available;
+document.getElementById(‘apQtyInput’).value=Math.min(5,m.available);
+apUpdateMercatoTotal();
 }
 
-function switchPopMode(mode){
-  currentPopMode = mode;
-  ['quota','mercato','asta'].forEach(m=>{
-    document.getElementById('pmt-' + m).classList.toggle('active', m === mode);
-  });
-
-  document.getElementById('popQuotaMode').style.display = mode === 'quota' ? '' : 'none';
-  document.getElementById('popMercatoMode').style.display = mode === 'mercato' ? '' : 'none';
-  document.getElementById('popAstaMode').style.display = mode === 'asta' ? '' : 'none';
-
-  if(mode === 'mercato' && selectedRegion) buildMercatoPopup(selectedRegion);
-  if(mode === 'asta' && selectedRegion) buildAstaPopup(selectedRegion);
+function apBuildAstaPopup(reg){
+const auc=apAuctions.find(a=>a.regId===reg.id&&a.live);
+if(!auc){
+document.getElementById(‘apAstaDesc’).textContent=‘Nessuna asta attiva per questa regione.’;
+document.getElementById(‘apBtnAsta’).disabled=true;
+return;
+}
+document.getElementById(‘apAstaDesc’).textContent=`Quota: ${auc.pct}% · Offerta attuale: ${apFmt(auc.currentBid)}`;
+document.getElementById(‘apOfferHint’).textContent=`Minimo: ${apFmt(auc.minNext)}`;
+document.getElementById(‘apOfferInput’).value=’’;
+document.getElementById(‘apBtnAsta’).disabled=true;
 }
 
-function buildMercatoPopup(reg){
-  const m = marketData.find(d=>d.id===reg.id);
-  document.getElementById('mercatoDesc').textContent = `Mercato secondario · Prezzo corrente: ${fmt(m.pricePerPct)}/quota · ${m.available} quote disponibili`;
-  document.getElementById('mercatoUnit').textContent = fmt(m.pricePerPct);
-  document.getElementById('qtyInput').max = m.available;
-  document.getElementById('qtyInput').value = Math.min(5, m.available);
-  updateMercatoTotal();
+function apAdjustQty(delta){
+const inp=document.getElementById(‘apQtyInput’);
+inp.value=Math.max(1,Math.min(parseInt(inp.max)||50,parseInt(inp.value||1)+delta));
+apUpdateMercatoTotal();
+}
+function apUpdateMercatoTotal(){
+if(!apSelectedRegion)return;
+const m=apMarketData.find(d=>d.id===apSelectedRegion.id);
+const qty=parseInt(document.getElementById(‘apQtyInput’).value)||1;
+const total=qty*m.pricePerPct;
+document.getElementById(‘apMercatoTotal’).textContent=apFmt(total);
+document.getElementById(‘apBtnMercato’).disabled=apBalance<total;
+}
+function apUpdateOfferBtn(){
+if(!apSelectedRegion)return;
+const auc=apAuctions.find(a=>a.regId===apSelectedRegion.id&&a.live);
+if(!auc)return;
+const val=parseInt(document.getElementById(‘apOfferInput’).value)||0;
+document.getElementById(‘apBtnAsta’).disabled=val<auc.minNext||apBalance<val;
 }
 
-function buildAstaPopup(reg){
-  const auc = auctions.find(a=>a.regId===reg.id && a.live);
-  if(!auc){
-    document.getElementById('astaDesc').textContent = 'Nessuna asta attiva per questa regione.';
-    document.getElementById('btnAsta').disabled = true;
-    document.getElementById('noteAsta').textContent = 'Al momento non ci sono gare aperte.';
-    return;
-  }
-  document.getElementById('astaDesc').textContent = `Quota: ${auc.pct}% · Offerta attuale: ${fmt(auc.currentBid)}`;
-  document.getElementById('offerHint').textContent = `Minimo: ${fmt(auc.minNext)}`;
-  document.getElementById('offerInput').value = '';
-  document.getElementById('btnAsta').disabled = true;
-  document.getElementById('noteAsta').textContent = `Scadenza: ${auc.ends}`;
+// ── CONFIRM ACTIONS ──
+function apConfirmQuota(){
+if(!apSelectedTier||!apSelectedRegion||apBalance<apSelectedTierCost)return;
+apSyncBalance(apBalance-apSelectedTierCost);
+apInvested+=apSelectedTierCost;
+apOwned[apSelectedRegion.id]=Math.max(apOwnedPct(apSelectedRegion.id),apSelectedTier.pct);
+showToast(`▸ Acquisito ${apSelectedTier.label} di ${apSelectedRegion.name}`);
+apClosePopup();
+apBuildRegionList(); apUpdateStats(); apDrawItaly();
+}
+function apConfirmMercato(){
+if(!apSelectedRegion)return;
+const m=apMarketData.find(d=>d.id===apSelectedRegion.id);
+const qty=parseInt(document.getElementById(‘apQtyInput’).value)||1;
+const total=qty*m.pricePerPct;
+if(apBalance<total){showToast(‘Saldo insufficiente ×’);return;}
+apSyncBalance(apBalance-total);
+apInvested+=total;
+apOwned[apSelectedRegion.id]=Math.min(100,(apOwnedPct(apSelectedRegion.id)||0)+qty);
+m.available=Math.max(0,m.available-qty);
+m.pricePerPct=Math.round(m.pricePerPct*1.04); // price goes up
+showToast(`▸ Acquistato ${qty}% di ${apSelectedRegion.name} dal mercato`);
+apClosePopup();
+apBuildRegionList(); apUpdateStats(); apDrawItaly();
+}
+function apConfirmAsta(){
+if(!apSelectedRegion)return;
+const auc=apAuctions.find(a=>a.regId===apSelectedRegion.id&&a.live);
+if(!auc)return;
+const val=parseInt(document.getElementById(‘apOfferInput’).value)||0;
+if(val<auc.minNext||apBalance<val){showToast(‘Offerta non valida ×’);return;}
+apSyncBalance(apBalance-val);
+auc.currentBid=val; auc.minNext=Math.round(val*1.1); auc.myBid=val;
+showToast(`▸ Offerta di ${apFmt(val)} accettata per ${apSelectedRegion.name}`);
+apClosePopup();
+apBuildAstaList();
 }
 
-function adjustQty(delta){
-  const inp = document.getElementById('qtyInput');
-  inp.value = Math.max(1, Math.min(parseInt(inp.max)||50, parseInt(inp.value||1) + delta));
-  updateMercatoTotal();
+function apShowPopup(){
+document.getElementById(‘apOverlay’).style.display=‘block’;
+const pp=document.getElementById(‘apPopup’);
+pp.style.display=‘block’;
+requestAnimationFrame(()=>pp.classList.add(‘open’));
+}
+function apClosePopup(){
+const pp=document.getElementById(‘apPopup’);
+pp.classList.remove(‘open’);
+setTimeout(()=>{pp.style.display=‘none’;document.getElementById(‘apOverlay’).style.display=‘none’;},280);
+apSelectedRegion=null; apSelectedTier=null;
+apDrawItaly();
 }
 
-function updateMercatoTotal(){
-  if(!selectedRegion) return;
-  const m = marketData.find(d=>d.id===selectedRegion.id);
-  const qty = parseInt(document.getElementById('qtyInput').value) || 1;
-  const total = qty * m.pricePerPct;
-  document.getElementById('mercatoTotal').textContent = fmt(total);
-  document.getElementById('btnMercato').disabled = balance < total || qty > m.available;
+// ── STATS ──
+function apUpdateStats(){
+const acq=regions.filter(r=>apOwnedPct(r.id)>0).length;
+const inc=apTotalIncome();
+const avg=Math.round(regions.reduce((s,r)=>s+apOwnedPct(r.id),0)/regions.length);
+document.getElementById(‘apSt1’).textContent=acq;
+document.getElementById(‘apSt2’).textContent=inc+‘€’;
+document.getElementById(‘apSt3’).textContent=avg+’%’;
+document.getElementById(‘apSt4’).textContent=apInvested>=1000?Math.round(apInvested/1000)+‘k€’:apInvested+‘€’;
 }
 
-function updateOfferBtn(){
-  if(!selectedRegion) return;
-  const auc = auctions.find(a=>a.regId===selectedRegion.id && a.live);
-  if(!auc) return;
-  const val = parseInt(document.getElementById('offerInput').value) || 0;
-  document.getElementById('btnAsta').disabled = val < auc.minNext || balance < val;
+function apShowToast(msg){
+const t=document.getElementById(‘apToast’);
+t.textContent=msg; t.classList.add(‘show’);
+setTimeout(()=>t.classList.remove(‘show’),2400);
 }
 
-function confirmQuota(){
-  if(!selectedTier || !selectedRegion || balance < selectedTierCost) return;
-  syncBalance(balance - selectedTierCost);
-  invested += selectedTierCost;
-  owned[selectedRegion.id] = Math.max(ownedPct(selectedRegion.id), selectedTier.pct);
-  showToast(`✓ Acquisito ${selectedTier.label} di ${selectedRegion.name}`);
-  closePopup();
-  buildRegionList();
-  updateStats();
-  drawItaly();
-}
-
-function confirmMercato(){
-  if(!selectedRegion) return;
-  const m = marketData.find(d=>d.id===selectedRegion.id);
-  const qty = parseInt(document.getElementById('qtyInput').value) || 1;
-  const total = qty * m.pricePerPct;
-  if(balance < total){
-    showToast('Saldo insufficiente 💸');
-    return;
-  }
-  if(qty > m.available){
-    showToast('Quote insufficienti');
-    return;
-  }
-  syncBalance(balance - total);
-  invested += total;
-  owned[selectedRegion.id] = Math.min(100, (ownedPct(selectedRegion.id) || 0) + qty);
-  m.available = Math.max(0, m.available - qty);
-  m.pricePerPct = Math.round(m.pricePerPct * 1.04);
-  showToast(`✓ Acquistato ${qty}% di ${selectedRegion.name} dal mercato`);
-  closePopup();
-  buildRegionList();
-  buildMarketList();
-  updateStats();
-  drawItaly();
-}
-
-function confirmAsta(){
-  if(!selectedRegion) return;
-  const auc = auctions.find(a=>a.regId===selectedRegion.id && a.live);
-  if(!auc) return;
-  const val = parseInt(document.getElementById('offerInput').value) || 0;
-  if(val < auc.minNext || balance < val){
-    showToast('Offerta non valida 💸');
-    return;
-  }
-  syncBalance(balance - val);
-  auc.currentBid = val;
-  auc.minNext = Math.round(val * 1.1);
-  auc.myBid = val;
-  showToast(`✓ Offerta di ${fmt(val)} accettata per ${selectedRegion.name}`);
-  closePopup();
-  buildAstaList();
-}
-
-function showPopup(){
-  document.getElementById('overlay').style.display = 'block';
-  const pp = document.getElementById('popup');
-  pp.style.display = 'block';
-  requestAnimationFrame(()=>pp.classList.add('open'));
-}
-
-function closePopup(){
-  const pp = document.getElementById('popup');
-  pp.classList.remove('open');
-  setTimeout(()=>{
-    pp.style.display = 'none';
-    document.getElementById('overlay').style.display = 'none';
-  }, 280);
-  selectedRegion = null;
-  selectedTier = null;
-  drawItaly();
-}
-
-function updateStats(){
-  const acq = regions.filter(r=>ownedPct(r.id)>0).length;
-  const inc = totalIncome();
-  const avg = Math.round(regions.reduce((s,r)=>s+ownedPct(r.id),0) / regions.length);
-  document.getElementById('st1').textContent = acq;
-  document.getElementById('st2').textContent = inc + '€';
-  document.getElementById('st3').textContent = avg + '%';
-  document.getElementById('st4').textContent = invested >= 1000 ? Math.round(invested/1000) + 'k€' : invested + '€';
-}
-
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2400);
-}
-
+// Passive income every 60s
 setInterval(()=>{
-  const inc = totalIncome();
-  if(inc > 0){
-    syncBalance(balance + inc);
-    showToast(`+${inc}€ rendita appalti`);
-  }
+const inc=apTotalIncome();
+if(inc>0){ apSyncBalance(apBalance+inc); showToast(`+${inc}€ rendita appalti`); }
+// Fluctuate market prices
+apMarketData.forEach(m=>{
+m.pricePerPct=Math.round(m.pricePerPct*(0.97+Math.random()*0.06));
+m.trend=Math.random()>0.5?1:-1;
+m.change=(Math.random()*6+0.5).toFixed(1);
+});
+if(apCurrentTab===‘mercato’) apBuildMarketList();
+},60000);
 
-  marketData.forEach(m=>{
-    m.pricePerPct = Math.max(1, Math.round(m.pricePerPct * (0.97 + Math.random() * 0.06)));
-    m.trend = Math.random() > 0.5 ? 1 : -1;
-    m.change = (Math.random() * 6 + 0.5).toFixed(1);
-  });
+// Init
+apSyncBalance(apBalance);
 
-  if(currentTab === 'mercato') buildMarketList();
-}, 60000);
-
-let trainX = -440;
-function animateTrain(){
-  trainX += 1.2;
-  if(trainX > 540) trainX = -500;
-  const g = document.getElementById('trainGroup');
-  if(g) g.setAttribute('transform', `translate(${trainX},0)`);
-  requestAnimationFrame(animateTrain);
+// ── TRAIN ANIMATION ──
+let apTrainX = -440;
+const apTrainTotal = 540 + 500; // canvas width + train length
+function apAnimateTrain(){
+apTrainX += 1.2;
+if(apTrainX > 540) apTrainX = -500;
+const g = document.getElementById(‘apTrainGroup’);
+if(g) g.setAttribute(‘transform’, `translate(${apTrainX},0)`);
+requestAnimationFrame(apAnimateTrain);
 }
+requestAnimationFrame(apAnimateTrain);
+apDrawItaly();
+apBuildRegionList();
+apUpdateStats();
 
-syncBalance(balance);
-drawItaly();
-buildRegionList();
-updateStats();
-requestAnimationFrame(animateTrain);
 </script>
-
 </body>
 </html>

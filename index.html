@@ -715,8 +715,8 @@
       position:absolute;
       top:0;
       left:0;
-      width:540px;
-      height:680px;
+      width:760px;
+      height:920px;
       transform-origin:0 0;
     }
 
@@ -2099,7 +2099,7 @@
       apUpdateCityDots();
 
       const apMapWrap = document.getElementById('apMapWrap');
-      apPanX = Math.min(0, (apMapWrap.clientWidth - 540) / 2);
+      apPanX = Math.min(0, (apMapWrap.clientWidth - 760) / 2);
       apPanY = 0;
       [apPanX, apPanY] = apClampPan(apPanX, apPanY);
       apApplyPan();
@@ -2469,8 +2469,8 @@
     const apMapInner = document.getElementById('apMapInner');
 
     function apClampPan(x,y){
-      const minX = apMapWrap.clientWidth - 540;
-      const minY = apMapWrap.clientHeight - 680;
+      const minX = apMapWrap.clientWidth - 760;
+      const minY = apMapWrap.clientHeight - 920;
       return [
         Math.max(minX, Math.min(0, x)),
         Math.max(minY, Math.min(0, y))
@@ -2539,8 +2539,8 @@
       apHitTestMap(mx,my);
     });
 
-    function apGX(lon){ return (lon - 6.6) / (18.5 - 6.6) * 540; }
-    function apGY(lat){ return (47.1 - lat) / (47.1 - 36.6) * 680; }
+    function apGX(lon){ return (lon - 6.6) / (18.5 - 6.6) * 760; }
+    function apGY(lat){ return (47.1 - lat) / (47.1 - 36.6) * 920; }
 
     function apHitTestMap(mx,my){
       for(const reg of regions){

@@ -920,6 +920,38 @@
       .stats{grid-template-columns:repeat(2,1fr);}
     }
   </style>
+  <script>
+const AC = new (window.AudioContext||window.webkitAudioContext)();
+function playClick(){
+  const o=AC.createOscillator(), g=AC.createGain();
+  o.connect(g); g.connect(AC.destination);
+  o.frequency.value=800; g.gain.setValueAtTime(0.15,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.08);
+  o.start(); o.stop(AC.currentTime+0.08);
+}
+function playWin(){
+  [523,659,784].forEach((f,i)=>{
+    const o=AC.createOscillator(), g=AC.createGain();
+    o.connect(g); g.connect(AC.destination);
+    o.frequency.value=f; g.gain.setValueAtTime(0.12,AC.currentTime+i*0.1);
+    g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+i*0.1+0.15);
+    o.start(AC.currentTime+i*0.1); o.stop(AC.currentTime+i*0.1+0.15);
+  });
+}
+function playLose(){
+  const o=AC.createOscillator(), g=AC.createGain();
+  o.connect(g); g.connect(AC.destination);
+  o.frequency.value=220; g.gain.setValueAtTime(0.12,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.3);
+  o.start(); o.stop(AC.currentTime+0.3);
+}
+document.addEventListener('click', e=>{
+  if(e.target.matches('button,.chip,.t-card,.city,.reg-card,.market-card,.tier,.nav-btn,.nav-btn *')){
+    playClick();
+  }
+},{passive:true});
+</script>
+
 </head>
 <body>
   <div class="topbar">
@@ -1555,6 +1587,9 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
       updateUI();
       bumpBalance();
       saveGame();
+      if(won) playWin();
+      else playLose();
+
     }
 
     function triggerInfraPopup(inf){
@@ -2215,9 +2250,10 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
         ring.setAttribute('cx',reg.x); ring.setAttribute('cy',reg.y);
         ring.setAttribute('r',r); ring.setAttribute('fill','#fff');
         ring.setAttribute('class','ring');
-        ring.setAttribute('stroke',isSelected?'#e8a820':'rgba(0,0,0,0.4)');
+        ring.setAttribute('stroke',isSelected?'#e8a820':'rgba(0,180,255,0.4)');
         ring.setAttribute('stroke-width',isSelected?'2.5':'1');
-        g.appendChild(ring);
+        ring.style.filter=isSelected?'drop-shadow(0 0 4px #e8a820)':'drop-shadow(0 0 3px rgba(0,180,255,0.6))';
+         g.appendChild(ring);
 
         if(pct>=100){
           const fill=document.createElementNS('http://www.w3.org/2000/svg','circle');
@@ -2493,11 +2529,9 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
     updateSliderTrack(15);
 const savedName = loadGame();
 if(savedName){ updateUI(); document.getElementById('welcomeScreen').style.display='none'; }
+requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
 
-    requestAnimationFrame(ts=>{
-      lastTime = ts;
-      animateMetro(ts);
-    });
+
     apSyncBalance(apBalance);
     apBuildRegionList();
     apBuildMarketList();

@@ -5,6 +5,44 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>TrenoScommesse</title>
   <style>
+    /* LISTE QUOTE/MERCATO/ASTE */
+.content{padding:10px 12px 100px;}
+.section-lbl{font-size:9px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.09em;color:rgba(255,255,255,.45);margin:12px 0 8px 2px;}
+.region-list,.market-list,.asta-list{display:grid;gap:7px;}
+.reg-card,.market-card,.asta-card{background:#ede9e1;border:1.5px solid #c4beb4;
+  border-radius:7px;padding:10px 11px;}
+.reg-card{cursor:pointer;transition:border-color .12s;}
+.reg-card.has-quota{border-color:rgba(30,122,74,0.4);}
+.reg-top{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.reg-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid rgba(0,0,0,.2);}
+.reg-name,.market-name,.asta-name{font-size:13px;font-weight:800;color:#181818;flex:1;}
+.reg-cap,.market-detail,.asta-info,.asta-timer{font-size:10px;color:#6a6058;}
+.reg-pct{font-size:17px;font-weight:800;color:#0c2336;min-width:40px;text-align:right;}
+.reg-pct.full{color:#1e7a4a;}
+.bar-wrap{background:#d4d0c8;border-radius:2px;height:4px;margin-bottom:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:2px;transition:width .4s;}
+.reg-bottom,.asta-detail{display:flex;justify-content:space-between;align-items:center;}
+.reg-income{font-size:10px;color:#25a060;font-weight:700;background:rgba(30,122,74,.1);
+  padding:2px 6px;border-radius:3px;}
+.reg-price{font-size:10px;color:#6a6058;font-weight:600;}
+.market-card{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.market-info{flex:1;} .market-right{text-align:right;}
+.market-price{font-size:14px;font-weight:800;color:#0c2336;}
+.market-change{font-size:10px;font-weight:700;margin-top:2px;}
+.market-change.up{color:#25a060;} .market-change.down{color:#c0392b;}
+.market-qty{font-size:10px;color:#6a6058;background:#ddd9d0;border-radius:3px;
+  padding:2px 6px;font-weight:600;margin-top:3px;}
+.asta-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.asta-badge{font-size:9px;font-weight:800;text-transform:uppercase;
+  padding:2px 7px;border-radius:3px;color:#fff;}
+.asta-badge.live{background:#c0392b;} .asta-badge.soon{background:#e8a820;color:#111;}
+.asta-bid-wrap{text-align:right;}
+.asta-current{font-size:11px;color:#6a6058;margin-bottom:2px;}
+.asta-amount{font-size:16px;font-weight:800;color:#0c2336;}
+.btn-bid{margin-top:6px;background:#0c2336;color:#fff;border:none;
+  border-radius:6px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;}
+
     :root{
       --bg:#f0ebe0;
       --navy:#0c2336;

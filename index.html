@@ -2099,10 +2099,10 @@
       apUpdateCityDots();
 
       const apMapWrap = document.getElementById('apMapWrap');
-      apPanX = Math.min(0, (apMapWrap.clientWidth - 760) / 2);
-      apPanY = 0;
-      [apPanX, apPanY] = apClampPan(apPanX, apPanY);
-      apApplyPan();
+      apPanX = 0;
+apPanY = 0;
+[apPanX, apPanY] = apClampPan(apPanX, apPanY);
+apApplyPan();
 
       if(!apTrainAnimStarted){
         apTrainAnimStarted = true;
@@ -2468,14 +2468,33 @@
     const apMapWrap = document.getElementById('apMapWrap');
     const apMapInner = document.getElementById('apMapInner');
 
-    function apClampPan(x,y){
-      const minX = apMapWrap.clientWidth - 760;
-      const minY = apMapWrap.clientHeight - 920;
-      return [
-        Math.max(minX, Math.min(0, x)),
-        Math.max(minY, Math.min(0, y))
-      ];
-    }
+    function apClampPan(x, y){
+  const mapW = 760;
+  const mapH = 920;
+  const wrapW = apMapWrap.clientWidth;
+  const wrapH = apMapWrap.clientHeight;
+
+  let minX, maxX, minY, maxY;
+
+  if (mapW <= wrapW) {
+    minX = maxX = (wrapW - mapW) / 2;
+  } else {
+    minX = wrapW - mapW;
+    maxX = 0;
+  }
+
+  if (mapH <= wrapH) {
+    minY = maxY = (wrapH - mapH) / 2;
+  } else {
+    minY = wrapH - mapH;
+    maxY = 0;
+  }
+
+  return [
+    Math.min(maxX, Math.max(minX, x)),
+    Math.min(maxY, Math.max(minY, y))
+  ];
+}
 
     function apApplyPan(){
       apMapInner.style.transform = `translate(${apPanX}px,${apPanY}px) scale(1)`;

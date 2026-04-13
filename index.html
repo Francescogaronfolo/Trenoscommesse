@@ -1251,12 +1251,34 @@
       {name:"Linea B-2",   route:"Palermo → Messina", type:"Lunga Direttrice", base:24, variance:25}
     ];
 
-    const boardData = [
-      {name:"Atria V-01",  route:"Roma→MI", time:"08:12", delay:"+6",   sc:"s-mid"},
-      {name:"Radian R-12", route:"VE→Roma", time:"09:45", delay:"+13",  sc:"s-mid"},
-      {name:"Modulo C-4",  route:"Bari→TA", time:"11:05", delay:"Punt.",sc:"s-ok"},
-      {name:"Linea B-2",   route:"PA→ME",   time:"12:40", delay:"+22",  sc:"s-bad"}
-    ];
+    const boardTrains=[
+  {name:"Atria V-01",  route:"Roma→MI"},
+  {name:"Radian R-12", route:"VE→Roma"},
+  {name:"Modulo C-4",  route:"Bari→TA"},
+  {name:"Linea B-2",   route:"PA→ME"},
+  {name:"Freccia 05",  route:"MI→NA"},
+  {name:"Adriatico 9", route:"AN→Roma"},
+  {name:"Tirrenico 3", route:"GE→Roma"},
+  {name:"Sole 11",     route:"Roma→BA"},
+];
+function rndTime(){
+  const h=6+Math.floor(Math.random()*14),m=Math.floor(Math.random()*60);
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+function rndDelay(){
+  const r=Math.random();
+  if(r<0.18) return {text:'Punt.',sc:'s-ok'};
+  if(r<0.42) return {text:'+'+(1+Math.floor(Math.random()*8))+' min',sc:'s-ok'};
+  if(r<0.72) return {text:'+'+(8+Math.floor(Math.random()*12))+' min',sc:'s-mid'};
+  if(r<0.90) return {text:'+'+(20+Math.floor(Math.random()*20))+' min',sc:'s-bad'};
+  return {text:'SOPPRESSO',sc:'s-bad'};
+}
+function genBoard(){
+  return [...boardTrains].sort(()=>Math.random()-0.5).slice(0,4)
+    .map(t=>{ const d=rndDelay(); return {name:t.name,route:t.route,time:rndTime(),delay:d.text,sc:d.sc}; });
+}
+let boardData=genBoard();
+setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
 
     const infraDefs = [
       {id:'deposito',  x:60,  y:170, shape:'square',  color:'#e03a3a', symbol:'▣', label:'DEPOSITO',  upgradeKey:'train',     desc:'Riduce la variabilità del ritardo simulato.'},

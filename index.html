@@ -1298,7 +1298,9 @@ function startGame(){
   if(el) el.textContent = name;
   saveGame();
   document.getElementById('welcomeScreen').style.display = 'none';
+  requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
 }
+
 
 let balance = 1000;
 

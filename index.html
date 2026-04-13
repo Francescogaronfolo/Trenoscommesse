@@ -704,8 +704,9 @@
       border-top:1px solid rgba(0,180,255,0.15);
       border-bottom:1px solid rgba(0,180,255,0.15);
       position:relative;
-      height:72vh;
-      min-height:520px;
+      height:52vh;
+      min-height:420px;
+      max-height:620px;
       cursor:grab;
       user-select:none;
       background:#0a1628;
@@ -715,8 +716,8 @@
       position:absolute;
       top:0;
       left:0;
-      width:760px;
-      height:920px;
+      width:1600px;
+      height:2015px;
       transform-origin:0 0;
     }
 
@@ -1188,7 +1189,7 @@
       <div class="map-outer">
         <div class="map-scroll-wrap" id="apMapWrap">
           <div class="map-inner" id="apMapInner">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="540" height="680" style="display:block;position:absolute;top:0;left:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="1600" height="2015" style="display:block;position:absolute;top:0;left:0;">
               <defs>
                 <pattern id="apgrid" x="0" y="0" width="54" height="68" patternUnits="userSpaceOnUse">
                   <path d="M54,0 L0,0 0,68" fill="none" stroke="rgba(0,150,255,0.07)" stroke-width="0.5"/>
@@ -1266,7 +1267,7 @@
               </g>
             </svg>
 
-            <svg id="apCityDotsSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="540" height="680" style="display:block;position:absolute;top:0;left:0;">
+            <svg id="apCityDotsSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="1600" height="2015" style="display:block;position:absolute;top:0;left:0;">
               <g id="apCityDotsContainer"></g>
             </svg>
           </div>
@@ -2099,7 +2100,7 @@
       apUpdateCityDots();
 
       const apMapWrap = document.getElementById('apMapWrap');
-      apPanX = 0;
+apPanX = Math.round((apMapWrap.clientWidth - apMapW) / 2);
 apPanY = 0;
 [apPanX, apPanY] = apClampPan(apPanX, apPanY);
 apApplyPan();
@@ -2467,14 +2468,15 @@ apApplyPan();
 
     const apMapWrap = document.getElementById('apMapWrap');
     const apMapInner = document.getElementById('apMapInner');
-
-    function apClampPan(x, y){
-  const mapW = 760;
-  const mapH = 920;
-  const wrapW = apMapWrap.clientWidth;
-  const wrapH = apMapWrap.clientHeight;
-
-  let minX, maxX, minY, maxY;
+    const apMapW = 1600, apMapH = 2015;
+    function apClampPan(x,y){
+  const minX = Math.min(0, apMapWrap.clientWidth - apMapW);
+  const minY = Math.min(0, apMapWrap.clientHeight - apMapH);
+  return [
+    Math.max(minX, Math.min(0, x)),
+    Math.max(minY, Math.min(0, y))
+  ];
+}
 
   if (mapW <= wrapW) {
     minX = maxX = (wrapW - mapW) / 2;
@@ -2558,8 +2560,8 @@ apApplyPan();
       apHitTestMap(mx,my);
     });
 
-    function apGX(lon){ return (lon - 6.6) / (18.5 - 6.6) * 760; }
-    function apGY(lat){ return (47.1 - lat) / (47.1 - 36.6) * 920; }
+    function apGX(lon){ return (lon - 6.6) / (18.5 - 6.6) * 1600; }
+    function apGY(lat){ return (47.1 - lat) / (47.1 - 36.6) * 2015; }
 
     function apHitTestMap(mx,my){
       for(const reg of regions){

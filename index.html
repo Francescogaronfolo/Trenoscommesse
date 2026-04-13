@@ -698,176 +698,80 @@
     }
     .mode-tab.active{color:#fff;border-bottom-color:var(--gold);}
 
-    .map-outer{background:#0a1628;padding:0;}
-    .map-scroll-wrap{
-      overflow:hidden;
-      border-top:1px solid rgba(0,180,255,0.15);
-      border-bottom:1px solid rgba(0,180,255,0.15);
+    .map-wrap{
+      width:100%;
       position:relative;
-      height:52vh;
-      min-height:420px;
-      max-height:620px;
-      cursor:grab;
-      user-select:none;
-      background:#0a1628;
+      flex-shrink:0;
+      background:#080f1e;
+      border-bottom:1px solid rgba(0,180,255,.12);
     }
-    .map-scroll-wrap:active{cursor:grabbing;}
-    .map-inner{
-      position:absolute;
-      top:0;
-      left:0;
-      width:1600px;
-      height:2015px;
-      transform-origin:0 0;
+    .map-wrap svg{
+      display:block;
+      width:100%;
+      height:auto;
     }
 
-    .stats-row{
+    .city{cursor:pointer;}
+    .city.selected .ring{stroke:#e8a820;stroke-width:2.5;}
+
+    .stats{
       display:grid;
       grid-template-columns:repeat(4,1fr);
-      gap:8px;
-      padding:12px 12px 0;
+      gap:6px;
+      padding:10px 12px;
+      background:#0a1628;
+      border-top:1px solid rgba(0,180,255,.1);
     }
-    .stat-box{
-      background:#ede9e1;
-      border:1.5px solid #c4beb4;
-      border-radius:7px;
-      padding:9px 8px;
-      text-align:center;
-    }
+    .stat{text-align:center;}
     .stat-lbl{
       font-size:8px;
       font-weight:800;
       text-transform:uppercase;
       letter-spacing:.07em;
-      color:#6a6058;
-      margin-bottom:4px;
+      color:rgba(255,255,255,.3);
+      margin-bottom:3px;
     }
     .stat-val{
-      font-size:16px;
+      font-size:15px;
       font-weight:800;
-      color:#0c2336;
-    }
-    .stat-sub{
-      font-size:9px;
-      color:#6a6058;
-      margin-top:1px;
+      color:#fff;
     }
 
-    .content{padding:10px 12px 100px;}
-    .section-lbl{
-      font-size:9px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.09em;
-      color:#6a6058;
-      margin:12px 0 8px 2px;
+    .ap-popup-wrap{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      display:none;
+      z-index:700;
+      align-items:flex-end;
+      justify-content:center;
     }
-
-    .region-list,.market-list,.asta-list{display:grid;gap:7px;}
-
-    .reg-card,
-    .market-card,
-    .asta-card{
-      background:#ede9e1;
-      border:1.5px solid #c4beb4;
-      border-radius:7px;
-      padding:10px 11px;
+    .ap-popup-wrap.open{display:flex;}
+    .ap-popup{
+      background:#0c1e32;
+      border-radius:20px 20px 0 0;
+      padding:22px 20px 36px;
+      width:100%;
+      max-width:540px;
+      border-top:1px solid rgba(0,180,255,.25);
+      transform:translateY(100%);
+      transition:transform .3s cubic-bezier(.16,1,.3,1);
     }
-    .reg-card{cursor:pointer;transition:border-color .12s;}
-    .reg-card.has-quota{border-color:rgba(30,122,74,0.4);}
-    .reg-top{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
-    .reg-dot{
-      width:9px;
-      height:9px;
-      border-radius:50%;
-      flex-shrink:0;
-      border:1.5px solid rgba(0,0,0,0.2);
-    }
-    .reg-name{font-size:13px;font-weight:800;flex:1;}
-    .reg-cap{font-size:10px;color:#6a6058;}
-    .reg-pct{font-size:17px;font-weight:800;color:#0c2336;min-width:40px;text-align:right;}
-    .reg-pct.full{color:#1e7a4a;}
-    .bar-wrap{
-      background:#d4d0c8;
-      border-radius:2px;
+    .ap-popup-wrap.open .ap-popup{transform:translateY(0);}
+    .ap-pop-handle{
+      width:36px;
       height:4px;
-      margin-bottom:6px;
-      overflow:hidden;
+      background:rgba(255,255,255,.2);
+      border-radius:2px;
+      margin:0 auto 16px;
     }
-    .bar-fill{height:100%;border-radius:2px;transition:width .4s;}
-    .reg-bottom{display:flex;justify-content:space-between;align-items:center;}
-    .reg-income{
-      font-size:10px;
-      color:#25a060;
-      font-weight:700;
-      background:rgba(30,122,74,0.1);
-      padding:2px 6px;
-      border-radius:3px;
-    }
-    .reg-price{font-size:10px;color:#6a6058;font-weight:600;}
+    .ap-pop-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .ap-pop-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+    .ap-pop-name{font-size:19px;font-weight:800;color:#fff;}
+    .ap-pop-region{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:16px;}
 
-    .market-card{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      cursor:pointer;
-    }
-    .market-info{flex:1;}
-    .market-name{font-size:13px;font-weight:800;}
-    .market-detail{font-size:10px;color:#6a6058;margin-top:2px;}
-    .market-right{text-align:right;}
-    .market-price{font-size:14px;font-weight:800;color:#0c2336;}
-    .market-change{font-size:10px;font-weight:700;margin-top:2px;}
-    .market-change.up{color:#25a060;}
-    .market-change.down{color:#c0392b;}
-    .market-qty{
-      font-size:10px;
-      color:#6a6058;
-      background:#ddd9d0;
-      border-radius:3px;
-      padding:2px 6px;
-      font-weight:600;
-      margin-top:3px;
-    }
-
-    .asta-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-    .asta-badge{
-      font-size:9px;
-      font-weight:800;
-      letter-spacing:.05em;
-      text-transform:uppercase;
-      padding:2px 7px;
-      border-radius:3px;
-      color:#fff;
-    }
-    .asta-badge.live{background:#c0392b;}
-    .asta-badge.soon{background:#e8a820;color:#111;}
-    .asta-name{font-size:13px;font-weight:800;flex:1;}
-    .asta-timer{font-size:11px;font-weight:700;color:#6a6058;}
-    .asta-detail{display:flex;justify-content:space-between;align-items:flex-end;}
-    .asta-info{font-size:10px;color:#6a6058;line-height:1.5;}
-    .asta-bid-wrap{text-align:right;}
-    .asta-current{font-size:11px;color:#6a6058;margin-bottom:2px;}
-    .asta-amount{font-size:16px;font-weight:800;color:#0c2336;}
-    .btn-bid{
-      margin-top:6px;
-      background:#0c2336;
-      color:#fff;
-      border:none;
-      border-radius:6px;
-      padding:7px 14px;
-      font-size:12px;
-      font-weight:800;
-      cursor:pointer;
-    }
-
-    .pop-header{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
-    .pop-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
-    .pop-name{font-size:19px;font-weight:800;}
-    .pop-region{font-size:12px;color:#6a6058;margin-bottom:16px;}
-
-    .pop-mode-tabs{display:flex;gap:6px;margin-bottom:14px;}
-    .pop-mode-tab{
+    .ap-pop-mode-tabs{display:flex;gap:6px;margin-bottom:14px;}
+    .ap-pop-mode-tab{
       flex:1;
       padding:7px 4px;
       text-align:center;
@@ -875,36 +779,52 @@
       font-weight:700;
       text-transform:uppercase;
       letter-spacing:.04em;
-      background:#ddd9d0;
-      border:1.5px solid #c4beb4;
+      background:#15283d;
+      border:1.5px solid #26405e;
       border-radius:6px;
       cursor:pointer;
-      color:#6a6058;
+      color:rgba(255,255,255,.55);
       transition:all .12s;
     }
-    .pop-mode-tab.active{background:#0c2336;color:#fff;border-color:#0c2336;}
+    .ap-pop-mode-tab.active{background:#1e4878;color:#fff;border-color:#1e4878;}
 
-    .tiers-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;}
-    .tier-btn{
-      background:#e4e0d8;
-      border:2px solid #c4beb4;
-      border-radius:7px;
+    .tiers-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+    .tier{
+      background:#112238;
+      border:2px solid #1e3a5a;
+      border-radius:8px;
       padding:10px 8px;
-      cursor:pointer;
       text-align:center;
+      cursor:pointer;
       transition:all .12s;
     }
-    .tier-btn.affordable{border-color:#1e7a4a;}
-    .tier-btn.owned-tier{opacity:.45;cursor:not-allowed;}
-    .tier-btn.sel{border-color:#e8a820;background:#f5ede0;}
-    .tier-pct{font-size:17px;font-weight:800;color:#0c2336;margin-bottom:2px;}
-    .tier-cost{font-size:11px;color:#6a6058;font-weight:600;}
+    .tier.affordable{border-color:#1e7a4a;}
+    .tier.owned{opacity:.4;cursor:not-allowed;}
+    .tier.sel{border-color:#e8a820;background:#1a2e10;}
+    .tier-pct{font-size:17px;font-weight:800;color:#fff;margin-bottom:2px;}
+    .tier-cost{font-size:11px;color:rgba(255,255,255,.55);}
     .tier-inc{font-size:10px;color:#25a060;font-weight:700;margin-top:2px;}
+
+    .confirm-btn{
+      width:100%;
+      border:none;
+      background:#1e4878;
+      color:#fff;
+      padding:13px;
+      border-radius:9px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .confirm-btn:disabled{opacity:.35;cursor:not-allowed;}
+    .confirm-btn.active{background:#1e7a4a;}
+
+    .pop-note{font-size:11px;color:rgba(255,255,255,.45);text-align:center;margin-top:8px;line-height:1.4;}
 
     .market-buy-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
     .market-qty-input{
       flex:1;
-      border:1.5px solid #c4beb4;
+      border:1.5px solid #36516f;
       border-radius:6px;
       padding:9px 10px;
       font-size:15px;
@@ -917,26 +837,16 @@
       width:36px;
       height:36px;
       border-radius:6px;
-      background:#0c2336;
+      background:#1e4878;
       color:#fff;
       border:none;
       font-size:18px;
       font-weight:800;
       cursor:pointer;
     }
-
-    .offer-input-wrap{margin-bottom:14px;}
-    .offer-lbl{
-      font-size:10px;
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      color:#6a6058;
-      margin-bottom:6px;
-    }
     .offer-input{
       width:100%;
-      border:1.5px solid #c4beb4;
+      border:1.5px solid #36516f;
       border-radius:6px;
       padding:10px 12px;
       font-size:16px;
@@ -944,21 +854,8 @@
       background:#fff;
       color:#0c2336;
     }
-    .offer-hint{font-size:10px;color:#6a6058;margin-top:4px;}
-
-    .pop-confirm{
-      width:100%;
-      border:none;
-      background:#0c2336;
-      color:#fff;
-      padding:13px;
-      border-radius:9px;
-      font-size:15px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .pop-confirm:disabled{opacity:.38;cursor:not-allowed;}
-    .pop-note{font-size:11px;color:#6a6058;text-align:center;margin-top:8px;line-height:1.4;}
+    .offer-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.55);margin-bottom:6px;}
+    .offer-hint{font-size:10px;color:rgba(255,255,255,.5);margin-top:4px;}
 
     .ap-toast{
       position:fixed;
@@ -975,12 +872,14 @@
       transition:all .25s;
       z-index:800;
       white-space:nowrap;
+      pointer-events:none;
     }
     .ap-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
     @media (max-width:420px){
-      .stats-row{grid-template-columns:repeat(2,1fr);}
+      .stats-grid{grid-template-columns:1fr 1fr;}
       .chips{grid-template-columns:repeat(2,1fr);}
+      .stats{grid-template-columns:repeat(2,1fr);}
     }
   </style>
 </head>
@@ -1186,99 +1085,45 @@
     </div>
 
     <div class="appalti-inner">
-      <div class="map-outer">
-        <div class="map-scroll-wrap" id="apMapWrap">
-          <div class="map-inner" id="apMapInner">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="1600" height="2015" style="display:block;position:absolute;top:0;left:0;">
-              <defs>
-                <pattern id="apgrid" x="0" y="0" width="54" height="68" patternUnits="userSpaceOnUse">
-                  <path d="M54,0 L0,0 0,68" fill="none" stroke="rgba(0,150,255,0.07)" stroke-width="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="540" height="680" fill="#080f1e"/>
-              <rect width="540" height="680" fill="url(#apgrid)"/>
-              <g stroke="rgba(0,180,255,0.35)" stroke-width="1.5" fill="none">
-                <polyline points="8,8 8,22 22,22"/>
-                <polyline points="532,8 532,22 518,22"/>
-                <polyline points="8,672 8,658 22,658"/>
-                <polyline points="532,672 532,658 518,658"/>
-              </g>
-              <text x="32" y="19" font-size="7.5" font-family="-apple-system,sans-serif" font-weight="800" fill="rgba(0,180,255,0.45)" letter-spacing="2.5">
-                RETE FERROVIARIA NAZIONALE · IT
-              </text>
+      <div class="map-wrap">
+        <svg id="mapSvg" viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg">
+          <rect width="500" height="600" fill="#080f1e"/>
 
-              <rect x="0" y="645" width="540" height="8" fill="rgba(0,150,255,0.05)"/>
-              <line x1="0" y1="648" x2="540" y2="648" stroke="rgba(0,180,255,0.25)" stroke-width="1.2"/>
-              <line x1="0" y1="654" x2="540" y2="654" stroke="rgba(0,180,255,0.25)" stroke-width="1.2"/>
-              <g stroke="rgba(0,150,255,0.14)" stroke-width="2.5">
-                <line x1="15" y1="644" x2="15" y2="658"/><line x1="45" y1="644" x2="45" y2="658"/>
-                <line x1="75" y1="644" x2="75" y2="658"/><line x1="105" y1="644" x2="105" y2="658"/>
-                <line x1="135" y1="644" x2="135" y2="658"/><line x1="165" y1="644" x2="165" y2="658"/>
-                <line x1="195" y1="644" x2="195" y2="658"/><line x1="225" y1="644" x2="225" y2="658"/>
-                <line x1="255" y1="644" x2="255" y2="658"/><line x1="285" y1="644" x2="285" y2="658"/>
-                <line x1="315" y1="644" x2="315" y2="658"/><line x1="345" y1="644" x2="345" y2="658"/>
-                <line x1="375" y1="644" x2="375" y2="658"/><line x1="405" y1="644" x2="405" y2="658"/>
-                <line x1="435" y1="644" x2="435" y2="658"/><line x1="465" y1="644" x2="465" y2="658"/>
-                <line x1="495" y1="644" x2="495" y2="658"/><line x1="525" y1="644" x2="525" y2="658"/>
-              </g>
+          <g stroke="rgba(0,150,255,0.06)" stroke-width="0.5">
+            <line x1="0" y1="60"  x2="500" y2="60"/><line x1="0" y1="120" x2="500" y2="120"/>
+            <line x1="0" y1="180" x2="500" y2="180"/><line x1="0" y1="240" x2="500" y2="240"/>
+            <line x1="0" y1="300" x2="500" y2="300"/><line x1="0" y1="360" x2="500" y2="360"/>
+            <line x1="0" y1="420" x2="500" y2="420"/><line x1="0" y1="480" x2="500" y2="480"/>
+            <line x1="0" y1="540" x2="500" y2="540"/>
+            <line x1="50"  y1="0" x2="50"  y2="600"/><line x1="100" y1="0" x2="100" y2="600"/>
+            <line x1="150" y1="0" x2="150" y2="600"/><line x1="200" y1="0" x2="200" y2="600"/>
+            <line x1="250" y1="0" x2="250" y2="600"/><line x1="300" y1="0" x2="300" y2="600"/>
+            <line x1="350" y1="0" x2="350" y2="600"/><line x1="400" y1="0" x2="400" y2="600"/>
+            <line x1="450" y1="0" x2="450" y2="600"/>
+          </g>
 
-              <g id="apTrainGroup" transform="translate(-440,0)">
-                <rect x="352" y="629" width="88" height="22" rx="3" fill="rgba(0,0,0,0.35)"/>
-                <rect x="350" y="626" width="88" height="20" rx="3" fill="#1a3a5c"/>
-                <polygon points="438,626 452,635 438,646" fill="#1e4878"/>
-                <rect x="350" y="629" width="88" height="3" fill="#00b4ff" opacity="0.8"/>
-                <rect x="386" y="628" width="20" height="9" rx="1.5" fill="rgba(0,220,255,0.2)"/>
-                <rect x="355" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.18)"/>
-                <rect x="370" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.18)"/>
-                <circle cx="448" cy="637" r="3.5" fill="rgba(255,245,180,0.95)"/>
-                <circle cx="448" cy="637" r="7" fill="rgba(255,245,180,0.1)"/>
-                <circle cx="362" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,160,255,0.55)" stroke-width="1.4"/>
-                <circle cx="378" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,160,255,0.55)" stroke-width="1.4"/>
-                <circle cx="420" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,160,255,0.55)" stroke-width="1.4"/>
-                <circle cx="436" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,160,255,0.55)" stroke-width="1.4"/>
+          <g stroke="rgba(0,180,255,0.3)" stroke-width="1.2" fill="none">
+            <polyline points="6,6 6,18 18,18"/>
+            <polyline points="494,6 494,18 482,18"/>
+            <polyline points="6,594 6,582 18,582"/>
+            <polyline points="494,594 494,582 482,582"/>
+          </g>
+          <text x="26" y="14" font-size="6.5" font-family="-apple-system,sans-serif" font-weight="800" fill="rgba(0,180,255,0.4)" letter-spacing="2">RETE FERROVIARIA NAZIONALE · IT</text>
 
-                <rect x="262" y="629" width="84" height="22" rx="2" fill="rgba(0,0,0,0.3)"/>
-                <rect x="260" y="627" width="84" height="19" rx="2" fill="#112238"/>
-                <rect x="260" y="630" width="84" height="2.5" fill="#0090cc" opacity="0.65"/>
-                <rect x="264" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <rect x="279" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <rect x="294" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <rect x="309" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <circle cx="270" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-                <circle cx="338" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
+          <text x="108" y="460" font-size="9" font-style="italic" font-family="-apple-system,sans-serif" fill="rgba(40,150,220,0.45)" text-anchor="middle">Mar Tirreno</text>
+          <text x="390" y="280" font-size="9" font-style="italic" font-family="-apple-system,sans-serif" fill="rgba(40,150,220,0.45)" text-anchor="middle">Mar Adriatico</text>
+          <text x="300" y="580" font-size="9" font-style="italic" font-family="-apple-system,sans-serif" fill="rgba(40,150,220,0.45)" text-anchor="middle">Mar Mediterraneo</text>
 
-                <rect x="172" y="629" width="84" height="22" rx="2" fill="rgba(0,0,0,0.3)"/>
-                <rect x="170" y="627" width="84" height="19" rx="2" fill="#112238"/>
-                <rect x="170" y="630" width="84" height="2.5" fill="#0090cc" opacity="0.65"/>
-                <rect x="174" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <rect x="189" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <rect x="204" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <circle cx="180" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-                <circle cx="248" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-
-                <rect x="82" y="629" width="84" height="22" rx="2" fill="rgba(0,0,0,0.3)"/>
-                <rect x="80" y="627" width="84" height="19" rx="2" fill="#112238"/>
-                <rect x="80" y="630" width="84" height="2.5" fill="#0090cc" opacity="0.65"/>
-                <rect x="84" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <rect x="99" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <rect x="114" y="629" width="11" height="8" rx="1" fill="rgba(0,200,255,0.13)"/>
-                <circle cx="90" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-                <circle cx="158" cy="647" r="4.5" fill="#050d1a" stroke="rgba(0,150,255,0.4)" stroke-width="1.2"/>
-              </g>
-            </svg>
-
-            <svg id="apCityDotsSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="1600" height="2015" style="display:block;position:absolute;top:0;left:0;">
-              <g id="apCityDotsContainer"></g>
-            </svg>
-          </div>
-        </div>
+          <g id="connLines" stroke="rgba(0,180,255,0.25)" stroke-width="0.9" stroke-dasharray="3,5" stroke-linecap="round" fill="none"></g>
+          <g id="cityLayer"></g>
+        </svg>
       </div>
 
-      <div class="stats-row">
-        <div class="stat-box"><div class="stat-lbl">Regioni</div><div class="stat-val" id="apSt1">0</div><div class="stat-sub">su 20</div></div>
-        <div class="stat-box"><div class="stat-lbl">Rendita</div><div class="stat-val" id="apSt2">0€</div><div class="stat-sub">/min</div></div>
-        <div class="stat-box"><div class="stat-lbl">% media</div><div class="stat-val" id="apSt3">0%</div><div class="stat-sub">portafoglio</div></div>
-        <div class="stat-box"><div class="stat-lbl">Investito</div><div class="stat-val" id="apSt4">0€</div><div class="stat-sub">totale</div></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-lbl">Regioni</div><div class="stat-val" id="stReg">0</div></div>
+        <div class="stat"><div class="stat-lbl">Rendita</div><div class="stat-val" id="stInc">0€</div></div>
+        <div class="stat"><div class="stat-lbl">% media</div><div class="stat-val" id="stAvg">0%</div></div>
+        <div class="stat"><div class="stat-lbl">Investito</div><div class="stat-val" id="stInv">0€</div></div>
       </div>
 
       <div class="content">
@@ -1299,46 +1144,49 @@
       </div>
     </div>
 
-    <div class="overlay" id="apOverlay" onclick="apClosePopup()"></div>
-    <div class="popup" id="apPopup">
-      <div class="pop-handle"></div>
-      <div class="pop-header">
-        <div class="pop-dot" id="apPopDot"></div>
-        <div class="pop-name" id="apPopName">–</div>
-      </div>
-      <div class="pop-region" id="apPopRegion">–</div>
+    <div class="ap-popup-wrap" id="apPopupWrap">
+      <div class="ap-popup">
+        <div class="ap-pop-handle"></div>
 
-      <div class="pop-mode-tabs">
-        <div class="pop-mode-tab active" id="appmt-quota" onclick="apSwitchPopMode('quota')">Quota</div>
-        <div class="pop-mode-tab" id="appmt-mercato" onclick="apSwitchPopMode('mercato')">Mercato</div>
-        <div class="pop-mode-tab" id="appmt-asta" onclick="apSwitchPopMode('asta')">Asta</div>
-      </div>
-
-      <div id="apPopQuota">
-        <div class="tiers-grid" id="apTiersGrid"></div>
-        <button class="pop-confirm" id="apBtnQuota" onclick="apConfirmQuota()" disabled>Acquista quota</button>
-        <div class="pop-note" id="apNoteQuota">Seleziona una percentuale</div>
-      </div>
-
-      <div id="apPopMercato" style="display:none">
-        <div style="font-size:12px;color:#6a6058;margin-bottom:10px;" id="apMercatoDesc">–</div>
-        <div class="market-buy-row">
-          <button class="market-qty-btn" onclick="apAdjustQty(-1)">−</button>
-          <input class="market-qty-input" id="apQtyInput" type="number" min="1" max="50" value="5" oninput="apUpdateMercatoTotal()" />
-          <button class="market-qty-btn" onclick="apAdjustQty(1)">+</button>
+        <div class="ap-pop-header">
+          <div class="ap-pop-dot" id="apPopDot"></div>
+          <div class="ap-pop-name" id="apPopName">–</div>
         </div>
-        <div style="font-size:12px;color:#6a6058;margin-bottom:14px;">Totale: <strong id="apMercatoTotal">–</strong></div>
-        <button class="pop-confirm" id="apBtnMercato" onclick="apConfirmMercato()">Compra dal mercato</button>
-      </div>
+        <div class="ap-pop-region" id="apPopRegion">–</div>
 
-      <div id="apPopAsta" style="display:none">
-        <div style="font-size:12px;color:#6a6058;margin-bottom:10px;" id="apAstaDesc">–</div>
-        <div class="offer-input-wrap">
-          <div class="offer-lbl">La tua offerta</div>
-          <input class="offer-input" id="apOfferInput" type="number" placeholder="0" oninput="apUpdateOfferBtn()" />
-          <div class="offer-hint" id="apOfferHint">–</div>
+        <div class="ap-pop-mode-tabs">
+          <div class="ap-pop-mode-tab active" id="appmt-quota" onclick="apSwitchPopMode('quota')">Quota</div>
+          <div class="ap-pop-mode-tab" id="appmt-mercato" onclick="apSwitchPopMode('mercato')">Mercato</div>
+          <div class="ap-pop-mode-tab" id="appmt-asta" onclick="apSwitchPopMode('asta')">Asta</div>
         </div>
-        <button class="pop-confirm" id="apBtnAsta" onclick="apConfirmAsta()" disabled>Fai offerta</button>
+
+        <div id="apPopQuota">
+          <div class="tiers-grid" id="apTiersGrid"></div>
+          <button class="confirm-btn" id="apBtnQuota" onclick="apConfirmQuota()" disabled>Acquista quota</button>
+          <div class="pop-note" id="apNoteQuota">Seleziona una percentuale</div>
+        </div>
+
+        <div id="apPopMercato" style="display:none">
+          <div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:10px;" id="apMercatoDesc">–</div>
+          <div class="market-buy-row">
+            <button class="market-qty-btn" onclick="apAdjustQty(-1)">−</button>
+            <input class="market-qty-input" id="apQtyInput" type="number" min="1" max="50" value="5" oninput="apUpdateMercatoTotal()" />
+            <button class="market-qty-btn" onclick="apAdjustQty(1)">+</button>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:14px;">Totale: <strong id="apMercatoTotal">–</strong></div>
+          <button class="confirm-btn" id="apBtnMercato" onclick="apConfirmMercato()">Compra dal mercato</button>
+          <div class="pop-note">Ogni quota = 1% della regione</div>
+        </div>
+
+        <div id="apPopAsta" style="display:none">
+          <div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:10px;" id="apAstaDesc">–</div>
+          <div class="offer-input-wrap">
+            <div class="offer-lbl">La tua offerta</div>
+            <input class="offer-input" id="apOfferInput" type="number" placeholder="0" oninput="apUpdateOfferBtn()" />
+            <div class="offer-hint" id="apOfferHint">–</div>
+          </div>
+          <button class="confirm-btn" id="apBtnAsta" onclick="apConfirmAsta()" disabled>Fai offerta</button>
+        </div>
       </div>
     </div>
 
@@ -1366,10 +1214,10 @@
     ];
 
     const boardData = [
-      {name:"Atria V-01",  route:"Roma→MI", time:"08:12", delay:"+6",  sc:"s-mid"},
-      {name:"Radian R-12", route:"VE→Roma", time:"09:45", delay:"+13", sc:"s-mid"},
-      {name:"Modulo C-4",  route:"Bari→TA", time:"11:05", delay:"Punt.", sc:"s-ok"},
-      {name:"Linea B-2",   route:"PA→ME",   time:"12:40", delay:"+22", sc:"s-bad"}
+      {name:"Atria V-01",  route:"Roma→MI", time:"08:12", delay:"+6",   sc:"s-mid"},
+      {name:"Radian R-12", route:"VE→Roma", time:"09:45", delay:"+13",  sc:"s-mid"},
+      {name:"Modulo C-4",  route:"Bari→TA", time:"11:05", delay:"Punt.",sc:"s-ok"},
+      {name:"Linea B-2",   route:"PA→ME",   time:"12:40", delay:"+22",  sc:"s-bad"}
     ];
 
     const infraDefs = [
@@ -1997,36 +1845,45 @@
     let apSelectedTierCost = 0;
     let apCurrentPopMode = 'quota';
     let apCurrentTab = 'quote';
-    let apTrainAnimStarted = false;
 
     const regions = [
-      {id:'vda', name:"Valle d'Aosta", cap:'Aosta', lon:7.32, lat:45.74, base:12000, inc:4,  pop:0.1, color:'#7f8c8d'},
-      {id:'pie', name:'Piemonte', cap:'Torino', lon:7.68, lat:45.07, base:45000, inc:12, pop:4.3, color:'#8e44ad'},
-      {id:'lom', name:'Lombardia', cap:'Milano', lon:9.19, lat:45.46, base:95000, inc:22, pop:10.0, color:'#1e7a4a'},
-      {id:'taa', name:'Trentino A.A.', cap:'Trento', lon:11.12, lat:46.07, base:28000, inc:8, pop:1.1, color:'#2980b9'},
-      {id:'ven', name:'Veneto', cap:'Venezia', lon:12.34, lat:45.44, base:55000, inc:14, pop:4.9, color:'#16a085'},
-      {id:'fvg', name:'Friuli V.G.', cap:'Trieste', lon:13.78, lat:45.65, base:22000, inc:7, pop:1.2, color:'#3498db'},
-      {id:'lig', name:'Liguria', cap:'Genova', lon:8.93, lat:44.41, base:32000, inc:9, pop:1.5, color:'#27ae60'},
-      {id:'emr', name:'Emilia R.', cap:'Bologna', lon:11.34, lat:44.49, base:50000, inc:13, pop:4.5, color:'#c0392b'},
-      {id:'tos', name:'Toscana', cap:'Firenze', lon:11.25, lat:43.78, base:48000, inc:12, pop:3.7, color:'#d35400'},
-      {id:'mar', name:'Marche', cap:'Ancona', lon:13.52, lat:43.62, base:22000, inc:7, pop:1.5, color:'#f39c12'},
-      {id:'umb', name:'Umbria', cap:'Perugia', lon:12.39, lat:43.11, base:18000, inc:6, pop:0.9, color:'#9b59b6'},
-      {id:'laz', name:'Lazio', cap:'Roma', lon:12.48, lat:41.89, base:88000, inc:20, pop:5.9, color:'#34495e'},
-      {id:'abr', name:'Abruzzo', cap:"L'Aquila", lon:13.40, lat:42.35, base:20000, inc:7, pop:1.3, color:'#2ecc71'},
-      {id:'mol', name:'Molise', cap:'Campobasso', lon:14.65, lat:41.56, base:10000, inc:4, pop:0.3, color:'#95a5a6'},
-      {id:'cam', name:'Campania', cap:'Napoli', lon:14.27, lat:40.84, base:75000, inc:17, pop:5.8, color:'#e74c3c'},
-      {id:'pug', name:'Puglia', cap:'Bari', lon:16.87, lat:41.12, base:52000, inc:13, pop:4.0, color:'#f1c40f'},
-      {id:'bas', name:'Basilicata', cap:'Potenza', lon:15.80, lat:40.64, base:12000, inc:4, pop:0.6, color:'#7f8c8d'},
-      {id:'cal', name:'Calabria', cap:'Catanzaro', lon:16.60, lat:38.91, base:28000, inc:8, pop:2.0, color:'#8e44ad'},
-      {id:'sic', name:'Sicilia', cap:'Palermo', lon:13.36, lat:38.11, base:55000, inc:14, pop:5.0, color:'#e67e22'},
-      {id:'sar', name:'Sardegna', cap:'Cagliari', lon:9.11, lat:39.22, base:30000, inc:9, pop:1.6, color:'#16a085'}
+      {id:'vda', name:"Valle d'Aosta", cap:'Aosta',       x:36,  y:66,  base:12000, inc:4,  pop:0.1, color:'#7f8c8d'},
+      {id:'pie', name:'Piemonte',      cap:'Torino',      x:52,  y:108, base:45000, inc:12, pop:4.3, color:'#8e44ad'},
+      {id:'lom', name:'Lombardia',     cap:'Milano',      x:119, y:84,  base:95000, inc:22, pop:10.0,color:'#1e7a4a'},
+      {id:'taa', name:'Trentino A.A.', cap:'Trento',      x:204, y:46,  base:28000, inc:8,  pop:1.1, color:'#2980b9'},
+      {id:'ven', name:'Veneto',        cap:'Venezia',     x:258, y:85,  base:55000, inc:14, pop:4.9, color:'#16a085'},
+      {id:'fvg', name:'Friuli V.G.',   cap:'Trieste',     x:322, y:72,  base:22000, inc:7,  pop:1.2, color:'#3498db'},
+      {id:'lig', name:'Liguria',       cap:'Genova',      x:108, y:149, base:32000, inc:9,  pop:1.5, color:'#27ae60'},
+      {id:'emr', name:'Emilia R.',     cap:'Bologna',     x:214, y:144, base:50000, inc:13, pop:4.5, color:'#c0392b'},
+      {id:'tos', name:'Toscana',       cap:'Firenze',     x:210, y:189, base:48000, inc:12, pop:3.7, color:'#d35400'},
+      {id:'mar', name:'Marche',        cap:'Ancona',      x:311, y:199, base:22000, inc:7,  pop:1.5, color:'#f39c12'},
+      {id:'umb', name:'Umbria',        cap:'Perugia',     x:261, y:231, base:18000, inc:6,  pop:0.9, color:'#9b59b6'},
+      {id:'laz', name:'Lazio',         cap:'Roma',        x:265, y:307, base:88000, inc:20, pop:5.9, color:'#e74c3c'},
+      {id:'abr', name:'Abruzzo',       cap:"L'Aquila",    x:305, y:278, base:20000, inc:7,  pop:1.3, color:'#2ecc71'},
+      {id:'mol', name:'Molise',        cap:'Campobasso',  x:361, y:327, base:10000, inc:4,  pop:0.3, color:'#95a5a6'},
+      {id:'cam', name:'Campania',      cap:'Napoli',      x:344, y:372, base:75000, inc:17, pop:5.8, color:'#e74c3c'},
+      {id:'pug', name:'Puglia',        cap:'Bari',        x:459, y:355, base:52000, inc:13, pop:4.0, color:'#f1c40f'},
+      {id:'bas', name:'Basilicata',    cap:'Potenza',     x:412, y:385, base:12000, inc:4,  pop:0.6, color:'#7f8c8d'},
+      {id:'cal', name:'Calabria',      cap:'Catanzaro',   x:447, y:493, base:28000, inc:8,  pop:2.0, color:'#8e44ad'},
+      {id:'sic', name:'Sicilia',       cap:'Palermo',     x:304, y:543, base:55000, inc:14, pop:5.0, color:'#e67e22'},
+      {id:'sar', name:'Sardegna',      cap:'Cagliari',    x:115, y:474, base:30000, inc:9,  pop:1.6, color:'#16a085'},
+      {id:'olb', name:'Sardegna Nord', cap:'Olbia',       x:138, y:398, base:18000, inc:6,  pop:0.6, color:'#16a085'}
     ];
 
     const TIERS = [
-      {pct:10, mult:0.12, label:'10%'},
-      {pct:25, mult:0.32, label:'25%'},
-      {pct:51, mult:0.72, label:'51%'},
+      {pct:10,  mult:0.12, label:'10%'},
+      {pct:25,  mult:0.32, label:'25%'},
+      {pct:51,  mult:0.72, label:'51%'},
       {pct:100, mult:1.55, label:'100%'}
+    ];
+
+    const CONNS = [
+      ['vda','pie'],['pie','lom'],['pie','lig'],['lom','taa'],['lom','ven'],['lom','emr'],['lom','lig'],
+      ['taa','ven'],['ven','fvg'],['ven','emr'],['lig','emr'],['lig','tos'],
+      ['emr','tos'],['emr','mar'],['tos','umb'],['tos','laz'],['mar','umb'],['mar','abr'],
+      ['umb','laz'],['laz','cam'],['laz','abr'],['laz','mol'],['abr','mol'],['abr','cam'],
+      ['mol','cam'],['mol','pug'],['mol','bas'],['cam','pug'],['cam','bas'],['cam','cal'],
+      ['pug','bas'],['pug','cal'],['bas','cal'],['cal','sic'],['sar','olb']
     ];
 
     const apMarketData = regions.map(r=>({
@@ -2048,11 +1905,6 @@
       return Math.round(n).toLocaleString('it-IT') + '€';
     }
 
-    function apSyncBalance(v){
-      apBalance = v;
-      document.getElementById('apBalDisp').textContent = apFmt(apBalance);
-    }
-
     function apOwnedPct(id){
       return apOwned[id] || 0;
     }
@@ -2064,30 +1916,32 @@
     function apRegionIncome(reg){
       const pct = apOwnedPct(reg.id);
       if(pct === 0) return 0;
-      if(pct < 50) return Math.round(reg.inc * (pct/100) * 0.3);
-      return Math.round(reg.inc * (pct/100));
+      return pct < 50 ? Math.round(reg.inc * (pct/100) * 0.3) : Math.round(reg.inc * (pct/100));
     }
 
     function apTotalIncome(){
       return regions.reduce((sum,r)=>sum + apRegionIncome(r),0);
     }
 
-    function apUpdateStats(){
-      const acq = regions.filter(r=>apOwnedPct(r.id) > 0).length;
-      const inc = apTotalIncome();
-      const avg = Math.round(regions.reduce((s,r)=>s + apOwnedPct(r.id),0) / regions.length);
-
-      document.getElementById('apSt1').textContent = acq;
-      document.getElementById('apSt2').textContent = inc + '€';
-      document.getElementById('apSt3').textContent = avg + '%';
-      document.getElementById('apSt4').textContent = apInvested >= 1000 ? Math.round(apInvested/1000) + 'k€' : apInvested + '€';
+    function apSyncBalance(v){
+      apBalance = v;
+      document.getElementById('apBalDisp').textContent = apFmt(apBalance);
     }
 
     function apShowToast(msg){
       const t = document.getElementById('apToast');
       t.textContent = msg;
       t.classList.add('show');
-      setTimeout(()=>t.classList.remove('show'),2400);
+      setTimeout(()=>t.classList.remove('show'),2200);
+    }
+
+    function apUpdateStats(){
+      const acq = regions.filter(r=>apOwnedPct(r.id) > 0).length;
+      document.getElementById('stReg').textContent = acq;
+      document.getElementById('stInc').textContent = apTotalIncome() + '€';
+      document.getElementById('stAvg').textContent = Math.round(regions.reduce((s,r)=>s + apOwnedPct(r.id),0) / regions.length) + '%';
+      document.getElementById('stInv').textContent = apInvested >= 1000 ? Math.round(apInvested/1000) + 'k€' : apInvested + '€';
+      document.getElementById('apBalDisp').textContent = apFmt(apBalance);
     }
 
     function openAppalti(){
@@ -2097,18 +1951,7 @@
       apBuildMarketList();
       apBuildAstaList();
       apUpdateStats();
-      apUpdateCityDots();
-
-      const apMapWrap = document.getElementById('apMapWrap');
-apPanX = Math.round((apMapWrap.clientWidth - apMapW) / 2);
-apPanY = 0;
-[apPanX, apPanY] = apClampPan(apPanX, apPanY);
-apApplyPan();
-
-      if(!apTrainAnimStarted){
-        apTrainAnimStarted = true;
-        requestAnimationFrame(apAnimateTrain);
-      }
+      apDrawMap();
     }
 
     function closeAppalti(){
@@ -2146,7 +1989,7 @@ apApplyPan();
 
         const div = document.createElement('div');
         div.className = 'reg-card' + (pct > 0 ? ' has-quota' : '');
-        div.onclick = ()=>apOpenRegionPopup(reg);
+        div.onclick = ()=>apOpenPopup(reg);
 
         div.innerHTML = `
           <div class="reg-top">
@@ -2175,12 +2018,13 @@ apApplyPan();
 
       regions.forEach(reg=>{
         const m = apMarketData.find(d=>d.id === reg.id);
+        if(!m) return;
         const up = m.trend > 0;
 
         const div = document.createElement('div');
         div.className = 'market-card';
         div.onclick = ()=>{
-          apOpenRegionPopup(reg);
+          apOpenPopup(reg);
           setTimeout(()=>apSwitchPopMode('mercato'),50);
         };
 
@@ -2231,28 +2075,199 @@ apApplyPan();
         `;
         div.querySelector('.btn-bid').addEventListener('click', (ev)=>{
           ev.stopPropagation();
-          apOpenAucPopup(auc.id);
+          apOpenAuctionPopup(auc.id);
         });
         list.appendChild(div);
       });
     }
 
-    function apOpenRegionPopup(reg){
+    function apDrawMap(){
+      const connG = document.getElementById('connLines');
+      connG.innerHTML = '';
+
+      CONNS.forEach(([a,b])=>{
+        const ra=regions.find(r=>r.id===a), rb=regions.find(r=>r.id===b);
+        if(!ra||!rb)return;
+        const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1',ra.x); line.setAttribute('y1',ra.y);
+        line.setAttribute('x2',rb.x); line.setAttribute('y2',rb.y);
+        if((a==='sar'&&b==='olb')||(a==='olb'&&b==='sar')){
+          line.setAttribute('stroke','rgba(0,220,180,0.55)');
+          line.setAttribute('stroke-width','1.2');
+          line.setAttribute('stroke-dasharray','5,3');
+        }
+        connG.appendChild(line);
+      });
+
+      const layer = document.getElementById('cityLayer');
+      layer.innerHTML = '';
+
+      regions.forEach(reg=>{
+        const pct = apOwnedPct(reg.id);
+        const r = reg.pop>4 ? 9 : reg.pop>1.5 ? 7 : 5.5;
+        const isSelected = apSelectedRegion && apSelectedRegion.id===reg.id;
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+        g.setAttribute('class','city'+(isSelected?' selected':''));
+        g.style.cursor='pointer';
+        g.addEventListener('click',()=>apOpenPopup(reg));
+
+        const sh=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        sh.setAttribute('cx',reg.x+1.5); sh.setAttribute('cy',reg.y+2);
+        sh.setAttribute('r',r); sh.setAttribute('fill','rgba(0,0,0,0.3)');
+        g.appendChild(sh);
+
+        const ring=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        ring.setAttribute('cx',reg.x); ring.setAttribute('cy',reg.y);
+        ring.setAttribute('r',r); ring.setAttribute('fill','#fff');
+        ring.setAttribute('class','ring');
+        ring.setAttribute('stroke',isSelected?'#e8a820':'rgba(0,0,0,0.4)');
+        ring.setAttribute('stroke-width',isSelected?'2.5':'1');
+        g.appendChild(ring);
+
+        if(pct>=100){
+          const fill=document.createElementNS('http://www.w3.org/2000/svg','circle');
+          fill.setAttribute('cx',reg.x); fill.setAttribute('cy',reg.y);
+          fill.setAttribute('r',r-1.5); fill.setAttribute('fill','#1e7a4a');
+          g.appendChild(fill);
+        } else if(pct>0){
+          const angle=-Math.PI/2+Math.PI*2*(pct/100);
+          const x2=reg.x+(r-1.5)*Math.cos(angle);
+          const y2=reg.y+(r-1.5)*Math.sin(angle);
+          const large=pct>50?1:0;
+          const pie=document.createElementNS('http://www.w3.org/2000/svg','path');
+          pie.setAttribute('d',`M${reg.x},${reg.y} L${reg.x},${reg.y-(r-1.5)} A${r-1.5},${r-1.5} 0 ${large},1 ${x2},${y2} Z`);
+          pie.setAttribute('fill',pct>=51?'#1e7a4a':'#d4890a');
+          g.appendChild(pie);
+        } else {
+          const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+          dot.setAttribute('cx',reg.x); dot.setAttribute('cy',reg.y);
+          dot.setAttribute('r',r-1.5); dot.setAttribute('fill','rgba(0,180,255,0.85)');
+          g.appendChild(dot);
+        }
+
+        const halo=document.createElementNS('http://www.w3.org/2000/svg','text');
+        halo.setAttribute('x',reg.x+r+3); halo.setAttribute('y',reg.y+1);
+        halo.setAttribute('font-size','7'); halo.setAttribute('font-family','-apple-system,sans-serif');
+        halo.setAttribute('font-weight','600'); halo.setAttribute('dominant-baseline','middle');
+        halo.setAttribute('fill','none'); halo.setAttribute('stroke','rgba(8,15,30,0.9)');
+        halo.setAttribute('stroke-width','2.5'); halo.setAttribute('paint-order','stroke');
+        halo.textContent=reg.cap;
+        g.appendChild(halo);
+
+        const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+        lbl.setAttribute('x',reg.x+r+3); lbl.setAttribute('y',reg.y+1);
+        lbl.setAttribute('font-size','7'); lbl.setAttribute('font-family','-apple-system,sans-serif');
+        lbl.setAttribute('font-weight','600'); lbl.setAttribute('dominant-baseline','middle');
+        lbl.setAttribute('fill','rgba(200,230,255,0.9)');
+        lbl.textContent=reg.cap;
+        g.appendChild(lbl);
+
+        const hit=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        hit.setAttribute('cx',reg.x); hit.setAttribute('cy',reg.y);
+        hit.setAttribute('r',r+8); hit.setAttribute('fill','transparent');
+        g.appendChild(hit);
+
+        layer.appendChild(g);
+      });
+    }
+
+    function apOpenPopup(reg){
       apSelectedRegion = reg;
       apSelectedTier = null;
       apSelectedTierCost = 0;
 
       document.getElementById('apPopDot').style.background = reg.color;
       document.getElementById('apPopName').textContent = reg.name;
-      document.getElementById('apPopRegion').textContent = `${reg.cap} · ${reg.pop.toFixed(1)}M ab. · Base appalto: ${apFmt(reg.base)}`;
+      document.getElementById('apPopRegion').textContent = `${reg.cap} · ${reg.pop.toFixed(1)}M ab. · Base: ${apFmt(reg.base)}`;
 
       apSwitchPopMode('quota');
       apBuildTiers(reg);
-      apShowPopup();
-      apUpdateCityDots();
+
+      document.getElementById('apPopupWrap').classList.add('open');
+      apDrawMap();
     }
 
-    function apOpenAucPopup(aucId){
+    function apClosePopup(){
+      document.getElementById('apPopupWrap').classList.remove('open');
+      apSelectedRegion = null;
+      apSelectedTier = null;
+      apDrawMap();
+    }
+
+    document.getElementById('apPopupWrap').addEventListener('click',function(e){
+      if(e.target===this) apClosePopup();
+    });
+
+    function apBuildTiers(reg){
+      const curPct=apOwnedPct(reg.id);
+      const grid=document.getElementById('apTiersGrid');
+      grid.innerHTML='';
+
+      TIERS.forEach(t=>{
+        const cost=tierCost(reg,t);
+        const alreadyOwned=curPct>=t.pct;
+        const canAfford=apBalance>=cost;
+        const div=document.createElement('div');
+        div.className='tier'+(alreadyOwned?' owned':canAfford?' affordable':'');
+        div.innerHTML=`<div class="tier-pct">${t.label}</div><div class="tier-cost">${apFmt(cost)}</div><div class="tier-inc">+${Math.round(reg.inc*(t.pct/100)*(t.pct>=51?1:0.3))}€/min</div>`;
+        if(!alreadyOwned) div.onclick=()=>apSelectTier(t,cost,div);
+        grid.appendChild(div);
+      });
+
+      document.getElementById('apBtnQuota').disabled=true;
+      document.getElementById('apBtnQuota').className='confirm-btn';
+      document.getElementById('apNoteQuota').textContent=curPct>0?`Quota attuale: ${curPct}% · Rendita: ${apRegionIncome(reg)}€/min`:'Nessuna quota';
+    }
+
+    function apSelectTier(t,cost,el){
+      apSelectedTier=t;
+      apSelectedTierCost=cost;
+      document.querySelectorAll('#apTiersGrid .tier').forEach(b=>b.classList.remove('sel'));
+      el.classList.add('sel');
+      document.getElementById('apBtnQuota').disabled=false;
+      document.getElementById('apBtnQuota').className='confirm-btn active';
+      document.getElementById('apNoteQuota').textContent=`Acquisto: ${t.label} · Costo: ${apFmt(cost)}`;
+    }
+
+    function apSwitchPopMode(mode){
+      apCurrentPopMode=mode;
+      ['quota','mercato','asta'].forEach(m=>{
+        const tab=document.getElementById('appmt-'+m);
+        if(tab) tab.classList.toggle('active',m===mode);
+      });
+
+      document.getElementById('apPopQuota').style.display=mode==='quota'?'':'none';
+      document.getElementById('apPopMercato').style.display=mode==='mercato'?'':'none';
+      document.getElementById('apPopAsta').style.display=mode==='asta'?'':'none';
+
+      if(mode==='mercato'&&apSelectedRegion) apBuildMercatoPopup(apSelectedRegion);
+      if(mode==='asta'&&apSelectedRegion) apBuildAstaPopup(apSelectedRegion);
+    }
+
+    function apBuildMercatoPopup(reg){
+      const m=apMarketData.find(d=>d.id===reg.id);
+      if(!m) return;
+      document.getElementById('apMercatoDesc').textContent=`Mercato secondario · Prezzo: ${apFmt(m.pricePerPct)}/quota · ${m.available} quote disponibili`;
+      document.getElementById('apQtyInput').max=m.available;
+      document.getElementById('apQtyInput').value=Math.min(5,m.available);
+      apUpdateMercatoTotal();
+    }
+
+    function apBuildAstaPopup(reg){
+      const auc=apAuctions.find(a=>a.regId===reg.id&&a.live);
+      if(!auc){
+        document.getElementById('apAstaDesc').textContent='Nessuna asta attiva per questa regione.';
+        document.getElementById('apBtnAsta').disabled=true;
+        return;
+      }
+      document.getElementById('apAstaDesc').textContent=`Quota: ${auc.pct}% · Offerta attuale: ${apFmt(auc.currentBid)}`;
+      document.getElementById('apOfferHint').textContent=`Minimo: ${apFmt(auc.minNext)}`;
+      document.getElementById('apOfferInput').value='';
+      document.getElementById('apBtnAsta').disabled=true;
+    }
+
+    function apOpenAuctionPopup(aucId){
       const auc = apAuctions.find(a=>a.id === aucId);
       if(!auc) return;
       const reg = regions.find(r=>r.id === auc.regId);
@@ -2263,467 +2278,106 @@ apApplyPan();
       document.getElementById('apPopName').textContent = reg.name;
       document.getElementById('apPopRegion').textContent = `${reg.cap} · Asta: ${auc.pct}%`;
 
+      document.getElementById('apPopupWrap').classList.add('open');
       apSwitchPopMode('asta');
       document.getElementById('apAstaDesc').textContent = `Quota in gara: ${auc.pct}% · Offerta attuale: ${apFmt(auc.currentBid)}`;
       document.getElementById('apOfferInput').value = '';
       document.getElementById('apOfferHint').textContent = `Offerta minima: ${apFmt(auc.minNext)}`;
       document.getElementById('apBtnAsta').disabled = true;
-
-      apShowPopup();
-    }
-
-    function apBuildTiers(reg){
-      const grid = document.getElementById('apTiersGrid');
-      grid.innerHTML = '';
-      const curPct = apOwnedPct(reg.id);
-
-      TIERS.forEach(t=>{
-        const cost = tierCost(reg,t);
-        const alreadyOwned = curPct >= t.pct;
-        const canAfford = apBalance >= cost;
-        const btn = document.createElement('div');
-
-        btn.className = 'tier-btn' + (alreadyOwned ? ' owned-tier' : canAfford ? ' affordable' : '');
-        btn.innerHTML = `
-          <div class="tier-pct">${t.label}</div>
-          <div class="tier-cost">${apFmt(cost)}</div>
-          <div class="tier-inc">+${Math.round(reg.inc * (t.pct/100) * (t.pct >= 51 ? 1 : 0.3))}€/min</div>
-        `;
-
-        if(!alreadyOwned){
-          btn.onclick = ()=>apSelectTierBtn(t,cost,btn);
-        }
-
-        grid.appendChild(btn);
-      });
-
-      document.getElementById('apBtnQuota').disabled = true;
-      document.getElementById('apNoteQuota').textContent =
-        curPct > 0 ? `Quota attuale: ${curPct}% · Rendita: ${apRegionIncome(reg)}€/min` : 'Nessuna quota';
-    }
-
-    function apSelectTierBtn(t,cost,btn){
-      apSelectedTier = t;
-      apSelectedTierCost = cost;
-      document.querySelectorAll('#apTiersGrid .tier-btn').forEach(b=>b.classList.remove('sel'));
-      btn.classList.add('sel');
-      document.getElementById('apBtnQuota').disabled = false;
-      document.getElementById('apNoteQuota').textContent = `Acquisto: ${t.label} · Costo: ${apFmt(cost)}`;
-    }
-
-    function apSwitchPopMode(mode){
-      apCurrentPopMode = mode;
-
-      ['quota','mercato','asta'].forEach(m=>{
-        const tab = document.getElementById('appmt-' + m);
-        if(tab) tab.classList.toggle('active', m === mode);
-      });
-
-      document.getElementById('apPopQuota').style.display = mode === 'quota' ? '' : 'none';
-      document.getElementById('apPopMercato').style.display = mode === 'mercato' ? '' : 'none';
-      document.getElementById('apPopAsta').style.display = mode === 'asta' ? '' : 'none';
-
-      if(mode === 'mercato' && apSelectedRegion) apBuildMercatoPopup(apSelectedRegion);
-      if(mode === 'asta' && apSelectedRegion) apBuildAstaPopup(apSelectedRegion);
-    }
-
-    function apBuildMercatoPopup(reg){
-      const m = apMarketData.find(d=>d.id === reg.id);
-      if(!m) return;
-
-      document.getElementById('apMercatoDesc').textContent = `Mercato secondario · Prezzo: ${apFmt(m.pricePerPct)}/quota · ${m.available} quote disponibili`;
-      document.getElementById('apQtyInput').max = m.available;
-      document.getElementById('apQtyInput').value = Math.min(5, m.available);
-      apUpdateMercatoTotal();
-    }
-
-    function apBuildAstaPopup(reg){
-      const auc = apAuctions.find(a=>a.regId === reg.id && a.live);
-      if(!auc){
-        document.getElementById('apAstaDesc').textContent = 'Nessuna asta attiva per questa regione.';
-        document.getElementById('apBtnAsta').disabled = true;
-        return;
-      }
-
-      document.getElementById('apAstaDesc').textContent = `Quota: ${auc.pct}% · Offerta attuale: ${apFmt(auc.currentBid)}`;
-      document.getElementById('apOfferHint').textContent = `Minimo: ${apFmt(auc.minNext)}`;
-      document.getElementById('apOfferInput').value = '';
-      document.getElementById('apBtnAsta').disabled = true;
+      apDrawMap();
     }
 
     function apAdjustQty(delta){
-      const inp = document.getElementById('apQtyInput');
-      inp.value = Math.max(1, Math.min(parseInt(inp.max || '50',10), parseInt(inp.value || '1',10) + delta));
+      const inp=document.getElementById('apQtyInput');
+      inp.value=Math.max(1,Math.min(parseInt(inp.max || '50',10),parseInt(inp.value || '1',10)+delta));
       apUpdateMercatoTotal();
     }
 
     function apUpdateMercatoTotal(){
-      if(!apSelectedRegion) return;
-      const m = apMarketData.find(d=>d.id === apSelectedRegion.id);
+      if(!apSelectedRegion)return;
+      const m=apMarketData.find(d=>d.id===apSelectedRegion.id);
       if(!m) return;
 
-      const qty = parseInt(document.getElementById('apQtyInput').value || '1',10);
-      const total = qty * m.pricePerPct;
-
-      document.getElementById('apMercatoTotal').textContent = apFmt(total);
-      document.getElementById('apBtnMercato').disabled = apBalance < total;
+      const qty=parseInt(document.getElementById('apQtyInput').value || '1',10);
+      const total=qty*m.pricePerPct;
+      document.getElementById('apMercatoTotal').textContent=apFmt(total);
+      document.getElementById('apBtnMercato').disabled=apBalance<total;
     }
 
     function apUpdateOfferBtn(){
-      if(!apSelectedRegion) return;
-      const auc = apAuctions.find(a=>a.regId === apSelectedRegion.id && a.live);
-      if(!auc) return;
-
-      const val = parseInt(document.getElementById('apOfferInput').value || '0',10);
-      document.getElementById('apBtnAsta').disabled = val < auc.minNext || apBalance < val;
+      if(!apSelectedRegion)return;
+      const auc=apAuctions.find(a=>a.regId===apSelectedRegion.id&&a.live);
+      if(!auc)return;
+      const val=parseInt(document.getElementById('apOfferInput').value || '0',10);
+      document.getElementById('apBtnAsta').disabled=val<auc.minNext||apBalance<val;
     }
 
     function apConfirmQuota(){
-      if(!apSelectedTier || !apSelectedRegion || apBalance < apSelectedTierCost) return;
-
-      apSyncBalance(apBalance - apSelectedTierCost);
-      apInvested += apSelectedTierCost;
-      apOwned[apSelectedRegion.id] = Math.max(apOwnedPct(apSelectedRegion.id), apSelectedTier.pct);
-
+      if(!apSelectedTier||!apSelectedRegion||apBalance<apSelectedTierCost)return;
+      apSyncBalance(apBalance-apSelectedTierCost);
+      apInvested+=apSelectedTierCost;
+      apOwned[apSelectedRegion.id]=Math.max(apOwnedPct(apSelectedRegion.id),apSelectedTier.pct);
       apShowToast(`▸ Acquisito ${apSelectedTier.label} di ${apSelectedRegion.name}`);
       apClosePopup();
       apBuildRegionList();
       apUpdateStats();
-      apUpdateCityDots();
+      apDrawMap();
     }
 
     function apConfirmMercato(){
-      if(!apSelectedRegion) return;
-      const m = apMarketData.find(d=>d.id === apSelectedRegion.id);
+      if(!apSelectedRegion)return;
+      const m=apMarketData.find(d=>d.id===apSelectedRegion.id);
       if(!m) return;
+      const qty=parseInt(document.getElementById('apQtyInput').value || '1',10);
+      const total=qty*m.pricePerPct;
 
-      const qty = parseInt(document.getElementById('apQtyInput').value || '1',10);
-      const total = qty * m.pricePerPct;
-
-      if(apBalance < total){
+      if(apBalance<total){
         apShowToast('Saldo insufficiente');
         return;
       }
 
-      apSyncBalance(apBalance - total);
-      apInvested += total;
-      apOwned[apSelectedRegion.id] = Math.min(100, apOwnedPct(apSelectedRegion.id) + qty);
-      m.available = Math.max(0, m.available - qty);
-      m.pricePerPct = Math.round(m.pricePerPct * 1.04);
+      apSyncBalance(apBalance-total);
+      apInvested+=total;
+      apOwned[apSelectedRegion.id]=Math.min(100,(apOwnedPct(apSelectedRegion.id)||0)+qty);
+      m.available=Math.max(0,m.available-qty);
+      m.pricePerPct=Math.round(m.pricePerPct*1.04);
 
       apShowToast(`▸ Acquistato ${qty}% di ${apSelectedRegion.name} dal mercato`);
       apClosePopup();
       apBuildRegionList();
       apBuildMarketList();
       apUpdateStats();
-      apUpdateCityDots();
+      apDrawMap();
     }
 
     function apConfirmAsta(){
-      if(!apSelectedRegion) return;
-      const auc = apAuctions.find(a=>a.regId === apSelectedRegion.id && a.live);
-      if(!auc) return;
+      if(!apSelectedRegion)return;
+      const auc=apAuctions.find(a=>a.regId===apSelectedRegion.id&&a.live);
+      if(!auc)return;
 
-      const val = parseInt(document.getElementById('apOfferInput').value || '0',10);
-
-      if(val < auc.minNext || apBalance < val){
+      const val=parseInt(document.getElementById('apOfferInput').value || '0',10);
+      if(val<auc.minNext||apBalance<val){
         apShowToast('Offerta non valida');
         return;
       }
 
-      apSyncBalance(apBalance - val);
-      auc.currentBid = val;
-      auc.minNext = Math.round(val * 1.1);
-      auc.myBid = val;
+      apSyncBalance(apBalance-val);
+      auc.currentBid=val;
+      auc.minNext=Math.round(val*1.1);
+      auc.myBid=val;
 
       apShowToast(`▸ Offerta di ${apFmt(val)} accettata per ${apSelectedRegion.name}`);
       apClosePopup();
       apBuildAstaList();
-    }
-
-    function apShowPopup(){
-      document.getElementById('apOverlay').style.display = 'block';
-      const pp = document.getElementById('apPopup');
-      pp.style.display = 'block';
-      requestAnimationFrame(()=>pp.classList.add('open'));
-    }
-
-    function apClosePopup(){
-      const pp = document.getElementById('apPopup');
-      pp.classList.remove('open');
-      setTimeout(()=>{
-        pp.style.display = 'none';
-        document.getElementById('apOverlay').style.display = 'none';
-      },280);
-      apSelectedRegion = null;
-      apSelectedTier = null;
-      apUpdateCityDots();
-    }
-
-    let apPanX = 0;
-    let apPanY = 0;
-    let apStartX = 0;
-    let apStartY = 0;
-    let apDragging = false;
-
-    const apMapWrap = document.getElementById('apMapWrap');
-    const apMapInner = document.getElementById('apMapInner');
-    const apMapW = 1600, apMapH = 2015;
-    function apClampPan(x,y){
-  const minX = Math.min(0, apMapWrap.clientWidth - apMapW);
-  const minY = Math.min(0, apMapWrap.clientHeight - apMapH);
-  return [
-    Math.max(minX, Math.min(0, x)),
-    Math.max(minY, Math.min(0, y))
-  ];
-}
-
-  if (mapW <= wrapW) {
-    minX = maxX = (wrapW - mapW) / 2;
-  } else {
-    minX = wrapW - mapW;
-    maxX = 0;
-  }
-
-  if (mapH <= wrapH) {
-    minY = maxY = (wrapH - mapH) / 2;
-  } else {
-    minY = wrapH - mapH;
-    maxY = 0;
-  }
-
-  return [
-    Math.min(maxX, Math.max(minX, x)),
-    Math.min(maxY, Math.max(minY, y))
-  ];
-}
-
-    function apApplyPan(){
-      apMapInner.style.transform = `translate(${apPanX}px,${apPanY}px) scale(1)`;
-    }
-
-    apMapWrap.addEventListener('mousedown', e=>{
-      apDragging = true;
-      apStartX = e.clientX - apPanX;
-      apStartY = e.clientY - apPanY;
-      e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', e=>{
-      if(!apDragging) return;
-      [apPanX, apPanY] = apClampPan(e.clientX - apStartX, e.clientY - apStartY);
-      apApplyPan();
-    });
-
-    document.addEventListener('mouseup', ()=>apDragging = false);
-
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchPanX = 0;
-    let touchPanY = 0;
-    let touchMoved = false;
-
-    apMapWrap.addEventListener('touchstart', e=>{
-      if(e.touches.length !== 1) return;
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      touchPanX = apPanX;
-      touchPanY = apPanY;
-      touchMoved = false;
-    }, {passive:true});
-
-    apMapWrap.addEventListener('touchmove', e=>{
-      if(e.touches.length !== 1) return;
-      const dx = e.touches[0].clientX - touchStartX;
-      const dy = e.touches[0].clientY - touchStartY;
-      if(Math.abs(dx) > 4 || Math.abs(dy) > 4) touchMoved = true;
-      [apPanX, apPanY] = apClampPan(touchPanX + dx, touchPanY + dy);
-      apApplyPan();
-      e.preventDefault();
-    }, {passive:false});
-
-    apMapWrap.addEventListener('touchend', e=>{
-      if(!touchMoved && e.changedTouches.length === 1){
-        const t = e.changedTouches[0];
-        const rect = apMapWrap.getBoundingClientRect();
-        const mx = t.clientX - rect.left - apPanX;
-        const my = t.clientY - rect.top - apPanY;
-        apHitTestMap(mx,my);
-      }
-    });
-
-    apMapWrap.addEventListener('click', e=>{
-      if(apDragging) return;
-      const rect = apMapWrap.getBoundingClientRect();
-      const mx = e.clientX - rect.left - apPanX;
-      const my = e.clientY - rect.top - apPanY;
-      apHitTestMap(mx,my);
-    });
-
-    function apGX(lon){ return (lon - 6.6) / (18.5 - 6.6) * 1600; }
-    function apGY(lat){ return (47.1 - lat) / (47.1 - 36.6) * 2015; }
-
-    function apHitTestMap(mx,my){
-      for(const reg of regions){
-        const cx = apGX(reg.lon);
-        const cy = apGY(reg.lat);
-        const r = Math.max(16, reg.pop > 4 ? 18 : reg.pop > 1.5 ? 14 : 11);
-        const dx = mx - cx;
-        const dy = my - cy;
-        if(dx*dx + dy*dy < r*r){
-          apOpenRegionPopup(reg);
-          return;
-        }
-      }
-    }
-
-    function apUpdateCityDots(){
-      const container = document.getElementById('apCityDotsContainer');
-      if(!container) return;
-      container.innerHTML = '';
-
-      const conns = [
-        ['vda','pie'],['pie','lom'],['pie','lig'],['lom','taa'],['lom','ven'],['lom','emr'],['lom','lig'],
-        ['taa','ven'],['ven','fvg'],['ven','emr'],['lig','emr'],['lig','tos'],
-        ['emr','tos'],['emr','mar'],['tos','umb'],['tos','laz'],['mar','umb'],['mar','abr'],
-        ['umb','laz'],['laz','cam'],['laz','abr'],['laz','mol'],['abr','mol'],['abr','cam'],
-        ['mol','cam'],['mol','pug'],['mol','bas'],['cam','pug'],['cam','bas'],['cam','cal'],
-        ['pug','bas'],['pug','cal'],['bas','cal'],['cal','sic'],['sar','cam']
-      ];
-
-      conns.forEach(([a,b])=>{
-        const ra = regions.find(r=>r.id===a);
-        const rb = regions.find(r=>r.id===b);
-        if(!ra || !rb) return;
-
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', apGX(ra.lon));
-        line.setAttribute('y1', apGY(ra.lat));
-        line.setAttribute('x2', apGX(rb.lon));
-        line.setAttribute('y2', apGY(rb.lat));
-        line.setAttribute('stroke', 'rgba(0,180,255,0.3)');
-        line.setAttribute('stroke-width', '1');
-        line.setAttribute('stroke-dasharray', '3,5');
-        line.setAttribute('stroke-linecap', 'round');
-        container.appendChild(line);
-      });
-
-      regions.forEach(reg=>{
-        const pct = apOwnedPct(reg.id);
-        const cx = apGX(reg.lon);
-        const cy = apGY(reg.lat);
-        const r = reg.pop > 4 ? 9 : reg.pop > 1.5 ? 7 : 5.5;
-        const isSelected = apSelectedRegion && apSelectedRegion.id === reg.id;
-
-        const shadow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        shadow.setAttribute('cx', cx + 1.5);
-        shadow.setAttribute('cy', cy + 2);
-        shadow.setAttribute('r', r);
-        shadow.setAttribute('fill', 'rgba(0,0,0,0.2)');
-        container.appendChild(shadow);
-
-        const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        ring.setAttribute('cx', cx);
-        ring.setAttribute('cy', cy);
-        ring.setAttribute('r', r);
-        ring.setAttribute('fill', '#fff');
-        ring.setAttribute('stroke', isSelected ? '#e8a820' : 'rgba(0,0,0,0.5)');
-        ring.setAttribute('stroke-width', isSelected ? '2.5' : '1');
-        container.appendChild(ring);
-
-        if(pct >= 100){
-          const fill = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          fill.setAttribute('cx', cx);
-          fill.setAttribute('cy', cy);
-          fill.setAttribute('r', r - 1.5);
-          fill.setAttribute('fill', '#1e7a4a');
-          container.appendChild(fill);
-        }else if(pct > 0){
-          const angle = -Math.PI/2 + Math.PI*2*(pct/100);
-          const x2 = cx + (r - 1.5) * Math.cos(angle);
-          const y2 = cy + (r - 1.5) * Math.sin(angle);
-          const large = pct > 50 ? 1 : 0;
-
-          const pie = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          pie.setAttribute('d', `M${cx},${cy} L${cx},${cy-(r-1.5)} A${r-1.5},${r-1.5} 0 ${large},1 ${x2},${y2} Z`);
-          pie.setAttribute('fill', pct >= 51 ? '#1e7a4a' : '#d4890a');
-          container.appendChild(pie);
-        }else{
-          const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          dot.setAttribute('cx', cx);
-          dot.setAttribute('cy', cy);
-          dot.setAttribute('r', r - 1.5);
-          dot.setAttribute('fill', 'rgba(0,180,255,0.85)');
-          container.appendChild(dot);
-        }
-
-        const halo = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        halo.setAttribute('x', cx + r + 3);
-        halo.setAttribute('y', cy + 1);
-        halo.setAttribute('font-size', '7.5');
-        halo.setAttribute('font-family', '-apple-system,sans-serif');
-        halo.setAttribute('font-weight', '600');
-        halo.setAttribute('fill', 'none');
-        halo.setAttribute('stroke', 'rgba(8,15,30,0.85)');
-        halo.setAttribute('stroke-width', '2.5');
-        halo.setAttribute('paint-order', 'stroke');
-        halo.setAttribute('dominant-baseline', 'middle');
-        halo.textContent = reg.cap;
-        container.appendChild(halo);
-
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', cx + r + 3);
-        label.setAttribute('y', cy + 1);
-        label.setAttribute('font-size', '7.5');
-        label.setAttribute('font-family', '-apple-system,sans-serif');
-        label.setAttribute('font-weight', '600');
-        label.setAttribute('fill', '#1a2a3a');
-        label.setAttribute('dominant-baseline', 'middle');
-        label.textContent = reg.cap;
-        container.appendChild(label);
-
-        const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        hit.setAttribute('cx', cx);
-        hit.setAttribute('cy', cy);
-        hit.setAttribute('r', r + 6);
-        hit.setAttribute('fill', 'transparent');
-        hit.style.cursor = 'pointer';
-        hit.addEventListener('click', ()=>apOpenRegionPopup(reg));
-        container.appendChild(hit);
-      });
-
-      [
-        ['Mar Tirreno', apGX(11.0), apGY(40.2)],
-        ['Mar Adriatico', apGX(15.2), apGY(43.0)],
-        ['Mar Mediterraneo', apGX(12.5), apGY(36.9)]
-      ].forEach(([txt,x,y])=>{
-        const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        t.setAttribute('x', x);
-        t.setAttribute('y', y);
-        t.setAttribute('font-size', '9');
-        t.setAttribute('font-style', 'italic');
-        t.setAttribute('font-family', '-apple-system,sans-serif');
-        t.setAttribute('fill', 'rgba(40,120,180,0.6)');
-        t.setAttribute('text-anchor', 'middle');
-        t.textContent = txt;
-        container.appendChild(t);
-      });
-    }
-
-    let apTrainX = -440;
-    function apAnimateTrain(){
-      apTrainX += 1.2;
-      if(apTrainX > 540) apTrainX = -500;
-      const g = document.getElementById('apTrainGroup');
-      if(g) g.setAttribute('transform', `translate(${apTrainX},0)`);
-      requestAnimationFrame(apAnimateTrain);
+      apUpdateStats();
     }
 
     setInterval(()=>{
       const inc = apTotalIncome();
       if(inc > 0){
-        apSyncBalance(apBalance + inc);
-        apShowToast(`+${inc}€ rendita appalti`);
+        apBalance += inc;
+        apUpdateStats();
+        apShowToast(`+${inc}€ rendita`);
       }
 
       apMarketData.forEach(m=>{
@@ -2752,7 +2406,7 @@ apApplyPan();
     apBuildMarketList();
     apBuildAstaList();
     apUpdateStats();
-    apUpdateCityDots();
+    apDrawMap();
   </script>
 </body>
 </html>

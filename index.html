@@ -2654,5 +2654,57 @@ requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
     Costituisci una nuova società
   </button>
 </div>
+<!-- POPUP BILANCIO -->
+<div class="overlay" id="bilancioOverlay" onclick="closeBilancio()"></div>
+<div class="popup" id="bilancioPopup">
+  <div class="popup-handle"></div>
+  <div style="font-size:20px;font-weight:900;color:var(--navy);margin-bottom:20px;">📊 Bilancio Aziendale</div>
+
+  <div style="background:#f0f7f0;border-radius:14px;padding:14px;margin-bottom:12px;">
+    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#1e7a4a;margin-bottom:10px;">ENTRATE — ogni 12 min</div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:13px;color:#333;">Rendita infrastrutture</span>
+      <span style="font-size:13px;font-weight:800;color:#1e7a4a;" id="bilIncInfra">+0€</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:13px;color:#333;">Rendita appalti pubblici</span>
+      <span style="font-size:13px;font-weight:800;color:#1e7a4a;" id="bilIncAppalti">+0€</span>
+    </div>
+    <div style="border-top:1px solid #c8e6c9;padding-top:8px;display:flex;justify-content:space-between;">
+      <span style="font-size:13px;font-weight:800;color:#333;">Totale entrate</span>
+      <span style="font-size:14px;font-weight:900;color:#1e7a4a;" id="bilTotIn">+0€</span>
+    </div>
+  </div>
+
+  <div style="background:#fff0f0;border-radius:14px;padding:14px;margin-bottom:12px;">
+    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#c0392b;margin-bottom:10px;">USCITE — ogni 12 min</div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:13px;color:#333;">Tassa patrimoniale 5%</span>
+      <span style="font-size:13px;font-weight:800;color:#c0392b;" id="bilTax1">-0€</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:13px;color:#333;">Tassa sul reddito 10%</span>
+      <span style="font-size:13px;font-weight:800;color:#c0392b;" id="bilTax2">-0€</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:13px;color:#333;">Costi mantenimento</span>
+      <span style="font-size:13px;font-weight:800;color:#c0392b;" id="bilCosts">-0€</span>
+    </div>
+    <div style="border-top:1px solid #ffcdd2;padding-top:8px;display:flex;justify-content:space-between;">
+      <span style="font-size:13px;font-weight:800;color:#333;">Totale uscite</span>
+      <span style="font-size:14px;font-weight:900;color:#c0392b;" id="bilTotOut">-0€</span>
+    </div>
+  </div>
+
+  <div style="background:var(--navy);border-radius:14px;padding:14px;margin-bottom:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:14px;font-weight:800;color:#fff;">Risultato netto</span>
+      <span style="font-size:22px;font-weight:900;" id="bilNet">0€</span>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;" id="bilDeficit"></div>
+  </div>
+
+  <button class="pop-btn" onclick="closeBilancio()">Chiudi</button>
+</div>
 </body>
 </html>

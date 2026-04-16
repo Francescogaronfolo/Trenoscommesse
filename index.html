@@ -960,11 +960,17 @@ document.addEventListener('click', e=>{
   <div class="topbar">
     <div class="brand">Treno<span>Scommesse</span></div>
     <div class="topbar-right">
-      <button class="ap-btn" onclick="openAppalti()" title="Appalti Nazionali">◈</button>
-      <div class="balance-pill" id="balBox" onclick="openBilancio()" style="cursor:pointer;">50.000€</div>
+  <button class="ap-btn" onclick="openAppalti()" title="Appalti Nazionali">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>
+    </svg>
+  </button>
+  <div id="taxPill" style="background:#c0392b;color:#fff;padding:8px 12px;border-radius:16px;font-size:13px;font-weight:800;cursor:pointer;" onclick="openBilancio()">-0€</div>
+  <div class="balance-pill" id="balBox" onclick="openBilancio()" style="cursor:pointer;">50.000€</div>
+</div>
 
-    </div>
-  </div>
 
   <div class="container">
     <div id="pageStation" class="page active">
@@ -1477,6 +1483,7 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
 
       const tol = document.getElementById('toleranceInfo');
       if(tol) tol.textContent = `Finestra utile: ±${tolerance()} min`;
+      updateTaxPill();
     }
 
     function updateRanking(){
@@ -2042,6 +2049,15 @@ function getCycleCosts(){
     const arr = maintenanceCosts[key];
     return tot + (arr[lv-1] || 0);
   }, 0);
+}
+function updateTaxPill(){
+  const inc = income() * 10;
+  const tax1 = Math.round(balance * 0.05);
+  const tax2 = Math.round(inc * 0.10);
+  const costs = getCycleCosts();
+  const total = tax1 + tax2 + costs;
+  const el = document.getElementById('taxPill');
+  if(el) el.textContent = '-' + fmt(total);
 }
 
 function showBankruptcy(){

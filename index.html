@@ -2052,8 +2052,12 @@ setInterval(()=>{
   balance += inc;
 
   // Tassa 15% sul capitale
-  const tax = Math.round(balance * 0.15);
-  balance -= tax;
+  const inc = income() * 10;
+const tax1 = Math.round(balance * 0.05);
+const tax2 = Math.round(inc * 0.10);
+const tax = tax1 + tax2;
+balance -= tax;
+
 
   // Costi mantenimento infrastrutture
   const costs = getCycleCosts();

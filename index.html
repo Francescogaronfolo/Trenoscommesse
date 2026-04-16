@@ -961,7 +961,8 @@ document.addEventListener('click', e=>{
     <div class="brand">Treno<span>Scommesse</span></div>
     <div class="topbar-right">
       <button class="ap-btn" onclick="openAppalti()" title="Appalti Nazionali">◈</button>
-      <div class="balance-pill" id="balBox">1.000€</div>
+      <div class="balance-pill" id="balBox" onclick="openBilancio()" style="cursor:pointer;">50.000€</div>
+
     </div>
   </div>
 
@@ -1513,6 +1514,41 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
 
       if(name === 'profile') updateRanking();
     }
+function openBilancio(){
+  const inc = income() * 10;
+  const apInc = typeof apTotalIncome === 'function' ? apTotalIncome() * 10 : 0;
+  const totIn = inc + apInc;
+  const tax1 = Math.round(balance * 0.05);
+  const tax2 = Math.round(totIn * 0.10);
+  const costs = getCycleCosts();
+  const totOut = tax1 + tax2 + costs;
+  const net = totIn - totOut;
+
+  document.getElementById('bilIncInfra').textContent = '+' + fmt(inc);
+  document.getElementById('bilIncAppalti').textContent = '+' + fmt(apInc);
+  document.getElementById('bilTotIn').textContent = '+' + fmt(totIn);
+  document.getElementById('bilTax1').textContent = '-' + fmt(tax1);
+  document.getElementById('bilTax2').textContent = '-' + fmt(tax2);
+  document.getElementById('bilCosts').textContent = '-' + fmt(costs);
+  document.getElementById('bilTotOut').textContent = '-' + fmt(totOut);
+  document.getElementById('bilNet').textContent = (net >= 0 ? '+' : '') + fmt(net);
+  document.getElementById('bilNet').style.color = net >= 0 ? '#4ddb90' : '#f06060';
+  document.getElementById('bilDeficit').textContent = deficitDays > 0 ? `⚠️ Giorno ${deficitDays}/${MAX_DEFICIT_DAYS} in deficit` : '';
+
+  document.getElementById('bilancioOverlay').style.display = 'block';
+  const pp = document.getElementById('bilancioPopup');
+  pp.style.display = 'block';
+  requestAnimationFrame(()=>pp.classList.add('open'));
+}
+
+function closeBilancio(){
+  const pp = document.getElementById('bilancioPopup');
+  pp.classList.remove('open');
+  setTimeout(()=>{
+    pp.style.display = 'none';
+    document.getElementById('bilancioOverlay').style.display = 'none';
+  }, 300);
+}
 
     function showToast(msg){
       const t = document.getElementById('toast');

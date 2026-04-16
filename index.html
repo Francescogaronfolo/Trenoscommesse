@@ -1307,6 +1307,17 @@ function startGame(){
   document.getElementById('welcomeScreen').style.display = 'none';
   requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
 }
+function resetGame(){
+  balance = 50000;
+  stats.bets = 0; stats.wins = 0; stats.losses = 0;
+  levels.train = 1; levels.station = 1; levels.control = 1; levels.logistics = 1;
+  deficitDays = 0;
+  document.getElementById('phName').textContent = 'La tua società';
+  document.getElementById('phOwner').textContent = '–';
+  localStorage.removeItem('ts_save');
+  document.getElementById('bankruptcyScreen').style.display = 'none';
+  document.getElementById('welcomeScreen').style.display = 'flex';
+}
 
 
 
@@ -1968,16 +1979,67 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
 
     window.addEventListener('resize', drawMetro);
 
-    setInterval(()=>{
-      const inc = income();
-      balance += inc;
-      updateUI();
+    
 
-      const f = document.getElementById('incFlash');
-      f.textContent = '+' + fmt(inc);
-      f.classList.add('show');
-      setTimeout(()=>f.classList.remove('show'), 1800);
-    },60000);
+    // Giorni in deficit
+let deficitDays = 0;
+const MAX_DEFICIT_DAYS = 7;
+const CYCLE_MS = 720000; // 12 minuti = 1 giorno di gioco
+
+const maintenanceCosts = {
+  train:     [500,1200,2800,6000,12000,22000],
+  station:   [800,1800,4000,8500,16000,30000],
+  control:   [400, 900,2000,4500, 9000,18000],
+  logistics: [300, 700,1500,3500, 7000,14000],
+};
+
+function getCycleCosts(){
+  return Object.keys(levels).reduce((tot, key)=>{
+    const lv = levels[key];
+    const arr = maintenanceCosts[key];
+    return tot + (arr[lv-1] || 0);
+  }, 0);
+}
+
+function showBankruptcy(){
+  document.getElementById('bankruptcyScreen').style.display = 'flex';
+}
+
+setInterval(()=>{
+  // Rendita
+  const inc = income();
+  balance += inc;
+
+  // Tassa 15% sul capitale
+  const tax = Math.round(balance * 0.15);
+  balance -= tax;
+
+  // Costi mantenimento infrastrutture
+  const costs = getCycleCosts();
+  balance -= costs;
+
+  // Controlla deficit
+  if(balance < 0){
+    deficitDays++;
+    showToast(`⚠️ Giorno ${deficitDays}/${MAX_DEFICIT_DAYS} in deficit`);
+    if(deficitDays >= MAX_DEFICIT_DAYS){
+      showBankruptcy();
+      return;
+    }
+  } else {
+    deficitDays = 0;
+  }
+
+  updateUI();
+  saveGame();
+
+  const f = document.getElementById('incFlash');
+  f.textContent = `-${fmt(tax+costs)} tasse/costi`;
+  f.classList.add('show');
+  setTimeout(()=>f.classList.remove('show'), 1800);
+
+}, CYCLE_MS);
+
 
     /* ===============================
        APPALTI
@@ -2572,6 +2634,16 @@ requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
     Fondare la società
   </button>
   <div id="welcomeErr" style="color:#f06060;font-size:13px;margin-top:12px;height:18px;"></div>
+</div>
+<!-- SCHERMATA BANCAROTTA -->
+<div id="bankruptcyScreen" style="position:fixed;inset:0;background:#0c0a0a;z-index:2000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;">
+  <div style="font-size:48px;margin-bottom:16px;">📋</div>
+  <div style="font-size:28px;font-weight:900;color:#e03030;margin-bottom:8px;">BANCAROTTA</div>
+  <div style="font-size:15px;color:rgba(255,255,255,.6);margin-bottom:12px;">7 giorni consecutivi in deficit.</div>
+  <div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:40px;">La tua società ferroviaria è stata dichiarata insolvente.</div>
+  <button onclick="resetGame()" style="width:100%;max-width:320px;padding:16px;border-radius:16px;border:none;background:#e8a820;color:#111;font-size:17px;font-weight:800;cursor:pointer;">
+    Costituisci una nuova società
+  </button>
 </div>
 </body>
 </html>

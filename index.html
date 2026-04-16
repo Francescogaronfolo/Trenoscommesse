@@ -959,7 +959,8 @@ document.addEventListener('click', e=>{
 <body>
   <div class="topbar">
     <div class="brand">Treno<span>Scommesse</span></div>
-    <div class="topbar-right">
+    <div class="topbar-right" style="flex:1;justify-content:center;gap:8px;">
+
   
     
   <div id="taxPill" style="background:#c0392b;color:#fff;padding:6px 10px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;" onclick="openBilancio()">-0€</div>
@@ -974,6 +975,7 @@ document.addEventListener('click', e=>{
       <div class="metro-wrap">
         <canvas id="metroCanvas"></canvas>
       </div>
+<div style="display:flex;gap:12px;margin-bottom:20px;justify-content:center;">
 
       <button onclick="openAppalti()" style="width:52px;height:52px;border-radius:16px;background:#0c2336;border:2px solid #e8a820;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e8a820" stroke-width="1.8">
@@ -984,6 +986,7 @@ document.addEventListener('click', e=>{
   </button>
 
   <button onclick="openLegenda()" style="width:52px;height:52px;border-radius:16px;background:#0c2336;border:2px solid rgba(255,255,255,0.2);color:#fff;font-size:20px;font-weight:800;cursor:pointer;flex-shrink:0;">ⓘ</button>
+</button>
 </div>
 
   

@@ -1403,8 +1403,9 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
     }
 
     function income(){
-      return 20 + (levels.logistics * 8) + (levels.station * 4);
-    }
+  return 500 + (levels.logistics * 200) + (levels.station * 100);
+}
+
 
     function tolerance(){
       return 5 + Math.floor(levels.control / 2);

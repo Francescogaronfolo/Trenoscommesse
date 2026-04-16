@@ -1068,12 +1068,12 @@ document.addEventListener('click', e=>{
 
       <div class="stats-grid">
         <div class="stat-card"><div class="sc-lbl">Saldo</div><div class="sc-val" id="scBal">1.000€</div><div class="sc-sub">capitale</div></div>
-        <div class="stat-card"><div class="sc-lbl">Rendita</div><div class="sc-val" id="scInc">28€</div><div class="sc-sub">ogni 60 sec</div></div>
-        <div class="stat-card"><div class="sc-lbl">Scommesse</div><div class="sc-val" id="scBets">0</div><div class="sc-sub">totali</div></div>
-        <div class="stat-card"><div class="sc-lbl">Win Rate</div><div class="sc-val" id="scRate">0%</div><div class="sc-sub">precisione</div></div>
-        <div class="stat-card"><div class="sc-lbl">Vittorie</div><div class="sc-val" id="scWins">0</div><div class="sc-sub">indovinate</div></div>
-        <div class="stat-card"><div class="sc-lbl">Sconfitte</div><div class="sc-val" id="scLoss">0</div><div class="sc-sub">mancate</div></div>
-      </div>
+        <div class="stat-card"><div class="sc-lbl">Rendita</div><div class="sc-val" id="scInc">28€</div><div class="sc-sub">ogni 12 min ×10</div>
+        <div class="stat-card" style="background:#f5f0e0;border-color:#d4c870;"><div class="sc-lbl">Scommesse</div><div class="sc-val" id="scBets" style="color:#8a7a20;">0</div><div class="sc-sub">totali</div></div>
+<div class="stat-card" style="background:#f5f0e0;border-color:#d4c870;"><div class="sc-lbl">Win Rate</div><div class="sc-val" id="scRate" style="color:#8a7a20;">0%</div><div class="sc-sub">precisione</div></div>
+<div class="stat-card" style="background:#f0fff4;border-color:#a8e6c0;"><div class="sc-lbl">Vittorie</div><div class="sc-val" id="scWins" style="color:#1e7a4a;">0</div><div class="sc-sub">indovinate</div></div>
+<div class="stat-card" style="background:#fff0f0;border-color:#f0a8a8;"><div class="sc-lbl">Sconfitte</div><div class="sc-val" id="scLoss" style="color:#c0392b;">0</div><div class="sc-sub">mancate</div></div>
+
 
       <div class="section-title" style="margin-bottom:12px;">Classifica</div>
       <div class="rank-list" id="rankList"></div>
@@ -2230,6 +2230,8 @@ setTimeout(()=>cf.classList.remove('show'), 2500);
 
       if(t === 'mercato') apBuildMarketList();
       if(t === 'aste') apBuildAstaList();
+      document.querySelector('.appalti-inner').scrollTo({top: 400, behavior: 'smooth'});
+
     }
 
     function apBuildRegionList(){

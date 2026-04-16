@@ -1310,7 +1310,7 @@ function startGame(){
 
 
 
-let balance = 50000000;
+let balance = 50000;
 
     let selectedBet = 200;
     let selectedTrainIdx = 0;
@@ -1382,8 +1382,14 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
     let lastTime = 0;
 
     function fmt(n){
-      return n.toLocaleString('it-IT') + '€';
-    }
+  const a = Math.abs(n);
+  let s;
+  if(a >= 1000000000) s = (n/1000000000).toFixed(1).replace('.0','') + 'B';
+  else if(a >= 1000000) s = (n/1000000).toFixed(1).replace('.0','') + 'M';
+  else if(a >= 1000) s = (n/1000).toFixed(1).replace('.0','') + 'k';
+  else s = Math.round(n).toString();
+  return (n < 0 ? '-' : '') + s + '€';
+}
 
     function upgradeCost(key){
       const table = {

@@ -982,30 +982,18 @@ document.addEventListener('click', e=>{
       </div>
 
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-<div class="map-legend" style="flex:1;margin-bottom:0;">
+<div style="display:flex;gap:12px;margin-bottom:20px;">
+  <button onclick="openAppalti()" style="flex:1;padding:14px;border-radius:16px;background:#0c2336;border:2px solid #e8a820;color:#e8a820;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e8a820" stroke-width="1.8">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>
+    </svg>
+    Appalti Nazionali
+  </button>
+  <button onclick="openLegenda()" style="width:52px;height:52px;border-radius:16px;background:#0c2336;border:2px solid rgba(255,255,255,0.2);color:#fff;font-size:20px;font-weight:800;cursor:pointer;flex-shrink:0;">ⓘ</button>
+</div>
 
-        <div class="legend-title">Legenda</div>
-        <div class="legend-body">
-          <div class="legend-section">
-            <div class="legend-section-title">Linee ferroviarie</div>
-            <div class="legend-line"><span class="leg-line-swatch" style="background:#e03a3a"></span><span class="leg-line-label">Linea A — Alta Velocità</span></div>
-            <div class="legend-line"><span class="leg-line-swatch" style="background:#2979c8"></span><span class="leg-line-label">Linea B — Intercity</span></div>
-            <div class="legend-line"><span class="leg-line-swatch" style="background:#1ab8a0"></span><span class="leg-line-label">Linea C — Regionale</span></div>
-            <div class="legend-line"><span class="leg-line-swatch" style="background:#e8b820"></span><span class="leg-line-label">Linea D — Direttrice N/S</span></div>
-            <div class="legend-line"><span class="leg-line-swatch" style="background:#9b4dca"></span><span class="leg-line-label">Linea E — Raccordo Est</span></div>
-          </div>
-          <div class="legend-divider"></div>
-          <div class="legend-section">
-            <div class="legend-section-title">Nodi e infrastrutture</div>
-            <div class="legend-line"><span class="leg-shape leg-square"></span><span class="leg-line-label">Impianto potenziabile</span></div>
-            <div class="legend-line"><span class="leg-shape leg-circle"></span><span class="leg-line-label">Stazione / nodo</span></div>
-            <div class="legend-line"><span class="leg-shape leg-diamond"></span><span class="leg-line-label">Centrale energetica</span></div>
-            <div class="legend-line"><span class="leg-shape leg-hex"></span><span class="leg-line-label">Terminale merci</span></div>
-          </div>
-                </div>
-      </div>
-    </div>
-  </div>
   <button onclick="openAppalti()" style="width:64px;height:64px;border-radius:18px;background:#0c2336;border:2px solid #e8a820;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;">
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e8a820" stroke-width="1.8">
       <circle cx="12" cy="12" r="10"/>
@@ -1569,6 +1557,20 @@ function closeBilancio(){
     pp.style.display = 'none';
     document.getElementById('bilancioOverlay').style.display = 'none';
   }, 300);
+}
+function openLegenda(){
+  document.getElementById('legendaOverlay').style.display='block';
+  const pp=document.getElementById('legendaPopup');
+  pp.style.display='block';
+  requestAnimationFrame(()=>pp.classList.add('open'));
+}
+function closeLegenda(){
+  const pp=document.getElementById('legendaPopup');
+  pp.classList.remove('open');
+  setTimeout(()=>{
+    pp.style.display='none';
+    document.getElementById('legendaOverlay').style.display='none';
+  },300);
 }
 
     function showToast(msg){
@@ -2772,6 +2774,31 @@ requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
   </div>
 
   <button class="pop-btn" onclick="closeBilancio()">Chiudi</button>
+</div>
+<!-- POPUP LEGENDA -->
+<div class="overlay" id="legendaOverlay" onclick="closeLegenda()"></div>
+<div class="popup" id="legendaPopup">
+  <div class="popup-handle"></div>
+  <div style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:16px;">Legenda</div>
+  <div style="display:flex;gap:16px;">
+    <div style="flex:1;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;color:#8a8480;margin-bottom:8px;">Linee ferroviarie</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="display:inline-block;width:22px;height:4px;background:#e03a3a;flex-shrink:0;"></span><span style="font-size:11px;">Linea A — Alta Velocità</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="display:inline-block;width:22px;height:4px;background:#2979c8;flex-shrink:0;"></span><span style="font-size:11px;">Linea B — Intercity</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="display:inline-block;width:22px;height:4px;background:#1ab8a0;flex-shrink:0;"></span><span style="font-size:11px;">Linea C — Regionale</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="display:inline-block;width:22px;height:4px;background:#e8b820;flex-shrink:0;"></span><span style="font-size:11px;">Linea D — Direttrice N/S</span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><span style="display:inline-block;width:22px;height:4px;background:#9b4dca;flex-shrink:0;"></span><span style="font-size:11px;">Linea E — Raccordo Est</span></div>
+    </div>
+    <div style="width:1px;background:#ddd;"></div>
+    <div style="flex:1;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;color:#8a8480;margin-bottom:8px;">Infrastrutture</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="display:inline-block;width:11px;height:11px;border:1.8px solid #1c1c1c;flex-shrink:0;"></span><span style="font-size:11px;">Impianto potenziabile</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;border:1.8px solid #1c1c1c;flex-shrink:0;"></span><span style="font-size:11px;">Stazione / nodo</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="display:inline-block;width:9px;height:9px;border:1.8px solid #1c1c1c;transform:rotate(45deg);flex-shrink:0;"></span><span style="font-size:11px;">Centrale energetica</span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><span style="display:inline-block;width:12px;height:10px;background:#1c1c1c;clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);flex-shrink:0;"></span><span style="font-size:11px;">Terminale merci</span></div>
+    </div>
+  </div>
+  <button class="pop-btn" style="margin-top:20px;" onclick="closeLegenda()">Chiudi</button>
 </div>
 </body>
 </html>

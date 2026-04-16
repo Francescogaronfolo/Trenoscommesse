@@ -960,7 +960,7 @@ document.addEventListener('click', e=>{
   <div class="topbar">
     <div class="brand">Treno<span>Scommesse</span></div>
     <div class="topbar-right">  
-  <div id="taxPill" style="background:#c0392b;color:#fff;padding:6px 10px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;" onclick="openBilancio()">-0€</div>
+  <div id="taxPill" style="background:#c0392b;color:#fff;padding:6px 10px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;" onclick="openTaxInfo()">-0€</div>
 <div class="balance-pill" id="balBox" onclick="openBilancio()" style="cursor:pointer;padding:6px 12px;font-size:14px;">50.000€</div>
     </div>
   </div>
@@ -1505,6 +1505,21 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
 
       if(name === 'profile') updateRanking();
     }
+    function openTaxInfo(){
+  document.getElementById('bilancioOverlay').style.display='block';
+  const pp=document.getElementById('taxInfoPopup');
+  pp.style.display='block';
+  requestAnimationFrame(()=>pp.classList.add('open'));
+}
+function closeTaxInfo(){
+  const pp=document.getElementById('taxInfoPopup');
+  pp.classList.remove('open');
+  setTimeout(()=>{
+    pp.style.display='none';
+    document.getElementById('bilancioOverlay').style.display='none';
+  },300);
+}
+
 function openBilancio(){
   const inc = income() * 10;
   const apInc = typeof apTotalIncome === 'function' ? apTotalIncome() * 10 : 0;
@@ -2705,6 +2720,20 @@ requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
     Costituisci una nuova società
   </button>
 </div>
+    <div class="popup" id="taxInfoPopup">
+  <div class="popup-handle"></div>
+  <div style="font-size:20px;font-weight:900;color:var(--navy);margin-bottom:16px;">📋 Come vengono calcolate le tasse</div>
+  <div style="background:#fff0f0;border-radius:14px;padding:14px;margin-bottom:12px;">
+    <div style="font-size:12px;font-weight:800;color:#c0392b;margin-bottom:8px;">TASSA PATRIMONIALE 5%</div>
+    <div style="font-size:13px;color:#333;line-height:1.5;">Ogni 12 minuti il gioco legge il tuo capitale in quel momento esatto e applica una tassa del 5%. Più sei ricco, più paghi.</div>
+  </div>
+  <div style="background:#fff0f0;border-radius:14px;padding:14px;margin-bottom:20px;">
+    <div style="font-size:12px;font-weight:800;color:#c0392b;margin-bottom:8px;">TASSA SUL REDDITO 10%</div>
+    <div style="font-size:13px;color:#333;line-height:1.5;">Ogni 12 minuti il gioco calcola le tue entrate totali e applica una tassa del 10% su di esse.</div>
+  </div>
+  <button class="pop-btn" onclick="closeTaxInfo()">Chiudi</button>
+</div>
+
 <!-- POPUP BILANCIO -->
 <div class="overlay" id="bilancioOverlay" onclick="closeBilancio()"></div>
 <div class="popup" id="bilancioPopup">

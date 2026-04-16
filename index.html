@@ -2047,16 +2047,13 @@ function showBankruptcy(){
 }
 
 setInterval(()=>{
-  // Rendita
-  const inc = income();
-  balance += inc;
-
-  // Tassa 15% sul capitale
   const inc = income() * 10;
-const tax1 = Math.round(balance * 0.05);
-const tax2 = Math.round(inc * 0.10);
-const tax = tax1 + tax2;
-balance -= tax;
+  balance += inc;
+  const tax1 = Math.round(balance * 0.05);
+  const tax2 = Math.round(inc * 0.10);
+  const tax = tax1 + tax2;
+  balance -= tax;
+
 
 
   // Costi mantenimento infrastrutture
@@ -2077,9 +2074,11 @@ balance -= tax;
 
   updateUI();
   saveGame();
+const f = document.getElementById('incFlash');
 f.textContent = `+${fmt(inc)}`;
 f.classList.add('show');
 setTimeout(()=>f.classList.remove('show'), 1800);
+
 
 const cf = document.getElementById('costFlash');
 cf.textContent = `-${fmt(tax+costs)} tasse`;
@@ -2668,9 +2667,6 @@ requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
     apDrawMap();
   </script>
 <!-- SCHERMATA BENVENUTO -->
-<div id="welcomeScreen" style="position:fixed;inset:0;background:#0c2336;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;">
-  <div style="font-size:32px;font-weight:900;color:#fff;margin-bottom:8px;">Treno<span style="color:#e8a820;">Scommesse</span></div>
-  <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:40px;">Il gioco dei ritardi ferroviari italiani</div>
   <div id="welcomeScreen" style="position:fixed;inset:0;background:#0c2336;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;">
   <div style="font-size:32px;font-weight:900;color:#fff;margin-bottom:4px;">Treno<span style="color:#e8a820;">Scommesse</span></div>
   <div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:36px;letter-spacing:.05em;">COSTITUISCI LA TUA SOCIETÀ FERROVIARIA</div>

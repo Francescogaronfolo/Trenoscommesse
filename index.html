@@ -2037,16 +2037,9 @@ setInterval(()=>{
 
   updateUI();
   saveGame();
-
 f.textContent = `+${fmt(inc)}`;
 f.classList.add('show');
 setTimeout(()=>f.classList.remove('show'), 1800);
-
-const cf = document.getElementById('costFlash');
-cf.textContent = `-${fmt(tax+costs)} tasse`;
-cf.classList.add('show');
-setTimeout(()=>cf.classList.remove('show'), 2500);
-
 
 const cf = document.getElementById('costFlash');
 cf.textContent = `-${fmt(tax+costs)} tasse`;

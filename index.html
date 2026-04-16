@@ -1131,6 +1131,8 @@ document.addEventListener('click', e=>{
 
   <div class="toast" id="toast"></div>
   <div class="income-flash" id="incFlash"></div>
+    <div class="cost-flash" id="costFlash"></div>
+
 
   <div class="bottom-nav">
     <div class="nav-btn" id="navProfile" onclick="showPage('profile')">
@@ -2036,10 +2038,21 @@ setInterval(()=>{
   updateUI();
   saveGame();
 
-  const f = document.getElementById('incFlash');
-  f.textContent = `-${fmt(tax+costs)} tasse/costi`;
-  f.classList.add('show');
-  setTimeout(()=>f.classList.remove('show'), 1800);
+f.textContent = `+${fmt(inc)}`;
+f.classList.add('show');
+setTimeout(()=>f.classList.remove('show'), 1800);
+
+const cf = document.getElementById('costFlash');
+cf.textContent = `-${fmt(tax+costs)} tasse`;
+cf.classList.add('show');
+setTimeout(()=>cf.classList.remove('show'), 2500);
+
+
+const cf = document.getElementById('costFlash');
+cf.textContent = `-${fmt(tax+costs)} tasse`;
+cf.classList.add('show');
+setTimeout(()=>cf.classList.remove('show'), 2500);
+
 
 }, CYCLE_MS);
 

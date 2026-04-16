@@ -1060,9 +1060,10 @@ document.addEventListener('click', e=>{
       <div class="section-sub">Le tue statistiche e la classifica.</div>
 
       <div class="profile-hero">
-        <div class="ph-name"><span id="phName">Operatore Ferroviario</span></div>
-        <div class="ph-sub">Livello · <span id="phLevel">Base</span></div>
-      </div>
+        <div class="ph-name"><span id="phName">La tua società</span></div>
+<div class="ph-sub">Proprietario · <span id="phOwner">–</span></div>
+<div class="ph-sub" style="margin-top:4px;">Livello · <span id="phLevel">Base</span></div>
+
 
       <div class="stats-grid">
         <div class="stat-card"><div class="sc-lbl">Saldo</div><div class="sc-val" id="scBal">1.000€</div><div class="sc-sub">capitale</div></div>
@@ -1275,9 +1276,11 @@ document.addEventListener('click', e=>{
 function saveGame(){
   localStorage.setItem('ts_save', JSON.stringify({
     balance, stats, levels,
-    username: document.getElementById('phName')?.textContent || 'Operatore'
+    company: document.getElementById('phName')?.textContent || '',
+    owner: document.getElementById('phOwner')?.textContent || ''
   }));
 }
+
 
 function loadGame(){
   try {
@@ -1286,23 +1289,25 @@ function loadGame(){
     balance = s.balance || 1000;
     Object.assign(stats, s.stats || {});
     Object.assign(levels, s.levels || {});
-    const name = s.username || 'Operatore';
-    const el = document.getElementById('phName');
-    if(el) el.textContent = name;
-    return name;
+    if(s.company) document.getElementById('phName').textContent = s.company;
+    if(s.owner) document.getElementById('phOwner').textContent = s.owner;
+    return s.company || false;
   } catch(e){ return false; }
 }
 
+
 function startGame(){
-  const input = document.getElementById('usernameInput');
-  const name = input.value.trim();
-  if(!name){ document.getElementById('welcomeErr').textContent = 'Scrivi il tuo nome per iniziare'; return; }
-  const el = document.getElementById('phName');
-  if(el) el.textContent = name;
+  const owner = document.getElementById('ownerInput').value.trim();
+  const company = document.getElementById('companyInput').value.trim();
+  if(!owner){ document.getElementById('welcomeErr').textContent = 'Inserisci il tuo nome'; return; }
+  if(!company){ document.getElementById('welcomeErr').textContent = 'Inserisci il nome della società'; return; }
+  document.getElementById('phName').textContent = company;
+  document.getElementById('phOwner').textContent = owner;
   saveGame();
   document.getElementById('welcomeScreen').style.display = 'none';
   requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
 }
+
 
 
 let balance = 1000;
@@ -2548,14 +2553,18 @@ requestAnimationFrame(ts=>{ lastTime=ts; animateMetro(ts); });
 <div id="welcomeScreen" style="position:fixed;inset:0;background:#0c2336;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;">
   <div style="font-size:32px;font-weight:900;color:#fff;margin-bottom:8px;">Treno<span style="color:#e8a820;">Scommesse</span></div>
   <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:40px;">Il gioco dei ritardi ferroviari italiani</div>
-  <input id="usernameInput" type="text" maxlength="20" placeholder="Il tuo nome operatore..."
-    style="width:100%;max-width:320px;padding:14px 18px;border-radius:14px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:17px;font-weight:700;text-align:center;outline:none;margin-bottom:16px;"/>
+  <div id="welcomeScreen" style="position:fixed;inset:0;background:#0c2336;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;">
+  <div style="font-size:32px;font-weight:900;color:#fff;margin-bottom:4px;">Treno<span style="color:#e8a820;">Scommesse</span></div>
+  <div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:36px;letter-spacing:.05em;">COSTITUISCI LA TUA SOCIETÀ FERROVIARIA</div>
+  <input id="ownerInput" type="text" maxlength="24" placeholder="Il tuo nome e cognome..."
+    style="width:100%;max-width:320px;padding:14px 18px;border-radius:14px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:16px;font-weight:700;text-align:center;outline:none;margin-bottom:12px;"/>
+  <input id="companyInput" type="text" maxlength="28" placeholder="Nome della tua società ferroviaria..."
+    style="width:100%;max-width:320px;padding:14px 18px;border-radius:14px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:16px;font-weight:700;text-align:center;outline:none;margin-bottom:20px;"/>
   <button onclick="startGame()"
     style="width:100%;max-width:320px;padding:16px;border-radius:16px;border:none;background:#e8a820;color:#111;font-size:17px;font-weight:800;cursor:pointer;">
-    Inizia a giocare
+    Fondare la società
   </button>
   <div id="welcomeErr" style="color:#f06060;font-size:13px;margin-top:12px;height:18px;"></div>
 </div>
-
 </body>
 </html>

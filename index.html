@@ -962,9 +962,8 @@ document.addEventListener('click', e=>{
     <div class="topbar-right">
   
     
-  <div id="taxPill" style="background:#c0392b;color:#fff;padding:8px 12px;border-radius:16px;font-size:13px;font-weight:800;cursor:pointer;" onclick="openBilancio()">-0€</div>
-  <div class="balance-pill" id="balBox" onclick="openBilancio()" style="cursor:pointer;">50.000€</div>
-</div>
+  <div id="taxPill" style="background:#c0392b;color:#fff;padding:6px 10px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;" onclick="openBilancio()">-0€</div>
+<div class="balance-pill" id="balBox" onclick="openBilancio()" style="cursor:pointer;padding:6px 12px;font-size:14px;">50.000€</div>
 
 
   <div class="container">
@@ -976,15 +975,14 @@ document.addEventListener('click', e=>{
         <canvas id="metroCanvas"></canvas>
       </div>
 
-      <div style="display:flex;gap:12px;margin-bottom:20px;">
-  <button onclick="openAppalti()" style="flex:1;padding:14px;border-radius:16px;background:#0c2336;border:2px solid #e8a820;color:#e8a820;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e8a820" stroke-width="1.8">
+      <button onclick="openAppalti()" style="width:52px;height:52px;border-radius:16px;background:#0c2336;border:2px solid #e8a820;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e8a820" stroke-width="1.8">
       <circle cx="12" cy="12" r="10"/>
       <line x1="2" y1="12" x2="22" y2="12"/>
       <path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>
     </svg>
-    Appalti Nazionali
   </button>
+
   <button onclick="openLegenda()" style="width:52px;height:52px;border-radius:16px;background:#0c2336;border:2px solid rgba(255,255,255,0.2);color:#fff;font-size:20px;font-weight:800;cursor:pointer;flex-shrink:0;">ⓘ</button>
 </div>
 

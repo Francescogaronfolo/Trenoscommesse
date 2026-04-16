@@ -1475,27 +1475,30 @@ setInterval(()=>{ boardData=genBoard(); buildBoard(); },90000);
     }
 
     function updateRanking(){
-      const myScore = balance + Object.values(levels).reduce((a,b)=>a+b,0) * 120;
-      const rows = [
-        {name:'Porta Centrale', desc:'stazione metropolitana', score:5200, rank:'gold'},
-        {name:'Nodo Nord', desc:'rete ad alta precisione', score:4300, rank:'silver'},
-        {name:'Terminale Tirrenico', desc:'stabile e luminosa', score:3600, rank:'bronze'},
-        {name:'La tua stazione', desc:'snodo in crescita', score:myScore, rank:''},
-        {name:'Raccordo Est', desc:'rete secondaria', score:2100, rank:''},
-        {name:'Scalo Vecchio', desc:'impianto arretrato', score:1450, rank:''}
-      ].sort((a,b)=>b.score-a.score);
+  const myCompany = document.getElementById('phName')?.textContent || 'La tua società';
+  const myOwner = document.getElementById('phOwner')?.textContent || '–';
+  const myScore = balance + Object.values(levels).reduce((a,b)=>a+b,0) * 120;
+  const rows = [
+    {name:'Ferrovia Centrale', owner:'Marco Bianchi', score:5200000, rank:'gold'},
+    {name:'Nord Express', owner:'Giulia Romani', score:4300000, rank:'silver'},
+    {name:'Tirrenica Rail', owner:'Luca Esposito', score:3600000, rank:'bronze'},
+    {name:myCompany, owner:myOwner, score:myScore, rank:''},
+    {name:'Raccordo Est', owner:'Sofia Marino', score:2100000, rank:''},
+    {name:'Scalo Vecchio', owner:'Pietro Galli', score:1450000, rank:''}
+  ].sort((a,b)=>b.score-a.score);
 
-      document.getElementById('rankList').innerHTML = rows.map((r,i)=>`
-        <div class="rank-row">
-          <div class="rp ${r.rank}">${i+1}</div>
-          <div class="rn">
-            <div class="rn-name">${r.name}</div>
-            <div class="rn-sub">${r.desc}</div>
-          </div>
-          <div class="rs">${fmt(r.score)}</div>
-        </div>
-      `).join('');
-    }
+  document.getElementById('rankList').innerHTML = rows.map((r,i)=>`
+    <div class="rank-row">
+      <div class="rp ${r.rank}">${i+1}</div>
+      <div class="rn">
+        <div class="rn-name" style="color:var(--navy);font-weight:800;font-size:15px;">${r.name}</div>
+        <div class="rn-sub" style="color:var(--muted);font-size:12px;">${r.owner}</div>
+      </div>
+      <div class="rs" style="color:var(--navy);font-weight:800;">${fmt(r.score)}</div>
+    </div>
+  `).join('');
+}
+
 
     function showPage(name){
       ['station','bets','profile'].forEach(p=>{

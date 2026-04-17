@@ -1094,6 +1094,27 @@ function getSecurityScore(){
   const score = base + (secLevel * 15) + (operators * 5);
   return score;
 }
+    function resolveAttack(type){
+  const security = getSecurityScore();
+
+  let enemyPower = 0;
+
+  if(type === 'anarchici') enemyPower = 30 + Math.random()*40;
+  if(type === 'terroristi') enemyPower = 60 + Math.random()*80;
+  if(type === 'rivoluzionari') enemyPower = 50 + Math.random()*60;
+
+  if(security >= enemyPower){
+    showToast("🛡 Attacco respinto (" + type + ")");
+  } else {
+    applyDamage(type);
+  }
+}
+    function applyDamage(type){
+  const penalty = Math.round(balance * 0.10);
+  balance -= penalty;
+
+  showToast("💥 Attacco subito (" + type + ") -" + fmt(penalty));
+}
   function updateUI(){
     document.getElementById('balBox').textContent=fmt(balance);
     document.getElementById('scBal').textContent=fmt(balance);
@@ -1949,14 +1970,20 @@ function getSecurityScore(){
   }
 
   setInterval(()=>{
-    const inc=apTotalIncome()*10;
-    if(inc>0){ apBalance+=inc; apUpdateStats(); apShowToast(`+${fmt(inc)} rendita appalti`); }
-    apMarketData.forEach(m=>{
-      m.pricePerPct=Math.max(50,Math.round(m.pricePerPct*(0.97+Math.random()*0.06)));
-      m.trend=Math.random()>0.5?1:-1;m.change=(Math.random()*6+0.5).toFixed(1);
-    });
-    if(apCurrentTab==='mercato') apBuildMarketList();
-  },CYCLE_MS);
+  const inc = apTotalIncome()*10;
+  if(inc>0){
+    apBalance+=inc;
+    apUpdateStats();
+    apShowToast('+${fmt(inc)} rendita appalti');
+  }
+  apMarketData.forEach(m=>{
+    m.pricePerPct=Math.max(50,Math.round(m.pricePerPct*(0.97+Math.random()*0.06)));
+    m.trend=Math.random()>0.5?1:-1;
+    m.change=(Math.random()*6+0.5).toFixed(1);
+  });
+  if(apCurrentTab==='mercato') apBuildMarketList();
+  handleSecurityEvent();
+}, CYCLE_MS);
 
   /* =====================================
      INIT

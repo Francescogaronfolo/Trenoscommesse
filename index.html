@@ -1087,7 +1087,13 @@ function simulateAttack(){
       if(el) el.classList.toggle('unlocked', i<=idx);
     });
   }
-
+function getSecurityScore(){
+  let base = 10;
+  const secLevel = levels?.security || 0;
+  const operators = secLevel * 2;
+  const score = base + (secLevel * 15) + (operators * 5);
+  return score;
+}
   function updateUI(){
     document.getElementById('balBox').textContent=fmt(balance);
     document.getElementById('scBal').textContent=fmt(balance);
@@ -1103,7 +1109,7 @@ function simulateAttack(){
     const tol=document.getElementById('toleranceInfo');
     if(tol) tol.textContent=`Finestra utile: ±${tolerance()} min`;
     const secEl = document.getElementById('scSecurity');
-    if(secEl) secEl.textContent = getSecurityPower();
+    if(secEl) secEl.textContent = getSecurityScore();
     updateTaxPill();
     updateBadges();
   }

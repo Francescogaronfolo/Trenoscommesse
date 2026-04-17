@@ -460,14 +460,19 @@ document.addEventListener('click',e=>{
   </div>
 
   <div class="stats-grid">
-    <div class="stat-card"><div class="sc-lbl">Saldo</div><div class="sc-val" id="scBal">50.000€</div><div class="sc-sub">capitale</div></div>
-    <div class="stat-card"><div class="sc-lbl">Rendita</div><div class="sc-val" id="scInc">800€</div><div class="sc-sub">ogni 12 min ×10</div></div>
-    <div class="stat-card" style="background:#f5f0e0;border-color:#d4c870;"><div class="sc-lbl">Scommesse</div><div class="sc-val" id="scBets" style="color:#8a7a20;">0</div><div class="sc-sub">totali</div></div>
-    <div class="stat-card" style="background:#f5f0e0;border-color:#d4c870;"><div class="sc-lbl">Win Rate</div><div class="sc-val" id="scRate" style="color:#8a7a20;">0%</div><div class="sc-sub">precisione</div></div>
-    <div class="stat-card" style="background:#f0fff4;border-color:#a8e6c0;"><div class="sc-lbl">Vittorie</div><div class="sc-val" id="scWins" style="color:#1e7a4a;">0</div><div class="sc-sub">indovinate</div></div>
-    <div class="stat-card" style="background:#fff0f0;border-color:#f0a8a8;"><div class="sc-lbl">Sconfitte</div><div class="sc-val" id="scLoss" style="color:#c0392b;">0</div><div class="sc-sub">mancate</div></div>
+  <div class="stat-card">
+    <div class="sc-lbl">Sicurezza</div>
+    <div class="sc-val" id="scSecurity">0</div>
+    <div class="sc-sub">difesa stazione</div>
   </div>
 
+  <div class="stat-card"><div class="sc-lbl">Saldo</div><div class="sc-val" id="scBal">50.000€</div><div class="sc-sub">capitale</div></div>
+  <div class="stat-card"><div class="sc-lbl">Rendita</div><div class="sc-val" id="scInc">800€</div><div class="sc-sub">ogni 12 min ×10</div></div>
+  <div class="stat-card" style="background:#f5f0e0;border-color:#d4c870;"><div class="sc-lbl">Scommesse</div><div class="sc-val" id="scBets" style="color:#8a7a20;">0</div><div class="sc-sub">totali</div></div>
+  <div class="stat-card" style="background:#f5f0e0;border-color:#d4c870;"><div class="sc-lbl">Win Rate</div><div class="sc-val" id="scRate" style="color:#8a7a20;">0%</div><div class="sc-sub">precisione</div></div>
+  <div class="stat-card" style="background:#f0fff4;border-color:#a8e6c0;"><div class="sc-lbl">Vittorie</div><div class="sc-val" id="scWins" style="color:#1e7a4a;">0</div><div class="sc-sub">indovinate</div></div>
+  <div class="stat-card" style="background:#fff0f0;border-color:#f0a8a8;"><div class="sc-lbl">Sconfitte</div><div class="sc-val" id="scLoss" style="color:#c0392b;">0</div><div class="sc-sub">mancate</div></div>
+</div>
   <div class="section-title" style="margin-bottom:12px;">Classifica</div>
   <div class="rank-list" id="rankList"></div>
 </div>
@@ -877,11 +882,16 @@ document.addEventListener('click',e=>{
   const CYCLE_MS = 720000;
 
   const stats = { bets:0, wins:0, losses:0 };
-  const levels = {
-    train:1, station:1, control:1, logistics:1, centrale:1,
-    merci:1, energia:1
-  };
-
+ const levels = {
+  train:1,
+  station:1,
+  control:1,
+  logistics:1,
+  centrale:1,
+  merci:1,
+  energia:1,
+  sicurezza:1
+};
   const trains = [
     {name:"Atria V-01",  route:"Roma → Milano",     type:"Alta Velocità",    base:8,  variance:16},
     {name:"Radian R-12", route:"Venezia → Roma",    type:"Intercity",        base:12, variance:18},
@@ -927,6 +937,7 @@ document.addEventListener('click',e=>{
     {id:'binari',    x:220, y:120, shape:'square',  color:'#2979c8', symbol:'▦', label:'BINARI',    upgradeKey:'station',   desc:'Abbassa il ritardo medio di tutti i treni.'},
     {id:'controllo', x:400, y:200, shape:'square',  color:'#7c3aed', symbol:'◈', label:'CONTROLLO', upgradeKey:'control',   desc:'Allarga la finestra utile per vincere.'},
     {id:'logistica', x:460, y:270, shape:'square',  color:'#b8600a', symbol:'◉', label:'LOGISTICA', upgradeKey:'logistics', desc:'Aumenta la rendita passiva.'},
+    {id:'sicurezza', x:150, y:260, shape:'square', color:'#9aa0a6', symbol:'⛨', label:'SICUREZZA', upgradeKey:'sicurezza', desc:'Protegge la stazione da attacchi ed eventi ostili.'},
     {id:'centrale',  x:280, y:200, shape:'circle',  color:'#1ab8a0', symbol:'◎', label:'CENTRALE',  upgradeKey:'centrale',  desc:'Nodo principale. Sblocca livelli avanzati per tutte le strutture.'},
     {id:'nord',      x:280, y:55,  shape:'circle',  color:'#5a8fb0', symbol:'○', label:'NORD',      upgradeKey:null,        desc:'Capolinea nord. Linee regionali superiori.'},
     {id:'est',       x:520, y:340, shape:'circle',  color:'#5a8fb0', symbol:'○', label:'EST',       upgradeKey:null,        desc:'Terminale est. Treni a lunga percorrenza.'},
@@ -954,6 +965,7 @@ document.addEventListener('click',e=>{
     station:   [800,1800,4000,8500,16000,30000,45000,65000,90000,120000],
     control:   [400, 900,2000,4500, 9000,18000,28000,40000,55000,75000],
     logistics: [300, 700,1500,3500, 7000,14000,22000,32000,45000,60000],
+    sicurezza: [300, 700, 1500, 3200, 6500, 12000, 20000, 32000, 48000, 70000],
     centrale:  [600,1400,3200,7000,14000,26000,40000,58000,80000,110000],
     merci:     [400, 900,2000,4500, 9000,18000,28000,40000,55000,75000],
     energia:   [200, 500,1100,2500, 5000,10000,16000,23000,32000,43000],
@@ -975,7 +987,65 @@ document.addEventListener('click',e=>{
       + (levels.merci * 150)
       + (levels.energia * 60);
   }
+function getSecurityPower(){
+  return (
+    levels.sicurezza * 12 +
+    levels.centrale * 8 +
+    levels.control * 5
+  );
+}
 
+function getThreatPower(type){
+  const baseMap = {
+    anarchici: 40,
+    terroristi: 65,
+    rivoluzionari: 55
+  };
+
+  const variabilityMap = {
+    anarchici: 20,
+    terroristi: 30,
+    rivoluzionari: 25
+  };
+
+  const base = baseMap[type] || 40;
+  const variance = variabilityMap[type] || 20;
+
+  return Math.round(base + Math.random() * variance);
+}
+
+function getAttackChance(){
+  const baseChance = 0.18; // 18% ogni ciclo
+  const reduction = levels.sicurezza * 0.008 + levels.centrale * 0.004;
+  return Math.max(0.03, baseChance - reduction);
+}
+
+function simulateAttack(){
+  if(Math.random() > getAttackChance()) return null;
+
+  const types = ['anarchici', 'terroristi', 'rivoluzionari'];
+  const type = types[Math.floor(Math.random() * types.length)];
+
+  const defense = getSecurityPower();
+  const attack = getThreatPower(type);
+
+  const success = defense >= attack;
+
+  return {
+    type,
+    defense,
+    attack,
+    success
+  };
+}
+    function getAttackPenalty(){
+  const tax1 = Math.round(balance * 0.05);
+  const tax2 = Math.round((income() * 10) * 0.10);
+  const costs = getCycleCosts();
+  const totalBase = tax1 + tax2 + costs;
+
+  return Math.round(totalBase * 0.10);
+}
   function tolerance(){
     return 5 + Math.floor(levels.control / 2);
   }
@@ -1032,6 +1102,8 @@ document.addEventListener('click',e=>{
       total<=7?'Base':total<=20?'Intermedio':total<=50?'Avanzato':total<=150?'Elite':'Leggenda';
     const tol=document.getElementById('toleranceInfo');
     if(tol) tol.textContent=`Finestra utile: ±${tolerance()} min`;
+    const secEl = document.getElementById('scSecurity');
+    if(secEl) secEl.textContent = getSecurityPower();
     updateTaxPill();
     updateBadges();
   }
@@ -1455,27 +1527,56 @@ document.addEventListener('click',e=>{
   }
 
   setInterval(()=>{
-    const inc=income()*10;
-    balance+=inc;
-    const tax1=Math.round(balance*0.05);
-    const tax2=Math.round(inc*0.10);
-    const tax=tax1+tax2;
-    balance-=tax;
-    const costs=getCycleCosts();
-    balance-=costs;
-    if(balance<0){
-      deficitDays++;
-      showToast(`⚠️ Giorno ${deficitDays}/${MAX_DEFICIT_DAYS} in deficit`);
-      if(deficitDays>=MAX_DEFICIT_DAYS){ showBankruptcy(); return; }
-    } else { deficitDays=0; }
-    updateUI(); saveGame();
-    const f=document.getElementById('incFlash');
-    f.textContent=`+${fmt(inc)}`;f.classList.add('show');
-    setTimeout(()=>f.classList.remove('show'),1800);
-    const cf=document.getElementById('costFlash');
-    cf.textContent=`-${fmt(tax+costs)} tasse`;cf.classList.add('show');
-    setTimeout(()=>cf.classList.remove('show'),2500);
-  },CYCLE_MS);
+  const inc = income() * 10;
+  balance += inc;
+
+  const tax1 = Math.round(balance * 0.05);
+  const tax2 = Math.round(inc * 0.10);
+  const tax = tax1 + tax2;
+
+  balance -= tax;
+
+  const costs = getCycleCosts();
+  balance -= costs;
+
+  // Simulazione attacco
+  const event = simulateAttack();
+  let attackPenalty = 0;
+
+  if(event){
+    if(event.success){
+      showToast(`🛡️ Attacco respinto: ${event.type}`);
+    } else {
+      attackPenalty = getAttackPenalty();
+      balance -= attackPenalty;
+      showToast(`⚠️ Attacco subito: ${event.type} (-${fmt(attackPenalty)})`);
+    }
+  }
+
+  if(balance < 0){
+    deficitDays++;
+    showToast(`⚠️ Giorno ${deficitDays}/${MAX_DEFICIT_DAYS} in deficit`);
+    if(deficitDays >= MAX_DEFICIT_DAYS){
+      showBankruptcy();
+      return;
+    }
+  } else {
+    deficitDays = 0;
+  }
+
+  updateUI();
+  saveGame();
+
+  const f = document.getElementById('incFlash');
+  f.textContent = `+${fmt(inc)}`;
+  f.classList.add('show');
+  setTimeout(()=>f.classList.remove('show'),1800);
+
+  const cf = document.getElementById('costFlash');
+  cf.textContent = `-${fmt(tax + costs + attackPenalty)} costi`;
+  cf.classList.add('show');
+  setTimeout(()=>cf.classList.remove('show'),2500);
+}, CYCLE_MS);
 
   /* =====================================
      APPALTI
